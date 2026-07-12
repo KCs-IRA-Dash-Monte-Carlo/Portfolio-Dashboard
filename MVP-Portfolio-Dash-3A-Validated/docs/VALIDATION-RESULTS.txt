@@ -1,0 +1,29 @@
+Phase 2C validation results
+Date: 2026-07-11
+
+Static module and manifest validation
+- JavaScript syntax checks: PASS
+- manifest.json parse and canonical dataset hash: PASS
+- Eight source-file SHA-256 checks: PASS
+- Eight Phase 2B parse/validate/normalize passes: PASS
+- Total normalized candle count: 34,122
+
+Browser synthetic IndexedDB tests
+- Result: 9/9 passed, 0 failed
+- Schema migration preserves Phase 1 stores: PASS
+- historicalCandles key path [symbol,date]: PASS
+- Calendar date parsing without UTC shift: PASS
+- Transactional install and progress: PASS
+- Metadata and provenance storage: PASS
+- Unchanged-file skip without fetch/parse: PASS
+- Source-file hash rejection: PASS
+- Failed replacement rollback: PASS
+- Dataset version/hash replacement: PASS
+
+Full private seed browser installation
+- Imported symbols: AVDV, AVUV, DCO, IWM, ONEQ, PSCH, SPY, VTV
+- Current files: 8 of 8
+- Installed candles: 34,122
+- Dataset current: true
+- Second installation: 0 imported, 8 skipped
+- Relaunch status: current, 8 files, 34,122 candles

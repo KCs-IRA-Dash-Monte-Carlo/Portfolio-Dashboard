@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase 1A Manual Tests</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/themes.css">
+</head>
+<body>
+  <header class="app-header" role="banner">
+    <div>
+      <p class="eyebrow">Test index</p>
+      <h1>Phase 1A Manual Tests</h1>
+      <p class="app-header__summary">Static shell tests only. These checks do not make API calls and do not require an API key.</p>
+    </div>
+    <p><a class="button" href="../index.html">Open app</a></p>
+  </header>
+
+  <main class="app-frame" role="main">
+    <section class="panel" aria-labelledby="static-files-title">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Smoke tests</p>
+          <h2 id="static-files-title">Static files</h2>
+        </div>
+        <button class="button" type="button" id="run-tests">Run checks</button>
+      </div>
+
+      <ul id="test-results" class="plain-list" aria-live="polite">
+        <li>Press Run checks.</li>
+      </ul>
+    </section>
+
+    <aside class="app-aside" aria-labelledby="manual-checks-title">
+      <h2 id="manual-checks-title">Manual checks</h2>
+      <ul class="plain-list">
+        <li>Open the app from localhost, not as a file URL.</li>
+        <li>Confirm all eight panels are reachable from the navigation.</li>
+        <li>Confirm keyboard focus is visible.</li>
+        <li>Confirm Light and Dark controls change the theme.</li>
+        <li>Confirm no API key is present in the source.</li>
+      </ul>
+    </aside>
+  </main>
+
+  <script>
+    const files = [
+      '../index.html',
+      '../manifest.json',
+      '../service-worker.js',
+      '../css/base.css',
+      '../css/layout.css',
+      '../css/themes.css',
+      '../css/print.css',
+      '../js/app.js',
+      './index.html'
+    ];
+
+    const capabilityChecks = [
+      ['Local Storage', () => {
+        const key = 'portfolioDash.testProbe';
+        localStorage.setItem(key, '1');
+        localStorage.removeItem(key);
+        return true;
+      }],
+      ['IndexedDB', () => 'indexedDB' in window],
+      ['Service Workers', () => 'serviceWorker' in navigator],
+      ['Web Workers', () => 'Worker' in window],
+      ['Fetch API', () => 'fetch' in window],
+      ['Promise', () => 'Promise' in window],
+      ['Blob URLs', () => 'Blob' in window && 'URL' in window && 'createObjectURL' in URL]
+    ];
+
+    document.getElementById('run-tests').addEventListener('click', runChecks);
+
+    async function runChecks() {
+      const results = [];
+
+      for (const file of files) {
+        try {
+          const response = await fetch(file, { cache: 'no-store' });
+          results.push([response.ok, `${file}: ${response.status}`]);
+        } catch (_error) {
+          results.push([false, `${file}: fetch failed`]);
+        }
+      }
+
+      for (const [label, check] of capabilityChecks) {
+        try {
+          results.push([Boolean(check()), `${label}: checked`]);
+        } catch (_error) {
+          results.push([false, `${label}: unavailable or blocked`]);
+        }
+      }
+
+      renderResults(results);
+    }
+
+    function renderResults(results) {
+      const list = document.getElementById('test-results');
+      list.textContent = '';
+
+      results.forEach(([passed, message]) => {
+        const item = document.createElement('li');
+        item.textContent = `${passed ? 'PASS' : 'FAIL'} - ${message}`;
+        list.appendChild(item);
+      });
+    }
+  </script>
+</body>
+</html>

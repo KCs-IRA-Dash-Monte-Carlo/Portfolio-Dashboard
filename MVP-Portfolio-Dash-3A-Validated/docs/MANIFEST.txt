@@ -1,0 +1,23 @@
+MVP Portfolio Dashboard - Phase 3A Portfolio Data Model and Engine
+Requirements authority: requirements.md Version 2.2
+
+Authorized implementation files:
+js/portfolio/portfolio-model.js
+js/portfolio/lot-model.js
+js/portfolio/portfolio-validation.js
+js/portfolio/portfolio-engine.js
+js/utils/number-utils.js
+js/utils/date-utils.js
+tests/calculation-tests.html
+
+Supporting delivery files:
+PHASE-3A-INTEGRATION.md
+PHASE-3A-EXACT-FILE-CONTENTS.md
+SHA256SUMS.txt
+
+Verification performed:
+- Node syntax check on all six JavaScript modules
+- 24 deterministic calculation tests executed through Node using the same ES module test body
+- Prohibited-scope scan for Finnhub /stock/candle, IndexedDB access, raw Stooq parsing, chart rendering, and Monte Carlo code
+
+Browser manual verification remains required in Firefox using tests/calculation-tests.html.

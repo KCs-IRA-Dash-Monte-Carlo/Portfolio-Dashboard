@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Storage Tests | MVP Portfolio Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    body {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    button {
+      min-height: 44px;
+      padding: 0.7rem 1rem;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    pre {
+      overflow: auto;
+      padding: 1rem;
+      border: 1px solid currentColor;
+      border-radius: 0.5rem;
+      white-space: pre-wrap;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .pass {
+      color: #0a7f2e;
+    }
+
+    .fail {
+      color: #b00020;
+    }
+
+    .note {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Storage Tests</h1>
+    <p class="note">
+      Phase 1B manual test harness. This page uses fixture-only data and does not contain or request a Finnhub API key.
+    </p>
+  </header>
+
+  <main>
+    <section aria-labelledby="controls-heading">
+      <h2 id="controls-heading">Controls</h2>
+      <div class="controls">
+        <button id="run-tests" type="button">Run Storage Tests</button>
+        <button id="clear-test-data" type="button">Clear Test Data</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="results-heading">
+      <h2 id="results-heading">Results</h2>
+      <pre id="results" aria-live="polite">Not run yet.</pre>
+    </section>
+  </main>
+
+  <script type="module">
+    import {
+      DEFAULT_DEBOUNCE_MS,
+      INDEXED_DB_SCHEMA_VERSION,
+      STORE_NAMES,
+      createDefaultLocalState,
+      summarizeApiSettingsForDiagnostics
+    } from '../js/persistence/schema.js';
+
+    import { LocalStoragePersistence } from '../js/persistence/local-storage.js';
+    import { IndexedDbPersistence } from '../js/persistence/indexed-db.js';
+    import { SettingsState } from '../js/settings/settings-state.js';
+    import { runCapabilityChecks } from '../js/diagnostics/capabilities.js';
+
+    const TEST_LOCAL_STORAGE_KEY = 'mvpPortfolioDashboard.test.localState';
+    const TEST_INDEXED_DB_NAME = 'mvpPortfolioDashboardStorageTests';
+
+    const resultsElement = document.getElementById('results');
+    const runButton = document.getElementById('run-tests');
+    const clearButton = document.getElementById('clear-test-data');
+
+    runButton.addEventListener('click', () => {
+      runAllTests();
+    });
+
+    clearButton.addEventListener('click', async () => {
+      await clearTestData();
+      writeLine('Test data cleared.');
+    });
+
+    async function runAllTests() {
+      resultsElement.textContent = '';
+
+      const tests = [
+        testDefaultSchema,
+        testLocalStorageRoundTrip,
+        testDebouncedLocalStorageWrite,
+        testSettingsState,
+        testIndexedDbStores,
+        testCapabilityChecks
+      ];
+
+      let passed = 0;
+
+      for (const test of tests) {
+        try {
+          await test();
+          passed += 1;
+          writeLine(`PASS ${test.name}`, 'pass');
+        } catch (error) {
+          writeLine(`FAIL ${test.name}: ${error.message}`, 'fail');
+        }
+      }
+
+      writeLine('');
+      writeLine(`${passed}/${tests.length} tests passed.`);
+    }
+
+    function testDefaultSchema() {
+      const state = createDefaultLocalState();
+
+      assert(state.schemaVersion === 1, 'Local schema version should be 1.');
+      assert(Array.isArray(state.holdings), 'holdings should be an array.');
+      assert(Array.isArray(state.lots), 'lots should be an array.');
+      assert(Array.isArray(state.activeSymbols.holdings), 'activeSymbols.holdings should be an array.');
+      assert(Array.isArray(state.activeSymbols.benchmarks), 'activeSymbols.benchmarks should be an array.');
+      assert(Array.isArray(state.benchmarks), 'benchmarks should be an array.');
+      assert(state.apiSettings.provider === 'finnhub', 'API settings metadata should identify Finnhub provider.');
+      assert(state.apiSettings.hasFinnhubApiKey === false, 'Default state should not claim an API key exists.');
+      assert(state.theme === 'dark' || state.theme === 'light', 'Theme should be dark or light.');
+      assert(typeof state.accentColor === 'string', 'Accent color should be present.');
+      assert(typeof state.fontScale === 'number', 'Font scale should be numeric.');
+      assert(state.projectionHorizonYears >= 1 && state.projectionHorizonYears <= 10, 'Projection horizon should be 1 to 10 years.');
+      assert(state.monteCarloSettings.pathCount === 5000, 'Default Monte Carlo path count should be 5,000.');
+      assert(state.exportPreferences.includeApiKeyInBackup === false, 'API key backup inclusion should default false.');
+    }
+
+    async function testLocalStorageRoundTrip() {
+      const storage = new LocalStoragePersistence({
+        storageKey: TEST_LOCAL_STORAGE_KEY,
+        debounceMs: 20
+      });
+
+      storage.clearState();
+
+      const state = createDefaultLocalState();
+      state.theme = 'light';
+      state.holdings = [{ id: 'holding-test', symbol: 'TEST', name: 'Fixture Holding' }];
+      state.lots = [{ id: 'lot-test', holdingId: 'holding-test', symbol: 'TEST', shares: 1.5, purchasePrice: 100, acquisitionDate: '2026-01-02' }];
+      state.apiSettings = {
+        provider: 'finnhub',
+        hasFinnhubApiKey: true,
+        keyMaskedHint: '••••1234',
+        keyLastUpdatedAt: '2026-01-02T00:00:00.000Z',
+        apiKey: 'fixture-key-that-must-not-persist'
+      };
+
+      storage.writeStateNow(state);
+
+      const restored = storage.readState();
+
+      assert(restored.theme === 'light', 'Theme should round-trip.');
+      assert(restored.holdings.length === 1, 'Holdings should round-trip.');
+      assert(restored.lots.length === 1, 'Lots should round-trip.');
+      assert(restored.apiSettings.hasFinnhubApiKey === true, 'API key metadata should round-trip.');
+      assert(!Object.prototype.hasOwnProperty.call(restored.apiSettings, 'apiKey'), 'Raw API key must not persist.');
+
+      const diagnosticSummary = summarizeApiSettingsForDiagnostics(restored.apiSettings);
+      assert(!Object.prototype.hasOwnProperty.call(diagnosticSummary, 'apiKey'), 'Diagnostics summary must not expose raw API key.');
+    }
+
+    async function testDebouncedLocalStorageWrite() {
+      const storage = new LocalStoragePersistence({
+        storageKey: TEST_LOCAL_STORAGE_KEY,
+        debounceMs: 30
+      });
+
+      const state = storage.readState();
+      state.accentColor = '#123456';
+
+      storage.scheduleWrite(state);
+
+      const immediateRaw = window.localStorage.getItem(TEST_LOCAL_STORAGE_KEY);
+      assert(immediateRaw, 'A previous immediate write should exist before debounce flush.');
+
+      await delay(DEFAULT_DEBOUNCE_MS > 30 ? 60 : DEFAULT_DEBOUNCE_MS + 50);
+
+      const restored = storage.readState();
+      assert(restored.accentColor === '#123456', 'Debounced write should flush.');
+    }
+
+    async function testSettingsState() {
+      const storage = new LocalStoragePersistence({
+        storageKey: TEST_LOCAL_STORAGE_KEY,
+        debounceMs: 20
+      });
+
+      const settings = new SettingsState({ storage });
+      settings.load();
+
+      settings.setTheme('dark');
+      settings.setProjectionHorizonYears(7);
+      settings.setFontScale(1.1);
+      settings.setApiSettingsMetadata({
+        hasFinnhubApiKey: true,
+        keyMaskedHint: '••••ABCD',
+        apiKey: 'fixture-key-that-must-not-persist'
+      });
+
+      settings.flush();
+
+      const state = settings.getState();
+
+      assert(state.theme === 'dark', 'Settings theme update should persist.');
+      assert(state.projectionHorizonYears === 7, 'Projection horizon should persist.');
+      assert(state.fontScale === 1.1, 'Font scale should persist.');
+      assert(state.apiSettings.hasFinnhubApiKey === true, 'API key metadata should persist.');
+      assert(!Object.prototype.hasOwnProperty.call(state.apiSettings, 'apiKey'), 'SettingsState must strip raw API keys.');
+      assert(settings.shouldShowBackupReminder() === true, 'Backup reminder should be true when no backup exists.');
+    }
+
+    async function testIndexedDbStores() {
+      const db = new IndexedDbPersistence({
+        dbName: TEST_INDEXED_DB_NAME,
+        version: INDEXED_DB_SCHEMA_VERSION,
+        batchDelayMs: 20
+      });
+
+      await db.open();
+
+      const quote = await db.put(STORE_NAMES.QUOTE_SNAPSHOTS, {
+        symbol: 'TEST',
+        asOf: '2026-01-02T14:30:00.000Z',
+        snapshot: {
+          c: 100,
+          d: 1,
+          dp: 1
+        },
+        source: 'fixture'
+      });
+
+      const quoteRead = await db.get(STORE_NAMES.QUOTE_SNAPSHOTS, quote.id);
+      assert(quoteRead.symbol === 'TEST', 'Quote snapshot placeholder should round-trip.');
+
+      const candle = await db.put(STORE_NAMES.CANDLES, {
+        symbol: 'TEST',
+        resolution: 'D',
+        from: '2026-01-01',
+        to: '2026-01-02',
+        candles: {
+          c: [100, 101],
+          h: [101, 102],
+          l: [99, 100],
+          o: [100, 100.5],
+          t: [1767225600, 1767312000],
+          v: [1000, 1100],
+          s: 'ok'
+        },
+        source: 'fixture'
+      });
+
+      const candleRead = await db.get(STORE_NAMES.CANDLES, candle.id);
+      assert(candleRead.candles.s === 'ok', 'Candle placeholder should round-trip.');
+
+      await db.batchPut({
+        [STORE_NAMES.COMPANY_METADATA]: [
+          {
+            symbol: 'TEST',
+            profile: {
+              name: 'Fixture Company'
+            },
+            updatedAt: '2026-01-02T00:00:00.000Z',
+            expiresAt: '2026-01-09T00:00:00.000Z'
+          }
+        ],
+        [STORE_NAMES.DIAGNOSTICS_HISTORY]: [
+          {
+            level: 'info',
+            category: 'storage-test',
+            message: 'Fixture diagnostic record.'
+          }
+        ],
+        [STORE_NAMES.EXPORT_STAGING]: [
+          {
+            type: 'fixture',
+            payload: {
+              rows: []
+            }
+          }
+        ]
+      });
+
+      const metadata = await db.get(STORE_NAMES.COMPANY_METADATA, 'TEST');
+      assert(metadata.profile.name === 'Fixture Company', 'Company metadata placeholder should round-trip.');
+
+      db.schedulePut(STORE_NAMES.DIAGNOSTICS_HISTORY, {
+        level: 'info',
+        category: 'storage-test',
+        message: 'Batched fixture diagnostic record.'
+      });
+
+      const batchResult = await db.flushPendingWrites();
+      assert(batchResult.written === 1, 'Scheduled IndexedDB write should flush.');
+
+      await db.clearAllStores();
+      const quotesAfterClear = await db.getAll(STORE_NAMES.QUOTE_SNAPSHOTS);
+      assert(quotesAfterClear.length === 0, 'IndexedDB stores should clear.');
+
+      await db.deleteDatabase();
+    }
+
+    async function testCapabilityChecks() {
+      const report = await runCapabilityChecks();
+
+      assert(report.checkedAt, 'Capability report should include timestamp.');
+      assert(report.checks.localStorage, 'Capability report should include Local Storage.');
+      assert(report.checks.indexedDB, 'Capability report should include IndexedDB.');
+      assert(report.checks.serviceWorkers, 'Capability report should include service workers.');
+      assert(report.checks.webWorkers, 'Capability report should include web workers.');
+      assert(report.checks.fetch, 'Capability report should include fetch.');
+      assert(report.checks.promise, 'Capability report should include Promise.');
+      assert(report.checks.echarts, 'Capability report should include ECharts availability.');
+      assert(report.checks.blobDownload, 'Capability report should include Blob/download support.');
+    }
+
+    async function clearTestData() {
+      window.localStorage.removeItem(TEST_LOCAL_STORAGE_KEY);
+
+      if ('indexedDB' in window) {
+        const db = new IndexedDbPersistence({
+          dbName: TEST_INDEXED_DB_NAME,
+          version: INDEXED_DB_SCHEMA_VERSION
+        });
+
+        try {
+          await db.deleteDatabase();
+        } catch (error) {
+          // Ignore blocked cleanup in manual tests.
+        }
+      }
+    }
+
+    function assert(condition, message) {
+      if (!condition) {
+        throw new Error(message);
+      }
+    }
+
+    function delay(ms) {
+      return new Promise((resolve) => {
+        window.setTimeout(resolve, ms);
+      });
+    }
+
+    function writeLine(message, className = '') {
+      const prefix = className === 'pass'
+        ? '✓ '
+        : className === 'fail'
+          ? '✗ '
+          : '';
+
+      resultsElement.textContent += `${prefix}${message}\n`;
+    }
+  </script>
+</body>
+</html>
