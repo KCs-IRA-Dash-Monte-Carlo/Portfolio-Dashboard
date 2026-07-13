@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'portfolio-dash-static-v0.2.3-baseline';
+const CACHE_VERSION = 'portfolio-dash-static-v0.2.3-phase-3b-2';
 
 const STATIC_ASSETS = [
   './',
@@ -9,12 +9,25 @@ const STATIC_ASSETS = [
   './css/themes.css',
   './css/print.css',
   './css/setup-wizard.css',
+  './css/portfolio-editor.css',
   './js/app.js',
   './js/config/finnhub.js',
   './js/settings/settings-state.js',
   './js/ui/setup-wizard.js',
+  './js/ui/lot-editor.js',
+  './js/ui/portfolio-editor.js',
+  './js/ui/portfolio-phase-3b.js',
+  './js/ui/portfolio-settings-state-adapter.js',
+  './js/ui/portfolio-ui-engine-adapter.js',
+  './js/portfolio/lot-model.js',
+  './js/portfolio/portfolio-model.js',
+  './js/portfolio/portfolio-validation.js',
+  './js/portfolio/portfolio-engine.js',
+  './js/utils/date-utils.js',
+  './js/utils/number-utils.js',
   './js/utils/dom-utils.js',
-  './tests/index.html'
+  './tests/index.html',
+  './tests/ui-tests.html'
 ];
 
 self.addEventListener('install', (event) => {

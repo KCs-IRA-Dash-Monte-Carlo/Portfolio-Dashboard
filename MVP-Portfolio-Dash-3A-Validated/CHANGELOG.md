@@ -2,6 +2,15 @@
 
 All notable project specification and repository-workflow changes are recorded here.
 
+## [2.3-phase-3b] - 2026-07-13
+
+- Added explicit-save holding and multi-lot CRUD backed by the accepted Phase 3A model, validation, and calculations.
+- Added accessible validation announcements, destructive confirmations, focus restoration, and an iPhone 13 mini responsive editor layout.
+- Added manual corporate-action adjustment with a required audit note and before/after preview; no corporate action is detected or applied automatically.
+- Added corporate-action responsibility notices to Holdings, Settings, and Help.
+- Added portfolio revision tracking and stale invalidation for dependent analytics and simulations.
+- Added deterministic adapter tests, a browser UI harness, and a physical-device manual test checklist.
+
 ## [2.3] - 2026-07-12
 
 ### Changed

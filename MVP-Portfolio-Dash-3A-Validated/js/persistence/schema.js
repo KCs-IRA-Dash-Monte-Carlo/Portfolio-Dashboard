@@ -3,7 +3,7 @@ import {
   PREDEFINED_FINNHUB_API_KEY
 } from "../config/finnhub.js";
 
-export const APP_VERSION = "0.2.3-v2.3-baseline";
+export const APP_VERSION = "0.2.3-v2.3-phase-3b";
 export const LOCAL_STORAGE_SCHEMA_VERSION = 2;
 export const INDEXED_DB_SCHEMA_VERSION = 2;
 export const LOCAL_STORAGE_KEY = "mvpPortfolioDashboard.localState";

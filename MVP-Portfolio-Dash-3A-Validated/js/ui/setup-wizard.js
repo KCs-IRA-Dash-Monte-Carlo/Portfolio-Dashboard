@@ -9,6 +9,8 @@ import {
   saveSettingsState
 } from '../settings/settings-state.js';
 import { clearElement, createElement, createField, formatCurrency } from '../utils/dom-utils.js';
+import { calculateLotCost } from '../portfolio/portfolio-engine.js';
+import { settingsStateToPortfolio } from './portfolio-settings-state-adapter.js';
 
 const STEPS = [
   'Storage Warnings',
@@ -294,12 +296,18 @@ class SetupWizard {
         text: 'Delete'
       });
       deleteButton.addEventListener('click', () => {
+        if (!window.confirm(`Delete this ${lot.ticker} acquisition lot? This cannot be undone.`)) return;
         this.state.lots = this.state.lots.filter((candidate) => candidate.id !== lot.id);
         this.syncHoldingsFromLots();
         this.render();
       });
 
-      const cost = Number(lot.shares) * Number(lot.purchasePrice);
+      let cost = NaN;
+      try {
+        cost = calculateLotCost(lot);
+      } catch (_error) {
+        // The accepted portfolio validation boundary reports the actionable error on save.
+      }
       tbody.append(createElement('tr', {
         children: [
           createElement('td', { children: [tickerInput] }),
@@ -610,17 +618,12 @@ class SetupWizard {
         return { valid: false, message: 'Add at least one lot or go back and close setup without completing it.' };
       }
 
-      for (const lot of this.state.lots) {
-        if (!normalizeTicker(lot.ticker)) return { valid: false, message: 'Every lot needs a ticker.' };
-        if (!Number.isFinite(Number(lot.shares)) || Number(lot.shares) <= 0) {
-          return { valid: false, message: 'Every lot needs shares greater than zero.' };
-        }
-        if (!Number.isFinite(Number(lot.purchasePrice)) || Number(lot.purchasePrice) <= 0) {
-          return { valid: false, message: 'Every lot needs a purchase price greater than zero.' };
-        }
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(lot.acquisitionDate)) {
-          return { valid: false, message: 'Every lot needs an acquisition date.' };
-        }
+      try {
+        this.syncHoldingsFromLots();
+        settingsStateToPortfolio(this.state);
+      } catch (error) {
+        const first = Array.isArray(error.errors) ? error.errors[0] : null;
+        return { valid: false, message: first?.message || error.message || 'Portfolio validation failed.' };
       }
     }
 

@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/portfolio-editor.css?v=0.2.3-phase-3b-6">
   <link rel="stylesheet" href="css/print.css" media="print">
 </head>
 <body>
@@ -19,7 +20,7 @@
     <div class="app-header__identity">
       <p class="eyebrow">Client-side PWA shell</p>
       <h1>Retirement Portfolio Dashboard</h1>
-      <p class="app-header__summary">Version 2.3 baseline complete through Phase 3A. Portfolio, persistence, setup, live-data, and historical-data foundations are implemented; later UI, analytics, projections, and exports remain phased work.</p>
+      <p class="app-header__summary">Version 2.3 portfolio holdings and acquisition lots are editable locally. Corporate actions remain an explicit, audited manual responsibility.</p>
     </div>
 
     <div class="app-header__controls" aria-label="Application controls">
@@ -45,6 +46,7 @@
       <li><button class="app-nav__button" type="button" data-panel-target="analytics" aria-controls="panel-analytics" aria-selected="false">Analytics</button></li>
       <li><button class="app-nav__button" type="button" data-panel-target="projections" aria-controls="panel-projections" aria-selected="false">Projections</button></li>
       <li><button class="app-nav__button" type="button" data-panel-target="settings" aria-controls="panel-settings" aria-selected="false">Settings</button></li>
+      <li><button class="app-nav__button" type="button" data-panel-target="help" aria-controls="panel-help" aria-selected="false">Help</button></li>
       <li><button class="app-nav__button" type="button" data-panel-target="diagnostics" aria-controls="panel-diagnostics" aria-selected="false">Diagnostics</button></li>
       <li><button class="app-nav__button" type="button" data-panel-target="report" aria-controls="panel-report" aria-selected="false">Report</button></li>
     </ul>
@@ -94,15 +96,13 @@
             <p class="eyebrow">Portfolio</p>
             <h2 id="holdings-title">Holdings</h2>
           </div>
-          <span class="status-pill">Placeholder</span>
+          <span class="status-pill">Editable · saved locally</span>
         </div>
 
-        <!-- Future Portfolio Engine attachment: add/edit/delete holdings and multi-lot workflows. -->
-        <!-- Future Persistence Manager attachment: saved holdings and lots. -->
-        <div class="placeholder-block">
-          <h3>Holdings table placeholder</h3>
-          <p>This panel will hold editable holdings, fractional-share lots, acquisition dates, purchase prices, and audit notes in later increments.</p>
+        <div class="portfolio-notice portfolio-notice--warning">
+          <strong>Corporate actions are manual.</strong> This app does not detect or apply splits, reverse splits, ticker changes, spin-offs, mergers, or other corporate actions. Use a lot's Manual adjustment action and verify the before-and-after preview before saving.
         </div>
+        <div data-portfolio-editor></div>
       </section>
 
       <section id="panel-benchmarks" class="panel" data-panel="benchmarks" aria-labelledby="benchmarks-title" hidden>
@@ -128,7 +128,7 @@
             <p class="eyebrow">Price-return approximation</p>
             <h2 id="analytics-title">Analytics</h2>
           </div>
-          <span class="status-pill status-pill--warning">Unavailable</span>
+          <span class="status-pill status-pill--warning" data-dependent-status="analytics">Unavailable</span>
         </div>
 
         <!-- Future Analytics Engine attachment: CAGR, alpha, beta, maximum drawdown, and date alignment. -->
@@ -145,7 +145,7 @@
             <p class="eyebrow">Forward-looking models</p>
             <h2 id="projections-title">Projections</h2>
           </div>
-          <span class="status-pill status-pill--warning">Unavailable</span>
+          <span class="status-pill status-pill--warning" data-dependent-status="simulations">Unavailable</span>
         </div>
 
         <!-- Future Monte Carlo Engine attachment: GBM and Historical Bootstrap only. -->
@@ -184,6 +184,31 @@
           <article class="card">
             <h3>Backup and restore</h3>
             <p>Backup export and restore controls are placeholders until the export manager is implemented.</p>
+          </article>
+          <article class="card portfolio-notice portfolio-notice--warning">
+            <h3>Corporate-action responsibility</h3>
+            <p>You are responsible for reviewing and updating acquisition lots after splits, reverse splits, ticker changes, spin-offs, mergers, or other corporate actions. The app never changes stored lots automatically.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="panel-help" class="panel" data-panel="help" aria-labelledby="help-title" hidden>
+        <div class="panel__header">
+          <div><p class="eyebrow">Guidance</p><h2 id="help-title">Help</h2></div>
+          <span class="status-pill">Portfolio workflow</span>
+        </div>
+        <div class="settings-grid">
+          <article class="card portfolio-notice portfolio-notice--warning">
+            <h3>Corporate actions require your review</h3>
+            <p>The app does not detect or apply splits, reverse splits, ticker changes, spin-offs, mergers, or other corporate actions. Compare your brokerage records with each stored lot and make corrections manually.</p>
+          </article>
+          <article class="card">
+            <h3>How to record an adjustment</h3>
+            <p>Open Holdings, find the affected acquisition lot, and choose Manual adjustment. Update shares, purchase price, or acquisition date only as supported by your records; add an audit note; review the before-and-after values; then save explicitly.</p>
+          </article>
+          <article class="card">
+            <h3>Warnings are non-authoritative</h3>
+            <p>A future unusual-price warning may suggest review, but it must never confirm a corporate action or alter stored portfolio data.</p>
           </article>
         </div>
       </section>
@@ -252,7 +277,8 @@
       <h2 id="phase-boundaries-title">Phase boundaries</h2>
       <ul class="plain-list">
         <li>Live-data services implemented; dashboard integration pending.</li>
-        <li>Portfolio calculations implemented through Phase 3A.</li>
+        <li>Portfolio calculations implemented through Phase 3A and used by the Phase 3B editor.</li>
+        <li>Corporate actions require explicit manual, audited lot adjustments.</li>
         <li>No charting library reference.</li>
         <li>No Monte Carlo worker.</li>
         <li>No export implementation.</li>
@@ -262,9 +288,9 @@
   </div>
 
   <footer class="app-footer" role="contentinfo">
-    <p>Retirement Portfolio Dashboard <span id="footer-version">Version 2.3 / Phase 3A</span>. Static client-side application.</p>
+    <p>Retirement Portfolio Dashboard <span id="footer-version">Version 2.3 / Phase 3B</span>. Static client-side application.</p>
   </footer>
 
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/app.js?v=0.2.3-phase-3b-3"></script>
 </body>
 </html>

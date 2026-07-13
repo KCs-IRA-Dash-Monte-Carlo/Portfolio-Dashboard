@@ -1,7 +1,12 @@
-import { applyDisplayPreferences, loadSettingsState } from './settings/settings-state.js';
+import {
+  applyDisplayPreferences,
+  loadSettingsState,
+  saveSettingsState
+} from './settings/settings-state.js';
 import { initSetupWizard, openSetupWizard } from './ui/setup-wizard.js';
+import { initPortfolioPhase3B } from './ui/portfolio-phase-3b.js?v=0.2.3-phase-3b-2';
 
-const APP_VERSION = '0.2.3-v2.3-baseline';
+const APP_VERSION = '0.2.3-v2.3-phase-3b';
 
 document.addEventListener('DOMContentLoaded', () => {
   bootstrapApp();
@@ -13,8 +18,21 @@ function bootstrapApp() {
   applyDisplayPreferences(state);
   renderPhaseOneShellState(state);
   wireShellActions();
+  initPortfolioPhase3B();
+  renderDependentDataState(state);
   registerServiceWorker();
   initSetupWizard();
+}
+
+function renderDependentDataState(state) {
+  const dependent = state.dependentDataState || {};
+  document.querySelectorAll('[data-dependent-status]').forEach((node) => {
+    const key = node.dataset.dependentStatus;
+    if (dependent[key] === 'stale') {
+      node.textContent = 'Stale after portfolio edit';
+      node.classList.add('status-pill--warning');
+    }
+  });
 }
 
 function ensureSetupWizardStyles() {
@@ -46,8 +64,74 @@ function renderPhaseOneShellState(state) {
 }
 
 function wireShellActions() {
+  wireThemeChoices();
+  wirePanelNavigation();
+
   document.querySelectorAll('[data-action="open-setup-wizard"]').forEach((button) => {
     button.addEventListener('click', () => openSetupWizard());
+  });
+
+  window.addEventListener('mvp:portfolio-changed', (event) => {
+    renderDependentDataState({ dependentDataState: event.detail?.dependentDataState });
+  });
+}
+
+function wireThemeChoices() {
+  const buttons = Array.from(document.querySelectorAll('[data-theme-choice]'));
+  if (!buttons.length) return;
+
+  const setActiveChoice = (theme) => {
+    buttons.forEach((button) => {
+      const isActive = button.dataset.themeChoice === theme;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', String(isActive));
+    });
+  };
+
+  const currentState = loadSettingsState();
+  setActiveChoice(document.documentElement.dataset.theme || currentState.theme);
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const theme = button.dataset.themeChoice;
+      if (!['light', 'dark'].includes(theme)) return;
+
+      const nextState = loadSettingsState();
+      nextState.theme = theme;
+      applyDisplayPreferences(nextState);
+      setActiveChoice(theme);
+
+      try {
+        saveSettingsState(nextState, { incrementEditCount: false });
+      } catch (error) {
+        // The selected theme still applies for this page when storage is blocked.
+      }
+    });
+  });
+}
+
+function wirePanelNavigation() {
+  const buttons = Array.from(document.querySelectorAll('[data-panel-target]'));
+  const panels = Array.from(document.querySelectorAll('[data-panel]'));
+  if (!buttons.length || !panels.length) return;
+
+  const showPanel = (target) => {
+    const targetPanel = document.getElementById(`panel-${target}`);
+    if (!targetPanel) return;
+
+    panels.forEach((panel) => {
+      panel.hidden = panel !== targetPanel;
+    });
+
+    buttons.forEach((button) => {
+      const isActive = button.dataset.panelTarget === target;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-selected', String(isActive));
+    });
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => showPanel(button.dataset.panelTarget));
   });
 }
 

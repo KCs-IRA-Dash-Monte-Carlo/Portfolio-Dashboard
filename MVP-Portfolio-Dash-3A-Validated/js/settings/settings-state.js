@@ -4,7 +4,7 @@ import {
 } from '../config/finnhub.js';
 
 const STORAGE_KEY = 'mvpPortfolioDash.settings.v1';
-const APP_VERSION = '0.2.3-v2.3-baseline';
+const APP_VERSION = '0.2.3-v2.3-phase-3b';
 const SETTINGS_SCHEMA_VERSION = 2;
 
 const DEFAULT_LOTS = [
@@ -129,6 +129,14 @@ export function createDefaultSettingsState() {
       lastExportedAt: null,
       editsSinceLastBackup: 0,
       dismissedReminderUntil: null
+    },
+    portfolioRevision: 0,
+    dependentDataState: {
+      analytics: 'not-generated',
+      simulations: 'not-generated',
+      staleReason: null,
+      portfolioRevision: 0,
+      invalidatedAt: null
     }
   };
 }
@@ -275,6 +283,14 @@ function normalizeSettingsState(state) {
     },
     backup: { ...defaults.backup, ...(state.backup || {}) }
   };
+
+  next.dependentDataState = {
+    ...defaults.dependentDataState,
+    ...(state.dependentDataState || {})
+  };
+  next.portfolioRevision = Number.isInteger(Number(state.portfolioRevision))
+    ? Math.max(0, Number(state.portfolioRevision))
+    : defaults.portfolioRevision;
 
   next.holdings = Array.isArray(state.holdings) ? state.holdings.map(normalizeHolding) : defaults.holdings;
   next.lots = Array.isArray(state.lots) ? state.lots.map(normalizeLot).filter(Boolean) : defaults.lots;
