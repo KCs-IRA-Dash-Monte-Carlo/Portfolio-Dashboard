@@ -1,5 +1,10 @@
-export const APP_VERSION = "0.2.0-phase-2c";
-export const LOCAL_STORAGE_SCHEMA_VERSION = 1;
+import {
+  FINNHUB_API_KEY_SOURCES,
+  PREDEFINED_FINNHUB_API_KEY
+} from "../config/finnhub.js";
+
+export const APP_VERSION = "0.2.3-v2.3-baseline";
+export const LOCAL_STORAGE_SCHEMA_VERSION = 2;
 export const INDEXED_DB_SCHEMA_VERSION = 2;
 export const LOCAL_STORAGE_KEY = "mvpPortfolioDashboard.localState";
 export const INDEXED_DB_NAME = "mvpPortfolioDashboard";
@@ -79,7 +84,9 @@ export const INDEXED_DB_STORE_DEFINITIONS = Object.freeze([
 export function createDefaultApiSettingsMetadata() {
   return {
     provider: "finnhub",
-    hasApiKey: false,
+    apiKey: PREDEFINED_FINNHUB_API_KEY,
+    hasApiKey: true,
+    keySource: FINNHUB_API_KEY_SOURCES.PREDEFINED,
     apiKeyLastUpdatedAt: null,
     lastCapabilityCheckAt: null
   };
@@ -101,7 +108,7 @@ export function createDefaultLocalState() {
     uiPreferences: {},
     projectionHorizonYears: 5,
     monteCarloSettings: {},
-    exportPreferences: {},
+    exportPreferences: { includeApiKeyInBackup: true },
     historicalImportPreferences: {},
     setup: {
       completed: false,
@@ -114,22 +121,52 @@ export function sanitizeApiSettings(apiSettings = {}) {
   const safe = apiSettings && typeof apiSettings === "object"
     ? { ...apiSettings }
     : {};
-  delete safe.apiKey;
   delete safe.token;
   delete safe.secret;
-  return {
+  const normalized = {
     ...createDefaultApiSettingsMetadata(),
     ...safe,
-    hasApiKey: Boolean(safe.hasApiKey)
+    apiKey: typeof safe.apiKey === "string" && safe.apiKey.trim()
+      ? safe.apiKey.trim()
+      : PREDEFINED_FINNHUB_API_KEY
+  };
+  normalized.hasApiKey = Boolean(normalized.apiKey);
+  normalized.keySource = Object.values(FINNHUB_API_KEY_SOURCES).includes(normalized.keySource)
+    ? normalized.keySource
+    : normalized.apiKey === PREDEFINED_FINNHUB_API_KEY
+      ? FINNHUB_API_KEY_SOURCES.PREDEFINED
+      : FINNHUB_API_KEY_SOURCES.USER_OVERRIDE;
+  return normalized;
+}
+
+export function summarizeApiSettingsForDiagnostics(apiSettings = {}) {
+  const normalized = sanitizeApiSettings(apiSettings);
+  return {
+    provider: normalized.provider,
+    apiKey: normalized.apiKey,
+    hasApiKey: normalized.hasApiKey,
+    keySource: normalized.keySource,
+    apiKeyLastUpdatedAt: normalized.apiKeyLastUpdatedAt,
+    lastCapabilityCheckAt: normalized.lastCapabilityCheckAt
   };
 }
 
 export function migrateLocalState(oldState) {
-  if (!oldState || typeof oldState !== "object") {
+  let source = oldState;
+
+  if (typeof source === "string") {
+    try {
+      source = JSON.parse(source);
+    } catch (error) {
+      return createDefaultLocalState();
+    }
+  }
+
+  if (!source || typeof source !== "object" || Array.isArray(source)) {
     return createDefaultLocalState();
   }
   return normalizeLocalState({
-    ...oldState,
+    ...source,
     schemaVersion: LOCAL_STORAGE_SCHEMA_VERSION
   });
 }
@@ -167,6 +204,10 @@ export function mergeLocalState(currentState, partialState) {
     ...(partialState && typeof partialState === "object" ? partialState : {}),
     updatedAt: new Date().toISOString()
   });
+}
+
+export function nowIso() {
+  return new Date().toISOString();
 }
 
 export function createIndexedDbUpgradePlan(oldVersion, newVersion) {

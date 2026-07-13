@@ -1,10 +1,14 @@
 import { sanitizeDiagnosticError } from "../data/live-data-errors.js";
+import {
+  FINNHUB_API_KEY_SOURCES,
+  PREDEFINED_FINNHUB_API_KEY
+} from "../config/finnhub.js";
 
 export const LIVE_DATA_DIAGNOSTICS_VERSION = "2.2-phase-2f";
 
 /**
- * Safe Diagnostics projection for Phase 2F. API keys and full request URLs are
- * never accepted or returned.
+ * Version 2.3 Diagnostics projection. The owner-approved Finnhub key is shown;
+ * infrastructure credentials remain outside this module.
  */
 export class LiveDataDiagnostics {
   constructor(options = {}) {
@@ -19,6 +23,12 @@ export class LiveDataDiagnostics {
     this.lastQuoteRefresh = null;
     this.lastTreasuryRefresh = null;
     this.lastApiState = "not-tested";
+    this.getApiKey = typeof options.getApiKey === "function"
+      ? options.getApiKey
+      : () => PREDEFINED_FINNHUB_API_KEY;
+    this.getApiKeySource = typeof options.getApiKeySource === "function"
+      ? options.getApiKeySource
+      : () => FINNHUB_API_KEY_SOURCES.PREDEFINED;
   }
 
   async record(event) {
@@ -44,18 +54,23 @@ export class LiveDataDiagnostics {
   async getSnapshot() {
     const queueBudget = await readQueueBudget(this.requestQueue);
     const recent = this.storage ? await safeReadRecent(this.storage) : [];
+    const activeApiKey = await this.getApiKey();
+    const apiKeySource = await this.getApiKeySource();
     return {
       category: "live-data",
       version: LIVE_DATA_DIAGNOSTICS_VERSION,
       generatedAt: this.now(),
       apiStatus: this.lastApiState,
+      activeApiKey,
+      apiKeySource,
       lastQuoteRefresh: this.lastQuoteRefresh,
       lastTreasuryRefresh: this.lastTreasuryRefresh,
       requestBudget: sanitizeBudget(queueBudget),
       recentEvents: recent.map((event) => sanitizeEvent(event, event.occurredAt || this.now())),
       security: {
-        apiKeyExposed: false,
-        apiKeyLogged: false
+        apiKeyExposed: true,
+        apiKeyLogged: true,
+        policy: "owner-approved-v2.3"
       },
       sourcePolicy: {
         finnhubHistoricalRequests: false,

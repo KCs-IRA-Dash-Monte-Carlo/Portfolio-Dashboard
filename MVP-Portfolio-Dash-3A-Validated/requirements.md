@@ -1,12 +1,48 @@
 # Retirement Portfolio Dashboard
 ## Private Local Multi-Source MVP Requirements Specification
 
-**Version:** 2.2  
-**Status:** Approved rescope for private Mac and iPhone use  
+**Version:** 2.3
+
+**Status:** Approved GitHub, VS Code, Codex, and predefined-key revision
+
 **Primary Constraint:** Finnhub free-tier live data plus private local Stooq history  
-**Target Build Type:** Client-side PWA hosted on the owner's Mac over trusted home Wi-Fi
+**Target Build Type:** Client-side PWA hosted on the owner's Mac over trusted home Wi-Fi; edited in VS Code with Codex and source controlled in a private GitHub repository
 
 ---
+
+## Document Control and Version 2.3 Change History
+
+| Item | Decision |
+|---|---|
+| Requirements version | 2.3 |
+| Effective date | 2026-07-12 |
+| Working-environment revision | 2026-07-13 |
+| Supersedes | Version 2.2 in full |
+| Source repository | Private GitHub repository on `github.com` |
+| Organization display name | `KCs IRA Dash - Monte Carlo` |
+| Organization login | `KCs-IRA-Dash-Monte-Carlo` |
+| Repository name | `Portfolio-Dashboard` |
+| SSH remote | `git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git` |
+| Code editor | Visual Studio Code 1.106.3 (`bf9252a2fb45be6893dd8870c0bf37e2e1766d61`) |
+| AI coding workflow | Codex extension connected to the owner's ChatGPT Plus subscription |
+| Integrated editor runtime | Electron 37.7.0; Chromium 138.0.7204.251; Node.js 22.20.0; V8 13.8.258.32-electron.0 |
+| Development OS | Darwin x64 20.6.0 |
+| VS Code workspace and Git root | `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard` |
+| Active project root | `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated` |
+| GitHub authentication | Git over SSH using the configured `git@github.com` remote |
+| Current accepted code baseline | Phase 3A |
+| Current active work | Version 2.3 baseline acceptance through Phase 3A; Phase 3B is next and not started |
+
+Version 2.3 preserves the Version 2.2 product, data-source, device, and private deployment scope. It changes the development workflow and Finnhub-key policy:
+
+1. The private GitHub repository becomes the authoritative source-control and release-history system.
+2. The predefined Finnhub key is committed with the project and may appear in source, documentation, tests, logs, diagnostics, URLs, exports, and backups.
+3. The user may replace the predefined key during setup or later in Settings without rebuilding the application.
+4. The eight Stooq production files, portfolio backups, and exports may be committed to the private repository.
+5. Accepted milestones are tagged and may publish ZIP packages as private repository releases.
+6. Browser-based test pages remain the primary acceptance tests; Node and GitHub Actions checks supplement but do not replace them.
+
+The no-cloud-sync requirement applies to application data synchronization between the Mac and iPhone. It does not prohibit private source control, release packages, committed Stooq files, backups, or exports in the approved GitHub repository.
 
 ## 1. Project Objective
 
@@ -199,6 +235,34 @@ Required files:
 
 A build tool may be reconsidered later if performance, ECharts bundle size, or modularity makes it necessary. For MVP, keep the toolchain minimal.
 
+### 4.0 Development Editor, Codex, and Source Control
+
+Development shall use:
+
+- Visual Studio Code Version 1.106.3
+- VS Code commit `bf9252a2fb45be6893dd8870c0bf37e2e1766d61`, dated `2025-11-25T22:28:18.024Z`
+- Electron 37.7.0, Electron build 12781156, Chromium 138.0.7204.251, bundled Node.js 22.20.0, and V8 13.8.258.32-electron.0
+- Darwin x64 20.6.0 on the development Mac
+- The Codex extension connected to the owner's ChatGPT Plus subscription
+- The VS Code Source Control view and integrated terminal for local Git inspection and commands
+- A private GitHub repository on `github.com`
+- Organization display name: `KCs IRA Dash - Monte Carlo`
+- Organization login: `KCs-IRA-Dash-Monte-Carlo`
+- Repository name: `Portfolio-Dashboard`
+- SSH remote: `git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git`
+- VS Code workspace and Git root: `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard`
+- Active project root: `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated`
+
+Open the Git repository root as the VS Code workspace and treat the nested active project root as the application working directory. Codex must read this project's `MVP-Portfolio-Dash-3A-Validated/requirements.md` and `MVP-Portfolio-Dash-3A-Validated/roadmap.md`; a similarly named file outside the active project root is not authoritative for this build unless the owner explicitly reconciles it. Codex must edit only phase-authorized files, preserve unrelated working-tree changes, and report the files it changed. Review every Codex edit in the Source Control diff before testing or committing.
+
+Git operations shall use the configured `origin` SSH URL. Verify it with `git remote get-url origin`; set it with `git remote set-url origin git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git` when necessary. GitHub pull requests, checks, merges, rulesets, and releases may be managed in the GitHub web interface. GitHub CLI is not required.
+
+The VS Code-bundled Electron, Chromium, Node.js, and V8 versions describe the editor and extension-host environment only. They do not replace the project's Firefox, Safari, browser-origin, service-worker, IndexedDB, or physical-device acceptance tests. A bundled VS Code Node.js version also does not guarantee that a `node` executable is available in the integrated terminal; terminal-based Node suites run only when `node --version` succeeds.
+
+`main` shall contain accepted work. Development from Phase 3B onward shall use one phase branch, one pull request, automated checks where available, and an accepted-phase tag. A one-person repository shall not require an outside reviewer or signed commits. Force pushes and deletion of `main` shall be blocked.
+
+The repository may contain the predefined Finnhub key, the eight approved Stooq production files, portfolio backups, exports, diagnostics, and accepted release packages. SSH private keys and local HTTPS private certificate keys remain excluded because they authenticate infrastructure rather than the Finnhub account.
+
 ### 4.1 Private local-network hosting
 
 The final personal-use origin must use a stable hostname or reserved local IP, a stable port, and HTTPS trusted by the iPhone.
@@ -237,8 +301,10 @@ On first launch, present a setup wizard.
 
 The wizard must support:
 
-- Finnhub API key entry
-- Warning that API keys are stored locally
+- A prepopulated, editable Finnhub API key field containing `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
+- Plaintext display and direct editing of the current key
+- Reset to the predefined key
+- Immediate validation through an approved Finnhub endpoint when requested
 - Warning that local browser data can be lost or evicted
 - Initial portfolio review
 - Add/edit/delete holdings
@@ -251,34 +317,44 @@ The wizard must support:
 - Historical installation progress
 - Full-backup restore option for initializing the iPhone
 
-Setup must not require successful historical-data installation before completion.
+The predefined key must allow setup to proceed without manual credential entry. The user may replace it during setup or later in Settings. A changed key applies to subsequent Finnhub requests without rebuilding the application.
 
-If historical installation fails, the app must allow quote-only operation while disabling or marking unavailable modules that require historical data.
+Setup must not require successful historical-data installation or successful Finnhub validation before completion. If live authentication fails, the app shall retain the entered key, classify the error, and permit cached or local-history operation. If historical installation fails, the app shall allow quote-only or cached operation while disabling or marking unavailable modules that require history.
 
 On a new iPhone installation, the user may initialize the app by either:
 
 1. Installing the private bundled Stooq seed dataset, or
 2. Restoring a full portable backup exported from the Mac.
 
-After successful iPhone setup, the app should request persistent storage where supported and immediately recommend a full backup.
+A restored full backup shall restore the Finnhub key when present. After successful iPhone setup, the app should request persistent storage where supported and recommend a full backup.
 
-## 7. API Key Handling
+## 7. Predefined Finnhub API Key Configuration
 
-The Finnhub API key must be entered by the user at runtime.
+The project-defined Finnhub API key is:
 
-The key must not be:
+```text
+d976km1r01qs09n8cp90d976km1r01qs09n8cp9g
+```
 
-- Hardcoded into source code
-- Committed to version control
-- Included in `requirements.md`
-- Exposed in diagnostics
-- Included in exports
-- Logged to the console
-- Displayed in plaintext after initial entry unless the user explicitly reveals it
+Required behavior:
 
-Any API key used during development must be treated as temporary and rotated before production use.
+- Store the predefined value in a plainly identifiable configuration or constants module.
+- Prepopulate setup and Settings with this value.
+- Permit the user to replace the value during setup and after setup.
+- Permit reset to the predefined value.
+- Apply a changed value to future Finnhub requests without rebuilding the app.
+- Preserve the current value in Local Storage, configuration backups, full portable backups, diagnostics, and repository-controlled fixtures where those components include settings.
+- Treat authentication rejection, quota exhaustion, and malformed responses as ordinary normalized provider errors.
 
----
+Owner-approved exposure policy:
+
+- The key may be hardcoded in source code.
+- The key may be committed to GitHub.
+- The key may appear in `requirements.md`, `roadmap.md`, `README.md`, examples, test fixtures, console output, diagnostics, request URLs, screenshots, exports, backups, release packages, and audit records.
+- GitHub secret-scanning or push-protection warnings for this exact Finnhub key may be bypassed or disabled by an authorized repository or organization administrator.
+- No masking, redaction, rotation, opt-in warning, or exclusion rule is required for this key.
+
+This policy applies only to the Finnhub free-account key. SSH private keys, GitHub authentication tokens, and private HTTPS certificate keys are not project content and must remain outside the repository.
 
 ## 8. Portfolio Data Model
 
@@ -1346,7 +1422,9 @@ Do not rely on color alone to communicate financial gain/loss or chart identity.
 
 Include a Settings area containing:
 
-- Finnhub API key management
+- Current Finnhub API key shown in plaintext
+- Edit, save, validate, and reset-to-default controls for the Finnhub key
+- Display of the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` as the reset target
 - Theme selection
 - Accent color
 - Chart palette
@@ -1372,6 +1450,8 @@ Include a Settings area containing:
 - Last successful historical import
 - Last full backup and restore
 
+Saving a changed API key must invalidate or refresh only provider-authentication and live-data state that depends on that value. It must not delete portfolio data or historical Stooq data.
+
 Destructive actions must require confirmation.
 
 ## 33. About and Diagnostics
@@ -1379,8 +1459,11 @@ Destructive actions must require confirmation.
 Include Diagnostics showing:
 
 - Application version
+- Git commit, branch, and accepted-phase tag where available
 - Current browser origin
 - Local Mac host reachability when detectable
+- Current Finnhub API key in plaintext
+- Source of the active key: predefined default, user override, or restored backup
 - Last quote refresh
 - Last successful historical import
 - API status
@@ -1402,7 +1485,7 @@ Include Diagnostics showing:
 - Source-file hashes
 - Import mode and timestamp
 - Historical quality flags
-- Failed requests
+- Failed requests, including request endpoint and parameters where available
 - Import errors
 - API errors
 - Browser capability warnings
@@ -1410,7 +1493,7 @@ Include Diagnostics showing:
 - Stale data warnings
 - Derived-data invalidation status
 
-Do not expose the Finnhub API key in logs or diagnostics.
+Diagnostics and console logging may include the Finnhub key and complete Finnhub request URLs. User-entered portfolio notes must still be rendered safely.
 
 ## 34. Export and Backup
 
@@ -1426,6 +1509,7 @@ Support CSV export for:
 - Benchmark results
 - Projection horizon
 - Projection end date
+- Current Finnhub API key and live-data settings where configuration metadata is included
 
 ### 34.2 Print-to-PDF report
 
@@ -1442,6 +1526,7 @@ The printable report should include:
 - Projection end date
 - Data freshness timestamps
 - Stale-data warnings
+- Current Finnhub API key in the report metadata or settings appendix
 
 Custom client-side PDF generation is deferred.
 
@@ -1451,7 +1536,7 @@ Charts must support PNG export through ECharts-compatible functionality.
 
 ### 34.4 Configuration backup
 
-Configuration backup should include:
+Configuration backup shall include:
 
 - Holdings
 - Lots
@@ -1459,23 +1544,22 @@ Configuration backup should include:
 - Settings
 - Active-symbol preferences
 - Projection settings
+- Current Finnhub API key
+- Key source metadata: predefined, user override, or restored
 
 ### 34.5 Full portable backup
 
 Full portable backup shall include:
 
-- All configuration backup fields
+- All configuration backup fields, including the current Finnhub API key
 - Normalized historical candles
 - Historical dataset metadata
 - Historical quality flags
 - Historical import history
 - Cached metadata where practical
+- Diagnostics history where practical
 
-The full backup is the supported Mac-to-iPhone transfer method.
-
-Do not include the Finnhub API key unless the user explicitly opts in and receives a warning.
-
-If a restored backup does not include an API key, the app must prompt the user to enter one before live refresh. The restored portfolio and history must remain usable offline or in cached mode.
+The full backup is the supported Mac-to-iPhone transfer method. Restoring a full backup shall restore the saved API key and permit later editing or reset to the predefined key.
 
 ### 34.6 Backup integrity
 
@@ -1488,7 +1572,7 @@ Backup files must include:
 - Record counts
 - Integrity checksum where practical
 
-Restore must validate the entire file before changing stored data. Failed restore must not leave partial state.
+Restore must validate the entire file before changing stored data. Failed restore must not leave partial state. Portfolio backups and exports may be committed to the private GitHub repository.
 
 ## 35. Progressive Web App and Home-Wi-Fi Access
 
@@ -1844,28 +1928,27 @@ Configurable items include:
 
 Because the application is client-side and privately hosted:
 
-- Do not send portfolio data to an application backend
-- Do not upload selected historical files
-- Do not transmit normalized candles or calculated return series to the Mac host after the page is loaded
-- Do not log API keys
-- Do not include API keys in exported reports
-- Do not expose API keys in diagnostics
-- Minimize API-key exposure in the UI
-- Document that Local Storage is not encrypted secure storage
-- Sanitize user-entered text before rendering
-- Avoid unsafe `innerHTML` use with untrusted values
-- Use trusted local HTTPS for the final iPhone origin
-- Restrict access to the trusted home Wi-Fi
-- Do not configure router port forwarding
-- Do not expose the application to the public internet
+- Do not send portfolio data to an application backend.
+- Do not upload selected historical files to an application service.
+- Do not transmit normalized candles or calculated return series to the Mac host after the page is loaded.
+- The approved private GitHub repository may contain source code, the predefined Finnhub key, Stooq files, backups, exports, diagnostics, and accepted release packages.
+- The Finnhub key may be displayed, logged, exported, backed up, committed, and included in request URLs under the Version 2.3 owner-approved policy.
+- Document that Local Storage is not encrypted secure storage.
+- Sanitize user-entered text before rendering.
+- Avoid unsafe `innerHTML` use with untrusted values.
+- Use trusted local HTTPS for the final iPhone origin.
+- Restrict application access to the trusted home Wi-Fi.
+- Do not configure router port forwarding.
+- Do not expose the running application to the public internet.
+- Keep GitHub SSH private keys, GitHub tokens, and local HTTPS certificate private keys outside the repository.
 
-Finnhub and Treasury requests shall be made directly from the user’s browser. The Mac host must not act as an API-key proxy.
+Finnhub and Treasury requests shall be made directly from the user’s browser. The Mac host must not act as an API proxy. GitHub is a development and archival system, not the application runtime or an automatic Mac-to-iPhone synchronization service.
 
 ## 44. Error Handling
 
 Provide clear user-facing errors for:
 
-- Invalid API key
+- Invalid or rejected API key
 - API rate limit
 - Network unavailable
 - Quote unavailable
@@ -1882,14 +1965,16 @@ Provide clear user-facing errors for:
 - Local Mac host unavailable
 - Local certificate invalid
 - Application update unavailable
+- GitHub workflow or release-package failure where surfaced in development documentation
 
 Errors must:
 
-- State what failed
-- State whether cached data is being used
-- State whether the failure affects live data, local history, or application updates
-- Avoid exposing secrets
-- Be recorded in Diagnostics where appropriate
+- State what failed.
+- State whether cached data is being used.
+- State whether the failure affects live data, local history, or application updates.
+- Preserve the active API key so the user can inspect or edit it.
+- Be recorded in Diagnostics where appropriate, including detailed request metadata when available.
+- Never fabricate a successful state or substitute data silently.
 
 ## 45. Browser Capability Checks
 
@@ -1929,192 +2014,119 @@ Do not assume old stored data always matches the current schema.
 
 ## 47. Testing Requirements
 
+Browser test pages served from the project’s normal HTTP or HTTPS origin are the primary acceptance mechanism. Node tests and GitHub Actions are supplemental regression checks and do not replace Firefox, service-worker, IndexedDB, or physical iPhone testing.
+
 ### 47.1 Functional tests
 
 Test:
 
 - First launch
-- Setup wizard
-- API key save/update
-- Add/edit/delete holdings
-- Add/edit/delete lots
+- Setup wizard with the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
+- API key display, save, update, validation, reset, reload persistence, diagnostics display, export, backup, and restore
+- Add/edit/delete holdings and lots
 - Multiple lots per ticker
 - Add/delete/re-add built-in benchmarks
 - Add/delete user benchmarks
-- Activate/deactivate symbols
-- 25 active-symbol cap
+- Activate/deactivate symbols and enforce the 25-symbol cap
 - Symbol-management search/filter
-- Manual quote refresh
-- Metadata cache TTL behavior
-- Private seed-history installation
-- Manual Stooq file import
-- Full-series historical replacement
-- Import conflict preview
-- Historical quality warnings
+- Manual quote refresh and metadata TTL behavior
+- Private seed-history installation and manual Stooq replacement
+- Import conflict preview, rollback, and historical quality warnings
 - Corporate-action manual adjustment notice/workflow
-- Offline startup
-- Mac host unavailable after installation
-- Cached fallback
-- Theme persistence
-- Projection horizon persistence
-- Monte Carlo include/exclude
-- Simulation cancellation
-- CSV export
-- Print-to-PDF report
-- PNG chart export
-- Configuration backup
-- Full portable backup
-- Full restore on iPhone
+- Offline startup and Mac-host-unavailable startup after installation
+- Cached fallback and explicit availability states
+- Theme and projection-horizon persistence
+- Monte Carlo include/exclude, progress, cancellation, and stale-run behavior
+- CSV, PNG, and browser Print-to-PDF exports
+- Configuration backup, full portable backup, and full iPhone restore
+- GitHub milestone ZIP generation for accepted tags
 
 ### 47.2 Data-source tests
 
-Test Finnhub with a temporary runtime development key, then rotate the key before release.
+Use the predefined development key:
 
-Verify:
+```text
+d976km1r01qs09n8cp90d976km1r01qs09n8cp9g
+```
+
+Verify the permitted Finnhub endpoints:
 
 - `/quote`
 - `/search`
+- `/stock/symbol`
 - `/stock/profile2`
+- `/stock/peers`
 - `/stock/market-status`
 - `/stock/market-holiday`
 - `/stock/metric`
 
-Do not require `/stock/candle`.
+Do not call or require `/stock/candle`.
 
-Required live-data test symbols:
-
-- DCO
-- VTV
-- ONEQ
-- SPY
-- IWM
-- AVUV
-- AVDV
-- PSCH
+Required live-data test symbols: DCO, VTV, ONEQ, SPY, IWM, AVUV, AVDV, and PSCH.
 
 ### 47.3 Historical-data tests
 
-Use private production files for local acceptance testing and deterministic synthetic fixtures for parser unit tests.
-
-Verify:
-
-- Exact Stooq header parsing
-- Daily frequency enforcement
-- Ticker normalization
-- Date conversion without UTC off-by-one errors
-- Numeric parsing
-- Duplicate-date rejection
-- Unsorted-row handling
-- OHLC bound validation
-- Nonfinite-value rejection
-- Full-series replacement
-- Transaction rollback
-- Manifest and hash checks
-- Dataset-version upgrade
-- Per-symbol date range and observation count
-- Eight-symbol alignment
-- Extraction of 756 daily return vectors
-- Quality-flag generation
-- Derived-data invalidation
+Use the committed production Stooq files for local acceptance testing and deterministic synthetic fixtures for parser unit tests. Verify exact header parsing, daily frequency, ticker normalization, date conversion, numeric and OHLC validation, duplicate and order handling, full-series replacement, rollback, manifests, hashes, versions, counts, ranges, eight-symbol alignment, 756-return extraction, quality flags, and derived-data invalidation.
 
 ### 47.4 Calculation tests
 
-Use deterministic fixtures to test:
-
-- Cost basis
-- Account value
-- Portfolio weights
-- Price-return normalization
-- CAGR
-- Alpha
-- Beta
-- Drawdown
-- Percentiles
-- VaR
-- Covariance/correlation behavior
-- Fixed-seed reproducibility
-- GBM drift/volatility estimation
-- Historical Bootstrap vector resampling
+Use deterministic fixtures to test cost basis, account value, portfolio weights, price-return normalization, CAGR, alpha, beta, drawdown, percentiles, VaR, covariance/correlation, fixed-seed reproducibility, GBM estimation, and whole-vector Historical Bootstrap resampling.
 
 ### 47.5 Compatibility tests
 
-Test on:
-
-- Firefox on macOS Big Sur 11.7.11
-- Safari on iPhone 13 mini, iOS 26.5
-- Safari Home Screen web-app mode
-- Firefox iOS where practical
+Test Firefox on macOS Big Sur 11.7.11, Safari on iPhone 13 mini iOS 26.5, Safari Home Screen mode, and Firefox iOS where practical.
 
 ### 47.6 Home-Wi-Fi and offline tests
 
-Test:
-
-- Stable local HTTPS origin
-- Trusted certificate on iPhone
-- Same-Wi-Fi access
-- No router port forwarding
-- Home Screen installation
-- Offline relaunch
-- Mac server unavailable after caching
-- Application update after cache-version change
-- Storage persistence request and status
-- Recovery after local data loss
+Test stable local HTTPS, trusted iPhone certificate, same-Wi-Fi access, no router forwarding, Home Screen installation, offline relaunch, Mac-server-unavailable relaunch, cache-version updates, persistence status, and recovery after local data loss.
 
 ### 47.7 Responsive and mobile tests
 
-Test:
+Test iPhone 13 mini portrait and landscape, tablet, desktop, touch interactions, chart gestures, table scrolling, orientation changes, safe-area insets, software-keyboard resizing, and Monte Carlo progress/cancellation.
 
-- iPhone 13 mini portrait
-- iPhone 13 mini landscape
-- Tablet
-- Desktop
-- Touch interactions
-- Chart gesture conflicts
-- Horizontal table scrolling
-- Orientation changes
-- Monte Carlo progress and cancellation
+### 47.8 Repository and continuous-integration tests
+
+GitHub Actions shall use an available repository or organization runner, defaulting to `ubuntu-latest` when GitHub-hosted runners are enabled. Required checks:
+
+- Required-file presence
+- JSON parsing
+- JavaScript and MJS syntax
+- Known deterministic Node tests when their files exist
+- No production dependency on `/stock/candle`
+- Milestone release ZIP creation from accepted tags
+
+The repository workflow must not claim that GitHub-hosted Linux checks validate Firefox/macOS, Safari/iPhone, IndexedDB on the real origin, service workers, local HTTPS trust, or touch behavior.
 
 ## 48. Acceptance Criteria
 
 The MVP is accepted only when:
 
 1. Finnhub free-tier endpoints provide live quotes and market context without requiring premium datasets.
-2. Historical analytics use private Stooq daily files rather than Finnhub historical candles.
-3. Historical prices are identified as split-adjusted and dividend-unadjusted.
-4. The application does not present OHLCV-based returns as exact total return.
-5. The application respects the 25-symbol active limit.
-6. The request queue enforces the approved Finnhub limits.
-7. The eight private seed symbols install and are queryable from IndexedDB.
-8. The application can extract 756 aligned daily return vectors for the seed universe.
-9. Manual historical imports support validated full-series replacement.
-10. Failed imports do not leave partial historical data.
-11. The application works in quote-only mode when a symbol lacks local history.
-12. The application supports GBM and Historical Bootstrap Monte Carlo only.
-13. The application excludes dividend-income calculations and news from MVP.
-14. The application warns users about local-only storage and possible data loss.
-15. Configuration backup and full portable backup both work.
-16. A full backup can initialize or update the iPhone without automatic synchronization.
-17. The API key is excluded from backup by default.
-18. Holdings and acquisition lots support add/edit/delete.
-19. Built-in benchmarks can be added, deleted, re-added, activated, and deactivated.
-20. Deleting a benchmark does not delete a same-ticker holding.
-21. Normalized benchmark comparison works when aligned local history exists.
-22. Historical, API, offline, local-host, import, and storage states are clearly distinguished.
-23. Simulations run without freezing the main UI and can be cancelled.
-24. Required charts render on desktop and iPhone 13 mini layouts.
-25. Dark/light themes work and persist.
-26. CSV, PNG, and print-to-PDF exports work.
-27. The PWA loads offline after a successful visit.
-28. The iPhone can launch the installed app when the Mac server is unavailable, using cached assets and local IndexedDB data.
-29. Diagnostics exposes failures, dataset status, and storage status without exposing secrets.
-30. The application runs on Firefox/macOS Big Sur and Safari/iPhone 13 mini iOS 26.5.
-31. The code remains parameter-driven and modular.
-32. No application backend, cloud sync, public hosting, remote access, or router port forwarding is required.
-33. Corporate actions are not auto-applied; manual lot-adjustment workflows remain available.
-34. Company profile, peer, and metric caches use explicit TTLs.
-35. GBM and Historical Bootstrap methods are documented and testable.
-36. Backup reminders follow the defined trigger rule.
-37. The final iPhone origin uses trusted local HTTPS and remains stable.
+2. The predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` is present in project configuration and is editable during and after setup.
+3. The active key persists, is visible in Settings and Diagnostics, and is included in configuration and full backups.
+4. Historical analytics use the committed private Stooq daily files rather than Finnhub historical candles.
+5. Historical prices are identified as split-adjusted and dividend-unadjusted, and returns are not presented as exact total return.
+6. The request queue enforces the approved Finnhub limits and the 25-symbol active limit is enforced across holdings and benchmarks.
+7. The eight seed symbols install and are queryable from IndexedDB; 756 aligned return vectors can be extracted.
+8. Manual historical imports support validated transactional full-series replacement without partial failure state.
+9. Quote-only or cached operation remains available when local history or live authentication is unavailable.
+10. Holdings and acquisition lots support add/edit/delete, and corporate actions remain manual.
+11. Built-in benchmarks can be added, deleted, re-added, activated, and deactivated without affecting same-ticker holdings.
+12. GBM and whole-vector Historical Bootstrap are the only MVP Monte Carlo methods.
+13. Simulations run in workers, report progress, support cancellation, and reject stale results.
+14. Required charts render on desktop and iPhone layouts and support PNG export.
+15. CSV, Print-to-PDF, configuration backup, full portable backup, and transactional restore work.
+16. A full backup can initialize or update the iPhone and restores the Finnhub key.
+17. Historical, API, offline, host, import, storage, stale, and quality states are distinct.
+18. The PWA loads offline after a successful visit and the installed iPhone app can launch from cached assets when the Mac server is unavailable.
+19. Firefox/macOS Big Sur and Safari/iPhone 13 mini compatibility tests pass.
+20. Dark/light themes, accessibility basics, safe rendering, precision, and date behavior pass.
+21. The project remains parameter-driven, modular, client-side, and free of an application backend or automatic cloud synchronization.
+22. No public hosting, remote runtime access, VPN requirement, or router port forwarding is required.
+23. GitHub `main` represents accepted work, phase branches use pull requests, required checks pass, and accepted phases are tagged.
+24. The eight Stooq files, backups, exports, and accepted milestone packages may be retained in the private repository.
+25. Browser test evidence remains authoritative where CI cannot reproduce the target environment.
+26. The final iPhone origin uses trusted, stable local HTTPS.
 
 ## 49. Explicit Non-Goals
 
@@ -2183,206 +2195,56 @@ Potential future features, only if explicitly approved later:
 
 ## 51. Build Sequence
 
-Implement in this order.
+The accepted Version 2.2 work through Phase 3A is preserved. Version 2.3 development proceeds in this order:
 
-### Phase 0: Live endpoint verification
+1. Open `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard` as the VS Code workspace, use `MVP-Portfolio-Dash-3A-Validated` as the active project root, and verify that `origin` is `git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git`.
+2. Connect the Codex extension to the owner's ChatGPT Plus subscription and confirm the validated Phase 3A project is the workspace baseline.
+3. Commit and tag the exact Phase 3A baseline as `phase-3a-accepted-v2.2`.
+4. Create `v2.3-api-key-baseline`, implement the predefined/editable-key migration required by Sections 6, 7, 32, 33, 34, 43, 44, and 47, audit it, merge it, and tag `v2.3-baseline`.
+5. Create and complete `phase-3b`.
+6. Continue sequentially through Phase 4A, 5A, 6A, 7A, 7B, 7C, 8A, 9A, 9B, 10A, and 10B.
+7. Complete deferred Phase 1D on the target home Wi-Fi before final iPhone, offline, restore, and Phase 10 acceptance.
 
-- Verify approved Finnhub live-data endpoints with a temporary runtime key
-- Confirm quote-only operation
-- Confirm rate-limit behavior
-- Record response shapes and failure modes
-- Do not require `/stock/candle`
+Phase descriptions remain:
 
-### Phase 1: Application foundation
-
-- Application shell
-- PWA manifest
-- Service worker
-- Theme
-- Settings
-- Local Storage
-- IndexedDB
-- Setup wizard
-- Capability checks
-- Local-data-loss warnings
-- Backup/restore shell
-
-### Phase 1D: Private home-Wi-Fi access
-
-- Establish stable local hostname or reserved IP
-- Configure static local HTTPS
-- Configure trusted iPhone certificate
-- Configure Mac firewall for home-network access only
-- Verify no router port forwarding
-- Test Safari and Home Screen installation
-
-### Phase 2A: Request queue
-
-- Finnhub request queue
-- Rate limits
-- Priorities
-- Retry and backoff
-- Diagnostics hooks
-
-### Phase 2B: Stooq parser and validation
-
-- Source parser
-- Header and frequency validation
-- Date and numeric parsing
-- Ticker normalization
-- OHLCV validation
-- Quality flags
-- Synthetic fixtures and private acceptance tests
-
-### Phase 2C: Private seed installation
-
-- Dataset manifest
-- File hashes
-- IndexedDB installation
-- Dataset versioning
-- Transactional writes
-- Skip unchanged files
-
-### Phase 2D: Manual historical updates
-
-- Multi-file import
-- Preview
-- Full-series replacement
-- Conflict reporting
-- Rollback
-- Derived-data invalidation
-
-### Phase 2E: Historical-data service and diagnostics
-
-- Series queries
-- Date-range queries
-- Alignment
-- 756-return extraction
-- Freshness states
-- Diagnostics
-
-### Phase 2F: Finnhub live-data services
-
-- Authentication
-- Quote retrieval
-- Symbol lookup
-- Company metadata
-- Market status and holidays
-- Basic metrics
-- Risk-free-rate retrieval
-- Cache fallback
-- Error normalization
-
-### Phase 3: Portfolio engine
-
-- Holdings
-- Lots
-- Cost basis
-- Account value
-- Position values
-- Floating weights
-- Validation
-- Portfolio performance series
-- Manual corporate-action adjustment workflow
-
-### Phase 4: Benchmark engine
-
-- Built-in benchmark seeding
-- Add/delete/re-add benchmarks
-- Activate/deactivate benchmarks
-- User-added benchmarks
-- Benchmark normalization
-- Date alignment
-- 25 active-symbol cap enforcement
-
-### Phase 5: Charting
-
-- ECharts integration
-- Comparison chart
-- Account-value growth chart
-- Allocation
-- Drawdown
-- Responsive behavior
-- Mobile gesture handling
-- PNG export
-
-### Phase 6: Analytics
-
-- CAGR
-- Alpha
-- Beta
-- Maximum Drawdown
-- Risk-free-rate integration
-- Split-adjusted, dividend-unadjusted labeling
-
-### Phase 7: Monte Carlo
-
-- Web Worker infrastructure
-- Seeded PRNG
-- GBM
-- Historical Bootstrap
-- Correlation
-- Covariance handling
-- Percentiles
-- Risk outputs
-- Progress
-- Cancellation
-- Stale-run state machine
-- Mac and iPhone performance tests
-
-### Phase 8: Projection horizon
-
-- Global 1–10 year horizon
-- Projection dates
-- Confidence fan
-- Percentile bands
-- Projection metadata
-
-### Phase 9A: Full portable backup and restore
-
-- Historical data included
-- Transactional restore
-- Integrity validation
-- Mac-to-iPhone workflow
-
-### Phase 9B: Export and reporting
-
-- CSV
-- Print report page
-- PNG chart export integration
-- Configuration backup
-- Freshness metadata
-
-### Phase 10: Hardening
-
-- Diagnostics
-- Accessibility
-- Performance optimization
-- Offline tests
-- Home-Wi-Fi tests
-- iPhone 13 mini tests
-- Compatibility tests
-- Full requirements audit
+- Phase 0: approved endpoint verification
+- Phase 1A–1C: application foundation, persistence, and setup
+- Phase 1D: private home-Wi-Fi HTTPS
+- Phase 2A–2F: request queue, Stooq pipeline, Historical Data Service, and Finnhub live services
+- Phase 3A: accepted portfolio model and engine
+- Phase 3B: portfolio UI and corporate-action workflow
+- Phase 4A: benchmark and shared symbol management
+- Phase 5A: charting
+- Phase 6A: analytics
+- Phase 7A–7C: worker infrastructure, GBM, and Historical Bootstrap
+- Phase 8A: projection horizon and visuals
+- Phase 9A: full portable backup and restore
+- Phase 9B: exports and reporting
+- Phase 10A: hardening and target-device validation
+- Phase 10B: final audit and release decision
 
 ## 52. Development Process Requirement
 
-Do not attempt to implement the full application in one unreviewed generation.
+Do not implement the full application in one unreviewed generation.
 
-For each phase:
+For each phase from Phase 3B onward:
 
-1. Review relevant requirements.
-2. Define interfaces.
-3. Implement the smallest working increment.
-4. Run it.
-5. Fix runtime errors.
-6. Test calculations.
-7. Audit against requirements.
-8. Save a working backup/version.
-9. Continue to the next phase.
+1. Read `MVP-Portfolio-Dash-3A-Validated/requirements.md` Version 2.3 and the matching phase packet in `MVP-Portfolio-Dash-3A-Validated/roadmap.md` from the active project root.
+2. In the VS Code integrated terminal, verify the workspace root and SSH remote, switch to `main`, pull with `--ff-only`, confirm a clean status, and create the named phase branch.
+3. Start a Codex implementation session in the workspace with the authoritative requirements, matching roadmap phase packet, current source, and explicit allowed-file list in scope.
+4. Require Codex to edit only authorized files directly in the workspace, preserve unrelated changes, avoid replacement ZIPs or wholesale project rewrites, and report its changed-file list.
+5. Inspect the Codex changes in VS Code Source Control and with `git status`, `git diff --stat`, `git diff`, and `git diff --check` before testing.
+6. If a terminal `node` executable is available, run applicable deterministic Node checks. Then start `python3 -m http.server 8000` and run the browser test pages in Firefox.
+7. Perform all manual target-device tests required by the phase. VS Code's embedded Chromium is not acceptance evidence.
+8. Run the phase audit in a separate Codex review session. The audit must provide requirement traceability, changed files, automated results, manual tests still required, known limitations, no-new-features confirmation, and exact repairs.
+9. Apply required repairs through Codex in the same phase branch, then re-review the diff and rerun affected tests.
+10. Commit coherent changes through VS Code Source Control or Git, push over SSH, open a pull request on GitHub, wait for required checks, and review the GitHub diff.
+11. For this one-person repository, no outside reviewer or signed commit is required. Merge only after the evidence is complete.
+12. Tag the accepted merge with the phase tag and allow the release workflow to attach an accepted milestone ZIP.
+13. Update `CHANGELOG.md`, test evidence, and project status before beginning the next phase.
+14. Roll back with Git rather than overwriting the accepted `main` branch. Codex must not run destructive Git commands without explicit owner approval.
 
-The requirements in this document are authoritative unless explicitly amended by the project owner.
-
----
+The repository's `main` branch and accepted tags are the source authority for implementation state. `requirements.md` remains the authority for product behavior. The requirements may be changed only by an explicit owner-approved version revision.
 
 ## 53. Required Transparency in the App
 
@@ -2408,21 +2270,20 @@ The application must clearly communicate these limitations:
 
 The completed MVP is a private, customizable, parameter-driven retirement portfolio dashboard and installable PWA that:
 
-- Is hosted from the owner’s Mac on the trusted home Wi-Fi
-- Is accessible on Firefox desktop and Safari on an iPhone 13 mini
-- Uses Finnhub free-tier endpoints for live quote snapshots and market context
-- Uses private Stooq files for split-adjusted, dividend-unadjusted daily history
-- Supports manual full-series Stooq replacement imports
-- Tracks editable multi-lot U.S. stock and ETF holdings
-- Provides price-return approximation analytics
-- Compares portfolio performance against configurable benchmarks
-- Enforces a 25 active-symbol cap
-- Runs GBM and Historical Bootstrap projections
-- Applies one global 1–10 year projection horizon
-- Supports offline cached operation after installation
-- Persists configuration and historical data locally on each device
-- Warns about local-data-loss risk
-- Uses full portable backup and restore for Mac-to-iPhone transfer
-- Exports CSV, PNG chart images, and print-to-PDF reports
-- Requires no application backend, cloud sync, public hosting, remote access, or router port forwarding
-- Maintains modular separation between data, calculations, persistence, rendering, exports, and diagnostics
+- Is hosted from the owner’s Mac on the trusted home Wi-Fi.
+- Is accessible on Firefox desktop and Safari on an iPhone 13 mini.
+- Is source controlled in the private `KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard` GitHub repository.
+- Uses the predefined, editable Finnhub key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` for live quote snapshots and market context.
+- Uses committed private Stooq files for split-adjusted, dividend-unadjusted daily history.
+- Supports manual full-series Stooq replacement imports.
+- Tracks editable multi-lot U.S. stock and ETF holdings.
+- Provides price-return approximation analytics and configurable benchmark comparisons.
+- Provides GBM and Historical Bootstrap Monte Carlo projections in Web Workers.
+- Supports global 1–10 year projection horizons.
+- Provides responsive charts, CSV, PNG, browser Print-to-PDF, configuration backup, and full portable backup/restore.
+- Restores the Finnhub key with full portable backups and permits later editing or reset.
+- Stores application data locally on each device with no automatic cross-device synchronization.
+- Uses private GitHub source control and milestone releases without using GitHub as the application runtime.
+- Supports offline relaunch after installation and local caching.
+- Clearly reports missing, stale, insufficient, quote-only, provider, host, network, import, and storage states.
+- Requires no application backend, brokerage connection, public hosting, remote runtime access, cloud synchronization, or router port forwarding.

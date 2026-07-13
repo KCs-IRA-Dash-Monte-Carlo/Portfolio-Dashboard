@@ -41,6 +41,9 @@
       createDefaultSettingsState,
       getSettingsStorageKey,
       loadSettingsState,
+      PREDEFINED_FINNHUB_API_KEY,
+      resetFinnhubApiKey,
+      saveSettingsState,
       resetSettingsStateForTesting
     } from '../js/settings/settings-state.js';
     import { initSetupWizard, openSetupWizard } from '../js/ui/setup-wizard.js';
@@ -93,11 +96,43 @@
       return defaultState.projectionHorizonYears >= 1 && defaultState.projectionHorizonYears <= 10;
     });
     check('settings storage key is local-only', () => getSettingsStorageKey() === 'mvpPortfolioDash.settings.v1');
-    check('no API key is hardcoded in default state', () => defaultState.api.apiKey === '' && defaultState.api.hasKey === false);
+    check('Version 2.3 predefined key is the editable default', () => {
+      return defaultState.api.apiKey === PREDEFINED_FINNHUB_API_KEY
+        && defaultState.api.hasKey === true
+        && defaultState.api.keySource === 'predefined';
+    });
+    check('API key backup inclusion defaults on', () => defaultState.exportPreferences.includeApiKeyInBackup === true);
 
-    renderResults();
+    const overrideState = createDefaultSettingsState();
+    overrideState.api.apiKey = 'browser-test-override';
+    overrideState.api.keySource = 'user-override';
+    saveSettingsState(overrideState, { incrementEditCount: false });
+    check('user API-key override survives reload', () => loadSettingsState().api.apiKey === 'browser-test-override');
+
+    saveSettingsState(resetFinnhubApiKey(loadSettingsState()), { incrementEditCount: false });
+    check('API-key reset survives reload', () => {
+      const state = loadSettingsState();
+      return state.api.apiKey === PREDEFINED_FINNHUB_API_KEY && state.api.keySource === 'predefined';
+    });
+
+    resetSettingsStateForTesting();
+
     renderSummary();
     initSetupWizard();
+
+    document.querySelector('.setup-footer .button--primary').click();
+    const renderedKeyInput = document.querySelector('.setup-step input[type="text"]');
+    check('wizard renders the active API key in plaintext', () => {
+      return renderedKeyInput && renderedKeyInput.value === PREDEFINED_FINNHUB_API_KEY;
+    });
+    renderedKeyInput.value = 'browser-ui-override';
+    renderedKeyInput.dispatchEvent(new Event('input', { bubbles: true }));
+    const resetButton = [...document.querySelectorAll('.setup-step button')]
+      .find((button) => button.textContent === 'Reset to predefined key');
+    resetButton.click();
+    check('wizard reset control restores the predefined key', () => renderedKeyInput.value === PREDEFINED_FINNHUB_API_KEY);
+
+    renderResults();
 
     document.getElementById('reset-state').addEventListener('click', () => {
       resetSettingsStateForTesting();

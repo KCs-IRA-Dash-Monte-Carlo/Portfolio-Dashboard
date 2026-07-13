@@ -301,7 +301,9 @@
         endpoint: "/quote?token=super-secret",
         message: "api_key=super-secret"
       });
-      equal(JSON.stringify(await diagnostics.getSnapshot()).includes("super-secret"), false);
+      const snapshot = await diagnostics.getSnapshot();
+      equal(JSON.stringify(snapshot).includes("super-secret"), false);
+      equal(snapshot.security.apiKeyExposed, true);
     });
 
     test("All eight permitted routes are represented and no historical route is present", () => {

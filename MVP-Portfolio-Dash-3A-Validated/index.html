@@ -19,7 +19,7 @@
     <div class="app-header__identity">
       <p class="eyebrow">Client-side PWA shell</p>
       <h1>Retirement Portfolio Dashboard</h1>
-      <p class="app-header__summary">Phase 1A foundation only. Market data, analytics, charts, Monte Carlo, and exports are not implemented in this increment.</p>
+      <p class="app-header__summary">Version 2.3 baseline complete through Phase 3A. Portfolio, persistence, setup, live-data, and historical-data foundations are implemented; later UI, analytics, projections, and exports remain phased work.</p>
     </div>
 
     <div class="app-header__controls" aria-label="Application controls">
@@ -68,22 +68,22 @@
           <article class="card">
             <h3>Current Portfolio Value</h3>
             <p class="metric-placeholder">Unavailable</p>
-            <p>Phase 3 portfolio engine and Phase 2 quote snapshots required.</p>
+            <p>Phase 3A calculations are available as tested modules; dashboard wiring is scheduled for a later phase.</p>
           </article>
           <article class="card">
             <h3>Today's Gain/Loss</h3>
             <p class="metric-placeholder">Unavailable</p>
-            <p>Quote snapshot calculations attach here later.</p>
+            <p>Phase 2F quote snapshots and Phase 3A calculations attach to this panel in a later UI phase.</p>
           </article>
           <article class="card">
             <h3>Market Status</h3>
             <p class="metric-placeholder">Pending</p>
-            <p>Finnhub market-status integration is deferred to Phase 2.</p>
+            <p>Phase 2F live-data services are implemented; dashboard presentation remains pending.</p>
           </article>
           <article class="card">
             <h3>API Status</h3>
             <p class="metric-placeholder">Not configured</p>
-            <p>No API key field or API calls are included in Phase 1A.</p>
+            <p>The Version 2.3 predefined/editable Finnhub key is managed by setup and used by Phase 2F services.</p>
           </article>
         </div>
       </section>
@@ -166,7 +166,7 @@
           <span class="status-pill">Shell only</span>
         </div>
 
-        <!-- Future Settings Manager attachment: runtime Finnhub API key workflow, theme, accent color, font scale, and projection horizon. -->
+        <!-- Phase 1C setup owns the predefined/editable Finnhub key until the full Settings Manager is added. -->
         <!-- Future Export Manager attachment: backup export and restore controls. -->
         <div class="settings-grid">
           <article class="card">
@@ -179,7 +179,7 @@
           </article>
           <article class="card">
             <h3>API key management</h3>
-            <p>Runtime API key entry is deferred. No API key is present in this increment.</p>
+            <p>The setup wizard provides the Version 2.3 predefined Finnhub key, plaintext editing, persistence, and reset-to-default behavior.</p>
           </article>
           <article class="card">
             <h3>Backup and restore</h3>
@@ -225,7 +225,7 @@
           </div>
           <div>
             <dt>ECharts</dt>
-            <dd id="capability-echarts">Not loaded in Phase 1A</dd>
+            <dd id="capability-echarts">Not loaded before the charting phase</dd>
           </div>
         </dl>
       </section>
@@ -251,18 +251,18 @@
     <aside class="app-aside" aria-labelledby="phase-boundaries-title">
       <h2 id="phase-boundaries-title">Phase boundaries</h2>
       <ul class="plain-list">
-        <li>No market-data implementation.</li>
-        <li>No analytics calculations.</li>
+        <li>Live-data services implemented; dashboard integration pending.</li>
+        <li>Portfolio calculations implemented through Phase 3A.</li>
         <li>No charting library reference.</li>
         <li>No Monte Carlo worker.</li>
         <li>No export implementation.</li>
-        <li>No API key or backend integration.</li>
+        <li>Predefined/editable Finnhub key; no backend integration.</li>
       </ul>
     </aside>
   </div>
 
   <footer class="app-footer" role="contentinfo">
-    <p>Retirement Portfolio Dashboard <span id="footer-version">Phase 1A</span>. Static client-side shell.</p>
+    <p>Retirement Portfolio Dashboard <span id="footer-version">Version 2.3 / Phase 3A</span>. Static client-side application.</p>
   </footer>
 
   <script type="module" src="js/app.js"></script>

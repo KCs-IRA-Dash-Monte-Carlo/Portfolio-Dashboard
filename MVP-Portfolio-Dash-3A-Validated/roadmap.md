@@ -1,14 +1,15 @@
 # MVP Portfolio Dashboard
-## Authoritative Implementation Roadmap - Version 2.2 Consolidated
+## Authoritative Implementation Roadmap - Version 2.3
 
-**Status:** Authoritative merged roadmap  
-**Requirements authority:** `requirements.md`, Private Local Multi-Source MVP Requirements Specification, Version 2.2  
+**Status:** Authoritative VS Code, Codex, and GitHub execution roadmap
+
+**Requirements authority:** `requirements.md`, Private Local Multi-Source MVP Requirements Specification, Version 2.3
 **Supersedes:** the separate Version 2.1 and Version 2.2 roadmap documents  
 **Prepared for:** private personal use on the owner's MacBook and iPhone 13 mini  
 **Primary desktop target:** Mozilla Firefox on macOS Big Sur 11.7.11  
 **Primary mobile target:** Safari Home Screen web app on iPhone 13 mini, iOS 26.5  
 **Hosting scope:** private static HTTPS from the owner's Mac, same trusted home Wi-Fi only  
-**Live data:** Finnhub free-tier endpoints, runtime API key only  
+**Live data:** Finnhub free-tier endpoints using predefined editable key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
 **Historical data:** private Stooq split-adjusted, dividend-unadjusted daily text files  
 **Synchronization:** manual full portable backup and restore; no automatic sync  
 
@@ -18,32 +19,51 @@
 
 | Item | Decision |
 |---|---|
-| Roadmap version | 2.2 Consolidated |
-| Requirements version | 2.2 |
-| Purpose | Merge and replace the applicable Version 2.1 and Version 2.2 roadmap material |
-| Completed scope | Phase 1A through 1C and Phase 2A through 2F |
-| Deferred scope | Phase 1D private home-Wi-Fi HTTPS and iPhone installation |
-| Next active build | Phase 3A Portfolio Data Model and Engine |
-| Public deployment | Excluded |
-| Remote access | Excluded |
-| Backend and cloud sync | Excluded |
-| Historical provider | Private Stooq files; manual complete-series refreshes |
-| Finnhub historical candles | Not used and not permitted as an MVP dependency |
+| Roadmap version | 2.3 |
+| Requirements version | 2.3 |
+| Effective date | 2026-07-12 |
+| Working-environment revision | 2026-07-13 |
+| Supersedes | Version 2.2 Consolidated in full |
+| GitHub organization display name | `KCs IRA Dash - Monte Carlo` |
+| GitHub organization login | `KCs-IRA-Dash-Monte-Carlo` |
+| GitHub repository | `Portfolio-Dashboard` |
+| SSH remote | `git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git` |
+| VS Code | Version 1.106.3, commit `bf9252a2fb45be6893dd8870c0bf37e2e1766d61` |
+| Codex | VS Code extension connected to the owner's ChatGPT Plus subscription |
+| Editor runtime | Electron 37.7.0; Chromium 138.0.7204.251; Node.js 22.20.0; V8 13.8.258.32-electron.0 |
+| Development OS | Darwin x64 20.6.0 |
+| VS Code workspace and Git root | `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard` |
+| Active project root | `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated` |
+| Accepted source baseline | Phase 3A |
+| Mandatory migration | Version 2.3 predefined/editable Finnhub key baseline |
+| Active gate | Version 2.3 baseline acceptance through Phase 3A |
+| Next phase | Phase 3B, not started |
+| Deferred infrastructure | Phase 1D private home-Wi-Fi HTTPS and iPhone installation |
+| Public runtime deployment | Excluded |
+| Application backend and automatic cloud sync | Excluded |
+| Historical provider | Committed private Stooq files; manual complete-series refreshes |
+| Finnhub historical candles | Not used and prohibited as an MVP dependency |
 
-## Status interpretation
+## Version 2.3 change history
 
-The user-approved roadmap status marks Phase 1A through Phase 1C and Phase 2A through Phase 2F as complete. Phase 1D is explicitly deferred and therefore is not included in the completed range despite its numeric placement. Any code or draft work beyond Phase 2F must be audited and accepted before its status changes in this roadmap.
+Version 2.3 preserves the Version 2.2 application scope and phase architecture while changing:
+
+- Source control through the VS Code workspace, Source Control view, integrated terminal, and Git over the confirmed GitHub SSH remote, with phase branches, pull requests, Actions checks, tags, and milestone releases.
+- The Finnhub key from runtime-only protected input to the predefined editable value `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` that may appear in source, documentation, tests, diagnostics, logs, exports, backups, and releases.
+- The source status so Phase 3A plus the Version 2.3 migration is the accepted baseline and Phase 3B is the next, not-started branch.
+- Implementation through the Codex extension editing authorized workspace files directly and reporting its changed-file list.
+- Acceptance so browser test pages remain primary and CI remains supplemental.
 
 ## Authority rule
 
-`requirements.md` Version 2.2 is authoritative. This roadmap controls build order, prompts, test gates, and deliverables, but it cannot weaken or contradict the requirements document. Any proposed change to project behavior requires explicit approval and a requirements update before implementation.
+`requirements.md` Version 2.3 is authoritative for behavior. This roadmap controls build order, prompts, repository operations, tests, audits, and release gates. The `main` branch and accepted tags record implementation state. Where accepted Version 2.2 code conflicts with Version 2.3, the required migration must be completed before dependent phases proceed.
 
 # Table of Contents
 
 1. Consolidated project decisions
 2. Current implementation status
 3. Non-negotiable build rules
-4. Development and deployment environment
+4. VS Code, Codex, GitHub, and deployment environment
 5. Canonical project file tree
 6. Module boundaries and stable interfaces
 7. Consolidated build order and dependency gates
@@ -73,7 +93,7 @@ The user-approved roadmap status marks Phase 1A through Phase 1C and Phase 2A th
    - Phase 10A: Hardening, vendoring, offline, and iPhone validation
    - Phase 10B: Final requirements audit
 9. Cross-phase testing matrix
-10. Backup, versioning, and release discipline
+10. GitHub versioning, backups, and release discipline
 11. Mac-to-iPhone operating workflow
 12. Final MVP acceptance checklist
 13. Prompt execution rules
@@ -137,170 +157,183 @@ Excluded:
 - Cloud synchronization
 - Brokerage integration
 
-## 1.5 Device separation
+## 1.5 Device and repository separation
 
-The Mac and iPhone maintain independent Local Storage, IndexedDB, service-worker caches, quote caches, and API-key settings. Cross-device transfer uses a full portable backup and transactional restore. The Finnhub key is excluded from backups by default and is entered separately on each device.
+The Mac and iPhone maintain independent Local Storage, IndexedDB, service-worker caches, and quote caches. Full portable backup and transactional restore remain the cross-device transfer mechanism. The current Finnhub key is included in backup and may be edited separately after restore.
+
+GitHub stores source, documentation, committed Stooq files, selected backups and exports, test evidence, and release packages. It does not provide runtime application hosting or automatic browser-storage synchronization. The running application remains private to the trusted home Wi-Fi.
 
 # 2. Current Implementation Status
 
 | Phase | Status | Roadmap treatment |
 |---|---|---|
-| Phase 0 | Complete | Retain as an archived verification and rebuild prompt; `/stock/candle` removed |
-| Phase 1A | Complete | Preserve; audit against Version 2.2 |
-| Phase 1B | Complete | Preserve; audit IndexedDB schema compatibility |
-| Phase 1C | Complete | Preserve; audit Stooq and backup wording |
-| Phase 1D | Deferred | Execute only on the target home Wi-Fi; mandatory before final acceptance |
-| Phase 2A | Complete | Preserve; historical file work does not consume API budget |
-| Phase 2B | Complete | Preserve parser, validator, normalizer, and synthetic tests |
-| Phase 2C | Complete | Preserve private seed installation and manifest behavior |
-| Phase 2D | Complete | Preserve complete-series import and rollback behavior |
-| Phase 2E | Complete | Preserve Historical Data Service and diagnostics |
-| Phase 2F | Complete | Preserve Finnhub live services; no candle calls |
-| Phase 3A | Next active phase | Build and accept next |
-| Phase 3B | Not accepted | Follows Phase 3A |
-| Phase 4A | Not accepted | Follows portfolio engine acceptance |
-| Phase 5A | Not accepted | Requires stable portfolio and benchmark interfaces |
-| Phase 6A | Not accepted | Requires Historical Data Service, portfolio, benchmarks, and chart contracts |
-| Phase 7A-7C | Not accepted | Requires Analytics Engine and stable aligned-return interfaces |
-| Phase 8A | Not accepted | Requires Monte Carlo state and chart interfaces |
-| Phase 9A | Not accepted | Implement before final iPhone transfer testing |
-| Phase 9B | Not accepted | Follows stable calculations and charts |
-| Phase 10A-10B | Not accepted | Final hardening and acceptance audit |
+| Phase 0 | Accepted | Retain as rebuild/reference packet using the predefined key |
+| Phase 1A | Accepted | Preserve application shell |
+| Phase 1B | Accepted | Preserve persistence foundation; update only where Version 2.3 key migration requires |
+| Phase 1C | Accepted under Version 2.3 | Predefined editable key behavior implemented |
+| Phase 1D | Deferred | Execute on target home Wi-Fi before final iPhone and Phase 10 acceptance |
+| Phase 2A | Accepted | Preserve request queue |
+| Phase 2B | Accepted | Preserve Stooq parser and validation |
+| Phase 2C | Accepted | Preserve committed seed installation and manifests |
+| Phase 2D | Accepted | Preserve manual replacement and rollback |
+| Phase 2E | Accepted | Preserve Historical Data Service and diagnostics |
+| Phase 2F | Accepted under Version 2.3 | Predefined key and user override supported |
+| Phase 3A | Accepted and authoritative | Preserve with tag `phase-3a-accepted-v2.2` |
+| Version 2.3 baseline migration | Implemented and locally validated | Commit to `main` and tag `v2.3-baseline` |
+| Phase 3B | Next; not started | Create `phase-3b` only after the baseline commit and tags are pushed |
+| Phase 4A onward | Not accepted | Proceed sequentially after each prior gate |
 
-## 2.1 Immediate next action
+## 2.1 Immediate action
 
-Proceed with Phase 3A. Do not begin Phase 4 or later work until Phase 3A passes its deterministic tests, manual tests, audit prompt, and backup gate.
+1. Open `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard` as the VS Code workspace and select `MVP-Portfolio-Dash-3A-Validated` as the active project root.
+2. Verify `origin` is `git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git` and that SSH authentication works.
+3. Use the Codex extension connected to the owner's ChatGPT Plus subscription to review the locally validated Phase 3A and Version 2.3 baseline.
+4. Commit the consolidated baseline to `main`, preserve the Phase 3A tag, create the Version 2.3 baseline tag, and push the branch and tags.
+5. Create `phase-3b` from the tagged baseline only when Phase 3B work begins.
 
-## 2.2 Deferred Phase 1D rule
+## 2.2 Phase 3B boundary
 
-Phase 1D does not block desktop development. It becomes blocking before:
+No Phase 3B implementation or test package is present in this baseline. Phase 3B starts from the accepted `v2.3-baseline` tag and must add only its authorized UI, persistence-integration, corporate-action workflow, and test changes.
 
-- Final Home Screen PWA acceptance
-- Final iPhone offline acceptance
-- Final Mac-to-iPhone restore acceptance
-- Phase 10B final acceptance
+## 2.3 Deferred Phase 1D rule
 
-When the owner is on the target home Wi-Fi, execute Phase 1D using the canonical prompt in this document. Do not improvise a public or remotely accessible alternative.
+Phase 1D does not block desktop phases, but it blocks final Home Screen, offline, backup-transfer, Phase 10A, and Phase 10B acceptance.
 
 # 3. Non-Negotiable Build Rules
 
-1. `requirements.md` Version 2.2 is authoritative.
-2. Build and review one module or subphase at a time.
-3. Use HTML, CSS, plain JavaScript, and ES2020-compatible modules.
-4. Use no required build system unless explicitly approved later.
-5. Keep business logic independent from rendering logic.
-6. Keep the application client-side only; do not add an application backend.
-7. Do not add public hosting, cloud sync, user accounts, brokerage connections, or remote access.
-8. Use Finnhub only for the approved free-tier live-data endpoints.
+1. `requirements.md` Version 2.3 is authoritative.
+2. `main` contains accepted work; development uses the named phase branch and pull request.
+3. Commit the exact validated Phase 3A baseline before integrating Phase 3B.
+4. Complete the Version 2.3 predefined/editable-key migration before Phase 3B acceptance.
+5. Use HTML, CSS, plain JavaScript, ES2020-compatible modules, and no required build system unless explicitly approved.
+6. Keep business logic independent from rendering logic.
+7. Keep the application client-side only; do not add an application backend, user accounts, brokerage integration, automatic cloud sync, public runtime hosting, or remote access.
+8. Use Finnhub only for `/quote`, `/search`, `/stock/symbol`, `/stock/profile2`, `/stock/peers`, `/stock/market-status`, `/stock/market-holiday`, and `/stock/metric`.
 9. Do not call or depend on Finnhub `/stock/candle`.
-10. Use private Stooq files for split-adjusted, dividend-unadjusted daily historical OHLCV.
-11. Store normalized historical data in IndexedDB and read history through the Historical Data Service.
-12. Default manual historical updates to complete-series replacement.
-13. Permit append only when every overlapping stored record matches exactly.
-14. Never leave a partial historical series after a failed import or schema migration.
-15. Treat Finnhub as a rate-limited cache-and-refresh provider.
-16. Enforce no more than 60 calls per minute and 30 calls per second.
-17. Prevent uncontrolled request fan-out.
-18. Enforce the 25 active-symbol cap across holdings and benchmarks.
-19. Enter the Finnhub key at runtime only.
-20. Never hardcode, commit, log, export, or expose the Finnhub key in diagnostics.
-21. Label Stooq-derived analytics as split-adjusted, dividend-unadjusted price-return approximations.
-22. Do not claim exact total return, dividend reinvestment, brokerage reconciliation, or tax-adjusted performance.
-23. Do not implement dividend-income calculations, news, SEC filings, ownership, executives, or premium datasets.
-24. Do not auto-apply stock splits or other corporate actions to user lots.
-25. MVP Monte Carlo methods are GBM and Historical Bootstrap only.
-26. Do not add Regime Switching, Stochastic Volatility, deterministic shock scenarios, or block bootstrap without explicit approval.
-27. Run computationally expensive simulations in Web Workers.
-28. Show progress, allow cancellation, and prevent stale simulation results from appearing current.
-29. Do not silently reduce a user-selected path count or projection universe.
-30. Start with CDN ECharts only where already approved for development; vendor ECharts before final offline acceptance.
-31. Use browser Print to PDF; do not add a custom PDF library.
-32. Maintain separate Mac and iPhone browser storage.
-33. Use full portable backup and restore for device transfer.
-34. Exclude the Finnhub key from backup by default.
-35. Preserve all source precision and round only for display.
-36. Use date-only parsing that avoids UTC date shifting.
-37. Feature unavailability must be explicit; do not fabricate values.
-38. Run relevant deterministic and manual tests before moving to the next phase.
-39. Audit every phase against this roadmap and `requirements.md`.
-40. Create a manual working-folder backup after every accepted phase.
+10. Use the predefined editable Finnhub key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`. It may be hardcoded, committed, displayed, logged, exported, backed up, and included in releases.
+11. Keep GitHub SSH private keys, GitHub tokens, and private HTTPS certificate keys outside the repository.
+12. Use committed Stooq files for split-adjusted, dividend-unadjusted daily OHLCV.
+13. Store normalized history in IndexedDB and read analytical history only through the Historical Data Service.
+14. Default manual historical updates to complete-series replacement and never leave partial series.
+15. Enforce 60 Finnhub calls per minute, 30 per second, bounded concurrency, priorities, retries, and the 25 active-symbol cap.
+16. Label Stooq-derived analytics as split-adjusted, dividend-unadjusted price-return approximations.
+17. Do not implement dividend income, news, filings, ownership, executives, or premium datasets.
+18. Do not auto-apply corporate actions to lots.
+19. Monte Carlo methods are GBM and whole-vector Historical Bootstrap only and run in Web Workers with progress, cancellation, seeds, and stale-run protection.
+20. Do not silently reduce selected paths, symbols, or horizon.
+21. Vendor ECharts before final offline acceptance; use browser Print to PDF.
+22. Preserve source precision and parse date-only values without UTC shifting.
+23. Feature unavailability must be explicit; never fabricate values.
+24. Browser test pages are primary. Node tests and GitHub Actions are supplemental.
+25. Codex edits only phase-authorized files in the open workspace, preserves unrelated work, and reports its changed-file list.
+26. Run implementation and audit in separate Codex sessions.
+27. Every audit must include requirement traceability, changed files, automated results, remaining manual tests, limitations, no-new-features confirmation, and exact fixes.
+28. Routine ZIPs are not committed. Accepted phase tags trigger private milestone ZIP releases.
+29. Stooq production files, portfolio backups, exports, diagnostics, and accepted releases may be committed to the private repository.
+30. Do not proceed until the phase’s browser/manual evidence, audit, pull request, checks, merge, changelog update, and accepted tag are complete.
 
-# 4. Development and Deployment Environment
+# 4. VS Code, Codex, GitHub, and Deployment Environment
 
-## 4.1 Desktop development
+## 4.1 GitHub repository and SSH remote
 
-Primary environment:
+- Host: `github.com`
+- Organization display name: `KCs IRA Dash - Monte Carlo`
+- Organization login: `KCs-IRA-Dash-Monte-Carlo`
+- Repository: `Portfolio-Dashboard`
+- Visibility: private
+- Authentication and transport: Git over SSH
+- Remote: `git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git`
 
-- MacBook Retina
-- 1.2 GHz Dual-Core Intel processor
-- 8 GB memory
-- macOS Big Sur 11.7.11
-- Mozilla Firefox desktop
-- SebEthaEdit
+The confirmed organization login is the hyphenated URL slug shown above. Do not substitute the display name in the SSH remote.
 
-Ordinary desktop development server:
+## 4.2 VS Code workspace and repository verification
+
+Open this Git repository root in VS Code:
 
 ```text
-cd ~/Desktop/MVP-Portfolio-Dash
-python3 -m http.server 8000
+/Users/nicholasoconnell/Desktop/Portfolio-Dashboard
 ```
 
-Open:
+The application and its authoritative Version 2.3 documents are under:
 
 ```text
-http://localhost:8000/
+/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated
 ```
 
-Stop with `Control + C`.
+From the VS Code integrated terminal, verify the repository, enter the active project root, and verify the remote:
 
-## 4.2 Temporary iPhone layout testing
+```bash
+pwd
+git rev-parse --show-toplevel
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+git remote get-url origin
+ssh -T git@github.com
+```
 
-For temporary same-network HTTP layout testing only:
+The expected `origin` value is:
 
 ```text
-python3 -m http.server 8000 --bind 0.0.0.0
+git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git
 ```
 
-Open the Mac's LAN address from Safari. This mode is not the final secure origin and must not be used for final service-worker, Home Screen, or offline acceptance.
+If `origin` differs, correct it from the integrated terminal:
 
-## 4.3 Final private local HTTPS
-
-Before final iPhone acceptance:
-
-1. Use a stable reserved LAN IP or stable `.local` hostname.
-2. Use one stable HTTPS port.
-3. Install a certificate chain trusted by the iPhone.
-4. Permit the static server through the Mac firewall for the private network only.
-5. Do not configure router port forwarding.
-6. Keep protocol, hostname, and port stable because browser storage is origin-specific.
-7. Verify Safari access without certificate warnings.
-8. Install from Safari to the Home Screen.
-9. Verify offline relaunch after stopping the Mac server.
-
-## 4.4 Private historical-data placement
-
-```text
-MVP-Portfolio-Dash/
-  data/
-    historical/
-      seed/
-        avdv.us.txt
-        avuv.us.txt
-        dco.us.txt
-        iwm.us.txt
-        oneq.us.txt
-        psch.us.txt
-        spy.us.txt
-        vtv.us.txt
-      manifest.json
+```bash
+git remote set-url origin git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git
 ```
 
-The real files remain private. Synthetic fixtures are used for deterministic parser tests.
+GitHub CLI is not required. Create and review pull requests, inspect Actions checks, squash-merge accepted changes, configure branch protection, and manage releases in the GitHub web interface unless the owner explicitly installs and authorizes another integration.
+
+## 4.3 VS Code and Codex environment
+
+- VS Code Version: 1.106.3
+- Commit: `bf9252a2fb45be6893dd8870c0bf37e2e1766d61`
+- Build date: `2025-11-25T22:28:18.024Z`
+- Electron: 37.7.0
+- Electron build: 12781156
+- Chromium: 138.0.7204.251
+- Bundled Node.js: 22.20.0
+- V8: 13.8.258.32-electron.0
+- OS: Darwin x64 20.6.0
+- AI coding surface: Codex extension connected to the owner's ChatGPT Plus subscription
+
+Codex works directly in the open workspace. Each phase session must use the nested active project root, read its current `requirements.md` and matching roadmap packet, stay within the allowed-file list, preserve unrelated user changes across the Git workspace, use reviewable edits, run proportionate checks, and report changed files and unresolved verification. A root-level document outside `MVP-Portfolio-Dash-3A-Validated` is not authoritative for this build unless the owner explicitly reconciles it. Review changes in VS Code Source Control before staging.
+
+Use a separate Codex review session for the phase audit. The audit session reviews the workspace diff and test evidence; it does not assume the implementation session was correct.
+
+VS Code's Electron, Chromium, Node.js, and V8 are editor runtime components. They are not the deployed application runtime and do not satisfy Firefox, Safari, normal-origin, service-worker, IndexedDB, or iPhone acceptance gates. Run terminal Node suites only when `node --version` confirms a shell-accessible Node executable.
+
+## 4.4 One-person branch protection
+
+After `quality-gate.yml` exists on `main`, configure the simplest ruleset:
+
+- Target branch: `main`
+- Require a pull request before merge
+- Require the `quality-gate` status check
+- Block force pushes
+- Block deletion
+- Do not require reviewer approval
+- Do not require signed commits
+- Retain an administrator bypass for repository recovery
+
+## 4.5 Target runtime and deployment
+
+Desktop and mobile targets, private same-Wi-Fi HTTPS, no router forwarding, no backend, offline PWA behavior, Stooq history, and separate browser storage remain as defined by requirements Version 2.3. GitHub is not the application host.
 
 # 5. Canonical Project File Tree
 
 ```text
-MVP-Portfolio-Dash/
+MVP-Portfolio-Dash-3A-Validated/
+  requirements.md
+  roadmap.md
+  README.md
+  CHANGELOG.md
+  .gitignore
+  .github/
+    PULL_REQUEST_TEMPLATE.md
+    workflows/
+      quality-gate.yml
+      release-milestone.yml
   index.html
   manifest.json
   service-worker.js
@@ -433,6 +466,7 @@ MVP-Portfolio-Dash/
   vendor/
     echarts/
   docs/
+    development/
     phase-00-endpoint-verification.md
     private-https-iphone-setup.md
     data-methodology.md
@@ -515,7 +549,7 @@ Owns ECharts lifecycle, theme updates, responsive resize, orientation handling, 
 
 ## 6.10 Persistence Manager
 
-Owns Local Storage and IndexedDB schema, migrations, transactional writes, versioning, and rollback support. It must not expose secrets through diagnostics or backups.
+Owns Local Storage and IndexedDB schema, migrations, transactional writes, versioning, and rollback support. It may include the active Finnhub key in diagnostics and backups under the Version 2.3 policy.
 
 ## 6.11 Export Manager
 
@@ -523,7 +557,7 @@ Owns CSV, PNG integration, print reports, configuration backup, full portable ba
 
 ## 6.12 Diagnostics Manager
 
-Owns capability, API, cache, historical dataset, import, storage, and simulation diagnostics. It must redact sensitive request parameters and never expose the Finnhub key.
+Owns capability, API, cache, historical dataset, import, storage, and simulation diagnostics. It may retain complete Finnhub request parameters and display the active key under the Version 2.3 policy.
 
 # 7. Consolidated Build Order and Dependency Gates
 
@@ -548,9 +582,11 @@ Phase 2E Historical Data Service [complete]
         |
 Phase 2F Finnhub live services [complete]
         |
-Phase 3A portfolio model/engine [next]
+Phase 3A portfolio model/engine [accepted]
         |
-Phase 3B portfolio UI/corporate actions
+Version 2.3 key baseline migration
+        |
+Phase 3B portfolio UI/corporate actions [next; not started]
         |
 Phase 4A benchmarks and symbol registry
         |
@@ -583,13 +619,13 @@ A phase is accepted only after:
 2. Deterministic tests pass.
 3. Manual tests pass in the required browser or device.
 4. The phase audit prompt reports no blocking defect.
-5. No architectural drift or secret exposure is found.
+5. No architectural drift is found, and infrastructure authentication keys remain outside the repository.
 6. A working-folder backup is created.
 7. The status table is updated.
 
 # 8. Phase Execution Packets
 
-Use the implementation prompt only for the named phase. After implementation, use the audit prompt in a separate turn. Do not combine implementation and audit into one generation. For phases marked complete, the prompt is retained as the canonical rebuild or repair prompt and should not be rerun unless an audit identifies a defect.
+Use the implementation prompt only for the named phase in a Codex session scoped to the open VS Code workspace. After implementation and local review, use the audit prompt in a separate Codex review session. Do not combine implementation and audit into one session. For phases marked complete, the prompt is retained as the canonical rebuild or repair prompt and should not be rerun unless an audit identifies a defect.
 
 
 # Phase 0 - Approved Endpoint Verification
@@ -597,28 +633,28 @@ Use the implementation prompt only for the named phase. After implementation, us
 
 ## Purpose
 
-Verify the Finnhub free-tier live-data endpoints retained by Version 2.2 and document quote-only and failure-state behavior without implementing application features.
+Verify the Finnhub free-tier live-data endpoints retained by Version 2.3 and document quote-only and failure-state behavior without implementing application features.
 
 ## Dependencies
 
-- Authoritative `requirements.md` Version 2.2
-- Temporary runtime Finnhub key entered manually
+- Authoritative `requirements.md` Version 2.3
+- Predefined editable Finnhub key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
 - No production application code
 
 ## Required deliverables
 
 - `docs/phase-00-endpoint-verification.md`
 - Recorded response shapes and failure classifications
-- No source file containing an API key
+- Source and documentation may contain `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
 
 ## Canonical implementation prompt
 
 ```text
 You are validating Phase 0 for my private client-side PWA retirement portfolio dashboard.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Do not write application code.
-Do not include a literal API key in the response or any file.
+Use the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` in the requested file and examples.
 
 Create or update docs/phase-00-endpoint-verification.md for these permitted Finnhub endpoints:
 - /quote
@@ -636,24 +672,24 @@ Required symbols:
 DCO, VTV, ONEQ, SPY, IWM, AVUV, AVDV, PSCH
 
 Include:
-1. Manual browser or test-page procedures using a runtime key.
+1. Manual browser or test-page procedures using `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` or a user override.
 2. Expected response fields to inspect.
 3. Failure modes and normalized classifications.
 4. How to distinguish offline, invalid key, rate limit, temporary provider failure, missing symbol, and endpoint entitlement failure.
 5. Quote-only behavior when local history is absent.
-6. A result-recording template with date, endpoint, symbol, status, HTTP code, and redacted notes.
+6. A result-recording template with date, endpoint, symbol, status, HTTP code, active key, and complete notes.
 7. No backend, proxy, or premium endpoint.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 0 against requirements.md Version 2.2.
+Audit Phase 0 against requirements.md Version 2.3.
 
 Check:
 - Only approved Finnhub live endpoints are included.
 - /stock/candle is absent.
-- No real API key appears in documentation, examples, URLs, logs, or screenshots.
+- The predefined key may appear in documentation, examples, URLs, logs, diagnostics, and screenshots.
 - All eight required symbols are covered.
 - Failure classifications distinguish offline, invalid key, rate limit, temporary failure, missing data, and entitlement failure.
 - Quote-only behavior is documented.
@@ -678,7 +714,7 @@ Do not write production code.
 
 - Endpoint behavior is documented.
 - Failure states are defined.
-- No secret is retained.
+- The predefined Finnhub key may be retained; infrastructure credentials remain external.
 - No obsolete historical endpoint remains.
 
 ## Backup gate
@@ -722,7 +758,7 @@ Create the static PWA shell, responsive semantic layout, core CSS, manifest, ser
 ```text
 Build or repair Phase 1A of my private local PWA retirement portfolio dashboard.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Do not implement market data, historical parsing, analytics, charts, Monte Carlo, exports, or a backend.
 
 Create or update only:
@@ -750,15 +786,15 @@ Requirements:
 4. Include light and dark theme variables.
 5. Include iPhone 13 mini responsive breakpoints and safe-area-ready CSS variables without claiming final device acceptance.
 6. Include a versioned service-worker shell cache skeleton.
-7. Include no API key, provider call, backend, public-hosting assumption, or remote-access code.
+7. Include the predefined API key configuration, but no provider call, backend, public-hosting assumption, or remote-access code.
 8. Show where later modules attach without implementing them.
-9. Provide exact file contents and manual tests.
+9. Edit the authorized workspace files directly and add manual tests.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 1A against requirements.md Version 2.2.
+Audit Phase 1A against requirements.md Version 2.3.
 Do not rewrite files unless a defect is identified.
 
 Check:
@@ -769,7 +805,7 @@ Check:
 - Layout includes all required application sections.
 - CSS is compatible with Firefox/macOS Big Sur and prepared for iPhone safe areas.
 - Service worker uses an explicit cache version and has no private-data leakage.
-- No market-data call or API key exists.
+- No market-data call exists; predefined key configuration is permitted.
 - No public-hosting or remote-access requirement exists.
 
 Return pass, partial, fail, architectural drift, compatibility risks, and exact fixes.
@@ -829,7 +865,7 @@ Provide versioned Local Storage and IndexedDB foundations, settings state, migra
 ```text
 Build or repair Phase 1B persistence foundation.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Do not implement live market-data calls, Stooq parsing, analytics, charts, Monte Carlo, or export content.
 
 Create or update:
@@ -846,15 +882,15 @@ Requirements:
 3. Include schema versioning and migration hooks.
 4. Use debounced or batched writes where practical.
 5. Handle quota, unavailable storage, blocked upgrade, aborted transaction, and corrupted value errors visibly.
-6. Never put a real API key in fixtures or diagnostics.
+6. Fixtures and diagnostics may include `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`.
 7. Capability checks include Local Storage, IndexedDB, service workers, Web Workers, fetch, Promise, ECharts availability, Blob/download support, File API, and optional StorageManager APIs.
-8. Provide exact file contents and deterministic manual tests.
+8. Edit the authorized workspace files directly and add deterministic manual tests.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 1B persistence foundation against requirements.md Version 2.2.
+Audit Phase 1B persistence foundation against requirements.md Version 2.3.
 
 Check:
 - Local Storage contains only lightweight configuration.
@@ -863,8 +899,8 @@ Check:
 - Transaction failures are surfaced and rollback behavior is documented.
 - Writes are debounced or batched where appropriate.
 - Quota and unavailable-storage errors are normalized.
-- Capability diagnostics do not expose secrets.
-- No real API key appears in code or fixtures.
+- Capability diagnostics may show the active Finnhub key.
+- The predefined Finnhub key may appear in code and fixtures.
 - Firefox/macOS Big Sur and Safari/iOS compatibility risks are identified.
 
 Return pass/fail, data-integrity risks, migration risks, and exact fixes. Do not add application features.
@@ -878,14 +914,14 @@ Return pass/fail, data-integrity risks, migration risks, and exact fixes. Do not
 - [ ] Run an IndexedDB version upgrade test.
 - [ ] Simulate or stub a rejected transaction and verify an explicit error.
 - [ ] Confirm stored values survive a page reload.
-- [ ] Confirm capability results render without exposing any key.
+- [ ] Confirm capability results show the active Finnhub key where required by Version 2.3.
 
 ## Exit criteria
 
 - Versioned storage opens successfully.
 - Migration stubs exist.
 - Failure states are explicit.
-- No secret or large dataset is stored in Local Storage.
+- The active Finnhub key may be stored in Local Storage; large datasets remain in IndexedDB.
 
 ## Backup gate
 
@@ -902,7 +938,7 @@ Completed. Later schema changes must preserve the accepted migration path.
 
 ## Purpose
 
-Create first-launch setup, editable seed holdings and benchmarks, local-data warnings, runtime API-key entry, theme and projection settings, and historical/backup initialization choices without requiring successful history installation.
+Create first-launch setup, editable seed holdings and benchmarks, local-data warnings, predefined editable API-key controls, theme and projection settings, and historical/backup initialization choices without requiring successful history installation.
 
 ## Dependencies
 
@@ -913,7 +949,7 @@ Create first-launch setup, editable seed holdings and benchmarks, local-data war
 
 - Setup wizard UI and state integration
 - Editable default holdings and benchmarks
-- Runtime API-key handling shell
+- Predefined editable API-key handling shell
 - Data-loss and backup warnings
 - Manual tests
 
@@ -922,13 +958,13 @@ Create first-launch setup, editable seed holdings and benchmarks, local-data war
 ```text
 Build or repair Phase 1C setup wizard shell.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Do not make Finnhub calls or parse Stooq files in this phase.
 
 Requirements:
 1. First launch shows the setup wizard.
-2. Finnhub key entry exists and accepts a runtime value only.
-3. Warn that the key is stored locally and must not be exported by default.
+2. Finnhub key entry is prepopulated with `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` and accepts user updates.
+3. State that the key is stored locally and is included in diagnostics, exports, and backups under Version 2.3.
 4. Warn that Local Storage and IndexedDB can be lost or evicted, especially on iOS.
 5. Prepopulate editable default lots:
    - DCO, 39 shares, acquisition date 2026-05-15, purchase price 145.17948
@@ -941,26 +977,26 @@ Requirements:
 10. Include full portable backup restore as an alternate iPhone initialization path.
 11. Setup completion must not require historical installation or live quote success.
 12. Save setup state locally.
-13. Provide exact files and manual tests.
+13. Edit the authorized workspace files directly and add manual tests.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 1C against requirements.md Version 2.2.
+Audit Phase 1C against requirements.md Version 2.3.
 
 Check:
 - First-launch detection works.
 - Defaults are editable ordinary data, not immutable business logic.
-- API key is runtime-only and masked after entry.
+- API key is predefined, visible in plaintext, editable, and resettable.
 - Key, storage-loss, iOS eviction, and backup warnings are visible.
 - All default lots and benchmarks are correct.
 - Projection horizon accepts only integers 1 through 10.
 - Historical installation and backup restore choices are represented.
 - Setup can finish in quote-only mode.
-- State persists without storing secrets in diagnostics or fixtures.
+- State, diagnostics, and fixtures may include the active Finnhub key.
 
-Return pass/fail, usability defects, security risks, and exact fixes.
+Return pass/fail, usability defects, key-state risks, and exact fixes.
 ```
 
 ## Manual test checklist
@@ -969,7 +1005,7 @@ Return pass/fail, usability defects, security risks, and exact fixes.
 - [ ] Edit each default lot and cancel, then reopen to verify predictable state.
 - [ ] Complete setup without historical data or a successful quote.
 - [ ] Reload and verify setup does not repeat unless reset.
-- [ ] Confirm the API key is masked and absent from console output.
+- [ ] Confirm the API key is visible, editable, persists, and may appear in console output.
 - [ ] Set projection horizon to 1 and 10; reject 0, 11, and decimals.
 - [ ] Inspect the iOS storage-loss warning copy.
 
@@ -978,7 +1014,7 @@ Return pass/fail, usability defects, security risks, and exact fixes.
 - First launch works.
 - Defaults and settings persist.
 - Setup does not block on history or live data.
-- No key exposure occurs.
+- Predefined and overridden key behavior matches Version 2.3.
 
 ## Backup gate
 
@@ -987,7 +1023,7 @@ Return pass/fail, usability defects, security risks, and exact fixes.
 
 ## Phase notes
 
-Completed. Audit copy against the final Version 2.2 labels whenever setup text changes.
+Completed. Audit copy against the final Version 2.3 labels whenever setup text changes.
 
 
 # Phase 1D - Private Home-Wi-Fi HTTPS and iPhone Access
@@ -1018,7 +1054,7 @@ Establish a stable trusted local HTTPS origin for Safari and Home Screen operati
 ```text
 Build the Phase 1D private local HTTPS setup and test plan.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Do not add a backend, public hosting, remote access, VPN requirement, dynamic DNS, or router port forwarding.
 
 Target environment:
@@ -1041,13 +1077,13 @@ Create docs/private-https-iphone-setup.md covering:
 12. Stopping the Mac server and testing offline relaunch from the Home Screen.
 13. Explaining that changing protocol, host, IP, or port creates a different browser origin.
 14. A rollback and troubleshooting section.
-15. No API key or private historical row in the documentation.
+15. The predefined API key and private historical-file metadata may appear in documentation.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 1D against requirements.md Version 2.2.
+Audit Phase 1D against requirements.md Version 2.3.
 
 Check:
 - Access is limited to the trusted home Wi-Fi design.
@@ -1118,7 +1154,7 @@ Enforce free-tier request limits, priorities, bounded concurrency, retry and bac
 ```text
 Build or repair Phase 2A Request Queue.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Focus only on Finnhub request scheduling and diagnostics hooks.
 
 Create or update:
@@ -1138,14 +1174,14 @@ Requirements:
 6. Support queueing, throttling, cancellation where practical, retry, and exponential backoff with jitter.
 7. Treat HTTP 429 visibly through normalized errors and Retry-After when provided.
 8. Expose approximate request budget, queue depth, active count, retry count, and last rate-limit event to Diagnostics.
-9. Never log URLs containing a token or any API key value.
+9. Logging complete Finnhub URLs and the active key is permitted.
 10. Provide stubbed deterministic tests before live tests.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 2A Request Queue against requirements.md Version 2.2.
+Audit Phase 2A Request Queue against requirements.md Version 2.3.
 
 Check:
 - Rolling 60/minute and 30/second limits are enforced.
@@ -1155,10 +1191,10 @@ Check:
 - 429, Retry-After, backoff, jitter, and retry limits are handled.
 - No uncontrolled recursive retry exists.
 - Queue cancellation and stale request behavior are safe.
-- Diagnostics expose budget without exposing keys.
+- Diagnostics expose budget and the active Finnhub key.
 - Stubbed tests are deterministic.
 
-Return pass/fail, burst risks, starvation risks, secret-exposure risks, and exact fixes.
+Return pass/fail, burst risks, starvation risks, authentication-state risks, and exact fixes.
 ```
 
 ## Manual test checklist
@@ -1174,7 +1210,7 @@ Return pass/fail, burst risks, starvation risks, secret-exposure risks, and exac
 ## Exit criteria
 
 - Limits and priorities pass deterministic tests.
-- No secret is logged.
+- The active Finnhub key may be logged; GitHub and SSH credentials must not be logged.
 - 429 and retry behavior are visible and bounded.
 - Historical work is outside the queue.
 
@@ -1215,7 +1251,7 @@ Parse the approved Stooq daily text format, validate complete files, normalize r
 ```text
 Build or repair Phase 2B.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 
 Create or update:
 - js/data/historical-file-parser.js
@@ -1244,13 +1280,13 @@ Requirements:
 13. Ignore OPENINT and the daily TIME placeholder after validation.
 14. Return normalized records, warnings, provenance, counts, first and last dates, and source ticker.
 15. Reject malformed complete files before storage.
-16. Provide exact files and deterministic manual tests.
+16. Edit the authorized workspace files directly and add deterministic manual tests.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 2B against requirements.md Version 2.2.
+Audit Phase 2B against requirements.md Version 2.3.
 
 Check:
 - Header, frequency, ticker, date, numeric, duplicate, order, and OHLC rules are enforced.
@@ -1321,7 +1357,7 @@ Install the validated eight-symbol Stooq dataset into IndexedDB with manifests, 
 ```text
 Build or repair Phase 2C.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 
 Create or update:
 - data/historical/manifest.json
@@ -1342,13 +1378,13 @@ Requirements:
 9. Do not parse every file on every launch.
 10. Support application relaunch using IndexedDB only after successful installation.
 11. Invalidate affected analytics and simulations when a changed seed version is installed.
-12. Provide exact files and manual tests.
+12. Edit the authorized workspace files directly and add manual tests.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 2C against requirements.md Version 2.2.
+Audit Phase 2C against requirements.md Version 2.3.
 
 Check:
 - Manifest entries match all eight private files.
@@ -1417,7 +1453,7 @@ Support occasional desktop and iOS Files imports in the same Stooq format, previ
 ```text
 Build or repair Phase 2D.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 
 Create or update:
 - js/data/historical-import-service.js
@@ -1438,13 +1474,13 @@ Requirements:
 10. Invalidate affected analytics and simulations after commit.
 11. Record import mode, source file name, hash, timestamp, counts, result, and safe error in import history and Diagnostics.
 12. Never upload file contents or derived data.
-13. Provide exact files and manual tests.
+13. Edit the authorized workspace files directly and add manual tests.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 2D against requirements.md Version 2.2.
+Audit Phase 2D against requirements.md Version 2.3.
 
 Check:
 - Multi-file desktop and iOS-compatible selection is used.
@@ -1456,7 +1492,7 @@ Check:
 - Transactions rollback fully.
 - Prior valid history remains after failure.
 - Derived analytics and simulations are invalidated after success.
-- Import history excludes file content and secrets.
+- Import history may include filenames, hashes, rows, backups, exports, and the active Finnhub key where settings are recorded.
 - No network upload exists.
 
 Return pass/fail, data-loss risks, UI ambiguity, and exact fixes.
@@ -1515,7 +1551,7 @@ Expose stable IndexedDB-backed history interfaces, exact-date alignment, lookbac
 ```text
 Build or repair Phase 2E.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 
 Create or update:
 - js/data/historical-data-service.js
@@ -1546,7 +1582,7 @@ Requirements:
 ## Canonical audit prompt
 
 ```text
-Audit Phase 2E against requirements.md Version 2.2.
+Audit Phase 2E against requirements.md Version 2.3.
 
 Check:
 - All public interfaces are documented and stable.
@@ -1617,9 +1653,9 @@ Implement current quotes, lookup, company context, market context, Treasury rate
 ```text
 Build or repair Phase 2F.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Use the existing Request Queue.
-Do not hardcode or log an API key.
+Use predefined editable key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`; hardcoding and logging are permitted.
 Do not call /stock/candle.
 
 Permitted Finnhub endpoints:
@@ -1641,7 +1677,7 @@ Create or update:
 - tests/data-service-tests.html
 
 Requirements:
-1. Retrieve the Finnhub key from runtime settings only.
+1. Initialize from predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` and allow a persisted user override.
 2. Fetch quote snapshots for active symbols on app load and manual refresh only.
 3. Use the Request Queue for all Finnhub calls.
 4. Implement symbol search and validation.
@@ -1655,13 +1691,13 @@ Requirements:
 12. Keep current quote snapshots separate from completed historical candles.
 13. Do not manufacture daily OHLCV from a quote.
 14. Do not add premium data, news, dividends, streaming, or a backend.
-15. Provide exact files and stubbed plus manual live tests.
+15. Edit the authorized workspace files directly and add stubbed and manual live tests.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 2F against requirements.md Version 2.2.
+Audit Phase 2F against requirements.md Version 2.3.
 
 Check:
 - Only permitted endpoints are called.
@@ -1674,9 +1710,9 @@ Check:
 - Quote data is never inserted as a historical candle.
 - Error normalization distinguishes all required states.
 - Cache fallback labels stale data visibly.
-- API key is absent from source, logs, diagnostics, exports, and test fixtures.
+- API key may be present in source, logs, diagnostics, exports, backups, and test fixtures.
 
-Return pass/fail, endpoint drift, cache risks, secret risks, and exact fixes.
+Return pass/fail, endpoint drift, cache risks, key-update risks, and exact fixes.
 ```
 
 ## Manual test checklist
@@ -1695,7 +1731,7 @@ Return pass/fail, endpoint drift, cache risks, secret risks, and exact fixes.
 - Live services and fallback work.
 - No historical candle dependency exists.
 - TTL and error states are explicit.
-- No secret exposure occurs.
+- Active Finnhub key exposure is allowed; infrastructure credentials remain external.
 
 ## Backup gate
 
@@ -1708,7 +1744,7 @@ Completed. Phase 3 and later modules must combine Finnhub current quotes with Hi
 
 
 # Phase 3A - Portfolio Data Model and Engine
-**Status:** Next active phase - not yet accepted
+**Status:** Accepted and authoritative baseline
 
 ## Purpose
 
@@ -1735,7 +1771,7 @@ Implement parameter-driven holdings and acquisition lots, deterministic validati
 ```text
 Build Phase 3A Portfolio Data Model and Engine.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Do not build benchmark analytics, chart rendering, or Monte Carlo.
 Consume historical data only through the Historical Data Service.
 
@@ -1766,13 +1802,13 @@ Requirements:
 15. Do not automatically alter shares or prices for corporate actions.
 16. Expose documented public calculation functions independent from the UI.
 17. Provide deterministic tests for single and multiple lots, partial histories, missing quotes, stale quotes, and date boundaries.
-18. Provide exact file contents and manual tests.
+18. Edit the authorized workspace files directly and add manual tests.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 3A against requirements.md Version 2.2.
+Audit Phase 3A against requirements.md Version 2.3.
 Do not write UI or later-phase code.
 
 Check:
@@ -1828,11 +1864,93 @@ Do not implement fixes until the audit is complete.
 
 ## Phase notes
 
-This is the next active build. Stop after Phase 3A passes audit and create a backup before Phase 3B.
+Phase 3A is accepted. Commit it to `main` and tag `phase-3a-accepted-v2.2` before the Version 2.3 baseline migration or Phase 3B work.
 
+
+# Mandatory Version 2.3 Baseline Migration - Predefined and Editable Finnhub Key
+
+**Status:** Implemented in the consolidated baseline; tag after validation
+
+The accepted Phase 3A source was built under Version 2.2 runtime-only and non-exposure rules. Version 2.3 reverses those rules. Do not mark the existing setup and live-data code compliant without changing it.
+
+## Allowed files
+
+- `js/settings/settings-state.js`
+- `js/ui/setup-wizard.js`
+- `js/data/finnhub-client.js`
+- `js/data/market-data-service.js` only if required by the current key interface
+- `js/app.js` only for wiring or displayed state
+- `js/diagnostics/` modules that currently redact the key
+- Existing setup, storage, data-service, and Phase 2F tests
+- `requirements.md`, `roadmap.md`, `README.md`, and `CHANGELOG.md`
+
+## Canonical migration prompt
+
+```text
+Implement the Version 2.3 Finnhub-key baseline migration before Phase 3B.
+
+Authoritative spec: requirements.md Version 2.3.
+Predefined key: d976km1r01qs09n8cp90d976km1r01qs09n8cp9g
+
+Requirements:
+1. Prepopulate the key in setup and Settings.
+2. Display it in plaintext.
+3. Allow edit, save, validation, reset to default, and persistence.
+4. Initialize Finnhub clients from the default unless a user override exists.
+5. Apply changes to subsequent requests without a rebuild.
+6. Permit the key in source, tests, logs, diagnostics, URLs, exports, and backups.
+7. Preserve portfolio and historical data when the key changes.
+8. Update existing setup, storage, data-service, and Phase 2F tests.
+9. Do not add new product scope or call /stock/candle.
+10. Edit only the allowed workspace files, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
+```
+
+## Canonical migration audit prompt
+
+```text
+Audit the Version 2.3 Finnhub-key baseline migration against requirements.md Version 2.3.
+
+Verify default value, plaintext display, edit/save/reset, reload persistence, request use, diagnostics/log behavior, backup/export readiness, no portfolio/history deletion, regression tests, and no /stock/candle dependency.
+
+Return requirement traceability, changed-file list, automated test results, manual tests still required, known limitations, no-new-features confirmation, and exact repairs.
+```
+
+## VS Code integrated terminal and GitHub workflow
+
+Run these commands from the VS Code integrated terminal at the repository root:
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c v2.3-api-key-baseline
+# Use Codex in the open workspace, then review every changed file.
+git diff --stat
+git diff
+git diff --check
+python3 -m http.server 8000
+# Run setup, storage, and data-service pages in Firefox.
+git add requirements.md roadmap.md README.md CHANGELOG.md js tests
+git commit -m "Version 2.3: predefined editable Finnhub key baseline"
+git push -u origin v2.3-api-key-baseline
+```
+
+In the GitHub web interface, open a pull request from `v2.3-api-key-baseline` to `main`, complete the pull-request evidence, wait for required checks, review the diff, squash-merge, and delete the remote branch. Then run:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a v2.3-baseline -m "Version 2.3 predefined-key baseline accepted"
+git push origin v2.3-baseline
+```
+
+Do not create `phase-3b` until this migration is merged and tagged.
 
 # Phase 3B - Portfolio UI and Corporate-Action Workflow
-**Status:** Not yet accepted
+**Status:** Next phase; not started
 
 ## Purpose
 
@@ -1855,7 +1973,7 @@ Create accessible add, edit, and delete workflows for holdings and lots, plus ex
 ```text
 Build Phase 3B Portfolio UI and Corporate-Action Workflow.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Use the accepted Phase 3A Portfolio Engine. Do not duplicate financial calculations in UI code.
 
 Create or update the portfolio and lot UI modules and tests.
@@ -1875,13 +1993,15 @@ Requirements:
 12. Persist changes with debounced or explicit-save behavior rather than every keystroke.
 13. Update dependent values and mark analytics or simulations stale after relevant edits.
 14. Support iPhone 13 mini form layout, touch targets, and keyboard behavior.
-15. Provide exact file contents and manual tests.
+15. Edit the authorized workspace files directly and add manual tests.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 3B against requirements.md Version 2.2.
+Audit Phase 3B against requirements.md Version 2.3.
 
 Check:
 - UI uses Phase 3A calculations rather than duplicating them.
@@ -1896,6 +2016,15 @@ Check:
 - Desktop and iPhone layouts remain usable.
 
 Return blocking, important, and minor defects with exact files to change.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -1921,6 +2050,132 @@ Return blocking, important, and minor defects with exact files to change.
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `css/portfolio-editor.css`
+- `js/ui/lot-editor.js`
+- `js/ui/portfolio-editor.js`
+- `js/ui/portfolio-phase-3b.js`
+- `js/ui/portfolio-settings-state-adapter.js`
+- `js/ui/portfolio-ui-engine-adapter.js`
+- `index.html`
+- `js/app.js`
+- `js/settings/settings-state.js`
+- `js/ui/setup-wizard.js`
+- `service-worker.js`
+- `js/persistence/schema.js`
+- `js/persistence/local-storage.js`
+- `tests/ui-tests.html`
+- `tests/phase-3b-node-tests.mjs`
+- `tests/phase-3b-integrated-tests.mjs`
+- `tests/phase-3b-state-adapter-tests.mjs`
+- `tests/storage-tests.html`
+- `tests/index.html`
+- `project-source.json`
+- `docs/PROJECT-STATE.md`
+- `docs/PHASE-3B-*.md`
+- `docs/PHASE-3B-TEST-EXECUTION-LOG.txt`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-3b
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+if command -v node >/dev/null 2>&1; then
+  [[ -f tests/phase-2f-node-tests.mjs ]] && node tests/phase-2f-node-tests.mjs
+  [[ -f tests/phase-3b-node-tests.mjs ]] && node tests/phase-3b-node-tests.mjs
+  [[ -f tests/phase-3b-integrated-tests.mjs ]] && node tests/phase-3b-integrated-tests.mjs
+  [[ -f tests/phase-3b-state-adapter-tests.mjs ]] && node tests/phase-3b-state-adapter-tests.mjs
+else
+  echo "Shell Node.js is unavailable; record Node suites as not run."
+fi
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/index.html`
+- `http://localhost:8000/tests/storage-tests.html`
+- `http://localhost:8000/tests/setup-wizard-tests.html`
+- `http://localhost:8000/tests/data-service-tests.html`
+- `http://localhost:8000/tests/historical-data-tests.html`
+- `http://localhost:8000/tests/calculation-tests.html`
+- `http://localhost:8000/tests/ui-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 3B: portfolio UI and corporate actions"
+git push -u origin phase-3b
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-3b-accepted -m "phase-3b-accepted accepted"
+git push origin phase-3b-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-3b
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -1953,7 +2208,7 @@ Manage holdings and benchmarks through a shared symbol registry while preserving
 ```text
 Build Phase 4A Benchmark Engine and shared active-symbol management.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Use the existing Finnhub Symbol Service for validation and Historical Data Service for history status.
 
 Create or update:
@@ -1981,12 +2236,14 @@ Requirements:
 15. Report local-history availability through Historical Data Service without blocking quote-only activation.
 16. Invalidate dependent charts, analytics, and simulations after relevant registry changes.
 17. Provide deterministic and manual tests.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 4A against requirements.md Version 2.2.
+Audit Phase 4A against requirements.md Version 2.3.
 
 Check:
 - Default benchmarks are seeded but not locked.
@@ -2001,6 +2258,15 @@ Check:
 - Changes invalidate dependent outputs.
 
 Return pass/fail, data-separation risks, cap-enforcement risks, and exact fixes.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2025,6 +2291,109 @@ Return pass/fail, data-separation risks, cap-enforcement risks, and exact fixes.
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `js/benchmarks/`
+- `js/core/symbol-registry.js`
+- `js/ui/benchmark-manager.js`
+- `js/settings/settings-state.js`
+- `js/app.js`
+- `index.html`
+- `service-worker.js`
+- `tests/calculation-tests.html`
+- `tests/ui-tests.html`
+- `tests/index.html`
+- `docs/test-results/`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-4a
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/calculation-tests.html`
+- `http://localhost:8000/tests/ui-tests.html`
+- `http://localhost:8000/tests/data-service-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 4A: benchmarks and active symbols"
+git push -u origin phase-4a
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-4a-accepted -m "phase-4a-accepted accepted"
+git push origin phase-4a-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-4a
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -2059,7 +2428,7 @@ Implement Apache ECharts lifecycle and the required portfolio, benchmark, alloca
 ```text
 Build Phase 5A Chart Manager.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Use Apache ECharts from the approved development source for this phase. It will be vendored in Phase 10A.
 Do not implement financial calculations inside chart modules.
 
@@ -2093,13 +2462,15 @@ Requirements:
 13. Avoid hover-only interaction.
 14. Prevent chart pan/zoom from conflicting with swipeable tabs.
 15. Prevent whole-page horizontal overflow while allowing table or chart-local interaction.
-16. Provide exact file contents and manual tests.
+16. Edit the authorized workspace files directly and add manual tests.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 5A against requirements.md Version 2.2.
+Audit Phase 5A against requirements.md Version 2.3.
 
 Check:
 - Chart modules contain no financial calculations.
@@ -2114,6 +2485,15 @@ Check:
 - No page-level horizontal overflow occurs.
 
 Return blocking, important, and minor defects with exact fixes.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2140,6 +2520,105 @@ Return blocking, important, and minor defects with exact fixes.
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `js/charts/`
+- `css/`
+- `index.html`
+- `js/app.js`
+- `service-worker.js`
+- `tests/ui-tests.html`
+- `tests/index.html`
+- `docs/test-results/`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-5a
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/ui-tests.html`
+- `http://localhost:8000/tests/calculation-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 5A: chart manager"
+git push -u origin phase-5a
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-5a-accepted -m "phase-5a-accepted accepted"
+git push origin phase-5a-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-5a
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -2175,7 +2654,7 @@ Implement aligned split-adjusted, dividend-unadjusted price-return series, CAGR,
 ```text
 Build Phase 6A Analytics Engine.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Use normalized Stooq close history through Historical Data Service.
 Do not implement Monte Carlo.
 
@@ -2204,12 +2683,14 @@ Requirements:
 13. Respect lot acquisition dates and contribution-neutral performance logic.
 14. Return methodology, observation counts, aligned date range, benchmark, risk-free-rate source, and warnings with each result.
 15. Provide deterministic fixture calculations with independently verifiable expected values.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 6A against requirements.md Version 2.2.
+Audit Phase 6A against requirements.md Version 2.3.
 
 Check:
 - Historical data comes only from Historical Data Service.
@@ -2225,6 +2706,15 @@ Check:
 - Tests use independently checkable fixtures.
 
 Return calculation defects, methodology risks, labeling defects, and exact fixes.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2243,12 +2733,115 @@ Return calculation defects, methodology risks, labeling defects, and exact fixes
 - Core analytics match deterministic expectations.
 - Alignment and contribution handling are correct.
 - No fabricated metric appears.
-- Labels and metadata comply with Version 2.2.
+- Labels and metadata comply with Version 2.3.
 
 ## Backup gate
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `js/analytics/`
+- `js/utils/`
+- `js/data/risk-free-rate-service.js`
+- `js/diagnostics/`
+- `js/app.js`
+- `index.html`
+- `service-worker.js`
+- `tests/calculation-tests.html`
+- `tests/data-service-tests.html`
+- `tests/index.html`
+- `docs/test-results/`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-6a
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/calculation-tests.html`
+- `http://localhost:8000/tests/data-service-tests.html`
+- `http://localhost:8000/tests/historical-data-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 6A: analytics engine"
+git push -u origin phase-6a
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-6a-accepted -m "phase-6a-accepted accepted"
+git push origin phase-6a-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-6a
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -2282,7 +2875,7 @@ Create non-blocking worker execution, input validation, run state, progress, can
 ```text
 Build Phase 7A Monte Carlo worker infrastructure.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Do not implement scenario analysis, Regime Switching, Stochastic Volatility, GBM math, or Historical Bootstrap math yet.
 
 Create or update:
@@ -2309,12 +2902,14 @@ Requirements:
 13. Record safe run metadata, elapsed time, cancellation, failure, and stale status in Diagnostics.
 14. Handle lack of Web Worker support with an explicit unavailable state rather than blocking the main thread.
 15. Provide deterministic protocol and state-machine tests.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 7A against requirements.md Version 2.2.
+Audit Phase 7A against requirements.md Version 2.3.
 
 Check:
 - No simulation method was implemented prematurely.
@@ -2329,6 +2924,15 @@ Check:
 - Worker and event listeners are cleaned up.
 
 Return state-machine defects, race conditions, memory risks, and exact fixes.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2353,6 +2957,109 @@ Return state-machine defects, race conditions, memory risks, and exact fixes.
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `js/monte-carlo/mc-controller.js`
+- `js/monte-carlo/mc-state.js`
+- `js/monte-carlo/mc-inputs.js`
+- `js/monte-carlo/random.js`
+- `js/monte-carlo/statistics.js`
+- `js/workers/monte-carlo-worker.js`
+- `js/workers/worker-protocol.js`
+- `js/diagnostics/simulation-diagnostics.js`
+- `service-worker.js`
+- `tests/monte-carlo-tests.html`
+- `tests/index.html`
+- `docs/test-results/`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-7a-worker
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/monte-carlo-tests.html`
+- `http://localhost:8000/tests/calculation-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 7A: Monte Carlo worker infrastructure"
+git push -u origin phase-7a-worker
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-7a-accepted -m "phase-7a-accepted accepted"
+git push origin phase-7a-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-7a-worker
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -2386,7 +3093,7 @@ Implement correlated multi-asset daily GBM from aligned local log returns, with 
 ```text
 Build Phase 7B Geometric Brownian Motion Monte Carlo.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Use the accepted Phase 7A worker protocol.
 Implement only GBM in this phase.
 
@@ -2414,12 +3121,14 @@ Requirements:
 13. Return confidence-fan and percentile-band data suitable for Phase 8 charts.
 14. Handle insufficient history, invalid covariance, overflow, underflow, and nonfinite output visibly.
 15. Provide deterministic tests for means, covariance, seeded reproducibility, correlation direction, percentiles, and failure states.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 7B GBM against requirements.md Version 2.2.
+Audit Phase 7B GBM against requirements.md Version 2.3.
 
 Check:
 - Inputs are aligned local daily log returns.
@@ -2435,6 +3144,15 @@ Check:
 - Worker cancellation and stale-run rules remain intact.
 
 Return mathematical defects, numerical risks, reproducibility defects, and exact fixes.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2459,6 +3177,105 @@ Return mathematical defects, numerical risks, reproducibility defects, and exact
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `js/monte-carlo/gbm.js`
+- `js/monte-carlo/covariance.js`
+- `js/monte-carlo/statistics.js`
+- `js/monte-carlo/mc-inputs.js`
+- `js/workers/monte-carlo-worker.js`
+- `js/workers/worker-protocol.js`
+- `tests/monte-carlo-tests.html`
+- `docs/test-results/`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-7b-gbm
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/monte-carlo-tests.html`
+- `http://localhost:8000/tests/calculation-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 7B: GBM Monte Carlo"
+git push -u origin phase-7b-gbm
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-7b-accepted -m "phase-7b-accepted accepted"
+git push origin phase-7b-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-7b-gbm
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -2490,7 +3307,7 @@ Implement whole-vector resampling of aligned daily arithmetic returns with repla
 ```text
 Build Phase 7C Historical Bootstrap Monte Carlo.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Use the accepted Phase 7A worker protocol.
 Implement only Historical Bootstrap in this phase.
 
@@ -2515,12 +3332,14 @@ Requirements:
 12. Preserve Phase 7A cancellation, progress, and stale-run behavior.
 13. Provide deterministic tests proving whole-vector resampling and fixed-seed reproducibility.
 14. Do not implement block bootstrap unless explicitly approved later.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 7C Historical Bootstrap against requirements.md Version 2.2.
+Audit Phase 7C Historical Bootstrap against requirements.md Version 2.3.
 
 Check:
 - Inputs are aligned daily arithmetic return vectors.
@@ -2535,6 +3354,15 @@ Check:
 - Block bootstrap was not introduced.
 
 Return algorithm defects, dependence-preservation risks, numerical risks, and exact fixes.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2558,6 +3386,105 @@ Return algorithm defects, dependence-preservation risks, numerical risks, and ex
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `js/monte-carlo/bootstrap.js`
+- `js/monte-carlo/random.js`
+- `js/monte-carlo/statistics.js`
+- `js/monte-carlo/mc-inputs.js`
+- `js/workers/monte-carlo-worker.js`
+- `js/workers/worker-protocol.js`
+- `tests/monte-carlo-tests.html`
+- `docs/test-results/`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-7c-bootstrap
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/monte-carlo-tests.html`
+- `http://localhost:8000/tests/historical-data-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 7C: historical bootstrap Monte Carlo"
+git push -u origin phase-7c-bootstrap
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-7c-accepted -m "phase-7c-accepted accepted"
+git push origin phase-7c-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-7c-bootstrap
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -2591,7 +3518,7 @@ Apply one persisted 1-10 year global horizon across every forward-looking module
 ```text
 Build Phase 8A Projection Horizon and Projection Visuals.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Use the accepted Monte Carlo and Chart Manager interfaces.
 
 Create or update:
@@ -2615,13 +3542,15 @@ Requirements:
 10. Do not silently start an expensive simulation on every input keystroke.
 11. Render confidence fan and percentile bands with accessible legends, methodology labels, and unavailable states.
 12. Support iPhone 13 mini portrait and landscape.
-13. Provide exact files and manual tests.
+13. Edit the authorized workspace files directly and add manual tests.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 8A against requirements.md Version 2.2.
+Audit Phase 8A against requirements.md Version 2.3.
 
 Check:
 - Only integer horizons 1-10 are accepted.
@@ -2636,6 +3565,15 @@ Check:
 - Desktop and iPhone layouts are usable.
 
 Return consistency defects, stale-state defects, date risks, and exact fixes.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2660,6 +3598,113 @@ Return consistency defects, stale-state defects, date risks, and exact fixes.
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `js/settings/projection-settings.js`
+- `js/utils/projection-date-utils.js`
+- `js/charts/mc-confidence-fan.js`
+- `js/charts/mc-percentile-bands.js`
+- `js/charts/chart-manager.js`
+- `js/charts/chart-options.js`
+- `js/ui/`
+- `js/app.js`
+- `index.html`
+- `css/`
+- `service-worker.js`
+- `tests/calculation-tests.html`
+- `tests/ui-tests.html`
+- `tests/monte-carlo-tests.html`
+- `docs/test-results/`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-8a-projections
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/calculation-tests.html`
+- `http://localhost:8000/tests/monte-carlo-tests.html`
+- `http://localhost:8000/tests/ui-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 8A: projection horizon and visuals"
+git push -u origin phase-8a-projections
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-8a-accepted -m "phase-8a-accepted accepted"
+git push origin phase-8a-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-8a-projections
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -2693,7 +3738,7 @@ Provide a versioned, validated, transactional backup containing configuration an
 ```text
 Build Phase 9A Full Portable Backup and Restore.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Implement this before final reporting so the Mac-to-iPhone transfer workflow is available early.
 
 Create or update:
@@ -2714,8 +3759,8 @@ Requirements:
    - historical quality flags
    - historical import history
    - diagnostics settings needed for safe restore
-2. Exclude the Finnhub API key by default.
-3. Do not include cached provider request URLs or secrets.
+2. Include the active Finnhub API key.
+3. Cached provider request URLs and the active Finnhub key may be included.
 4. Include backup schema version, application version, creation timestamp, source-device label, section counts, and integrity checksum or equivalent validation.
 5. Validate the complete backup before changing current state.
 6. Show a restore preview with versions, counts, symbols, date ranges, and warnings.
@@ -2723,20 +3768,22 @@ Requirements:
 8. Restore transactionally so a failed restore leaves the prior state intact.
 9. Offer replace behavior for the complete portable state; do not silently merge incompatible historical datasets.
 10. Invalidate derived analytics and simulations after successful restore.
-11. Prompt for a local Finnhub key after restore because the key is absent.
+11. Restore the saved Finnhub key and allow the user to edit or reset it.
 12. Support transfer from Mac to iPhone through AirDrop or Files.
 13. Record backup and restore success or safe failure in Diagnostics.
 14. Provide deterministic corruption and rollback tests.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 9A against requirements.md Version 2.2.
+Audit Phase 9A against requirements.md Version 2.3.
 
 Check:
 - Full backup includes every required state and historical section.
-- API key and sensitive request details are excluded.
+- API key and complete request details may be included.
 - Schema version and integrity validation are present.
 - Entire backup is validated before mutation.
 - Restore preview is complete.
@@ -2744,10 +3791,19 @@ Check:
 - Restore rollback preserves prior data.
 - Historical data is not silently merged across incompatible adjustment bases.
 - Derived results are invalidated.
-- Mac-to-iPhone transfer and post-restore key entry are documented.
-- Diagnostics do not expose private backup content.
+- Mac-to-iPhone transfer and restored-key edit/reset behavior are documented.
+- Diagnostics may include backup metadata and key content; restore status remains explicit.
 
-Return data-loss risks, privacy risks, compatibility risks, and exact fixes.
+Return data-loss risks, content-integrity risks, compatibility risks, and exact fixes.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2761,12 +3817,12 @@ Return data-loss risks, privacy risks, compatibility risks, and exact fixes.
 - [ ] Use an unsupported future schema version.
 - [ ] Inject a restore failure and verify old state remains.
 - [ ] Transfer through AirDrop/Files and restore on iPhone after Phase 1D.
-- [ ] Verify the iPhone requests its own Finnhub key.
+- [ ] Verify the iPhone restores the saved key and can edit or reset it.
 
 ## Exit criteria
 
 - Full backup round-trip preserves required state.
-- No secret is exported.
+- The active Finnhub key may be exported.
 - Corruption and rollback tests pass.
 - Mac-to-iPhone restore works before final acceptance.
 
@@ -2774,6 +3830,114 @@ Return data-loss risks, privacy risks, compatibility risks, and exact fixes.
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `js/export/backup-export.js`
+- `js/export/backup-restore.js`
+- `js/export/full-backup-export.js`
+- `js/export/full-backup-restore.js`
+- `js/export/export-manager.js`
+- `js/persistence/`
+- `js/settings/settings-state.js`
+- `js/ui/`
+- `js/app.js`
+- `index.html`
+- `service-worker.js`
+- `tests/storage-tests.html`
+- `tests/ui-tests.html`
+- `tests/index.html`
+- `backups/`
+- `docs/test-results/`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-9a-backup-restore
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/storage-tests.html`
+- `http://localhost:8000/tests/ui-tests.html`
+- `http://localhost:8000/tests/historical-data-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 9A: full portable backup and restore"
+git push -u origin phase-9a-backup-restore
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-9a-accepted -m "phase-9a-accepted accepted"
+git push origin phase-9a-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-9a-backup-restore
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -2807,7 +3971,7 @@ Add CSV exports, chart PNG integration, a print-optimized report for browser Pri
 ```text
 Build Phase 9B Export and Reporting.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Use browser Print to PDF. Do not add a custom PDF library.
 Do not weaken the accepted full portable backup behavior from Phase 9A.
 
@@ -2832,17 +3996,19 @@ Requirements:
 9. Create a print-optimized report page containing required summary cards, holdings, benchmarks, analytics, charts, Monte Carlo outputs, methodology, freshness, and warnings.
 10. Integrate PNG chart exports.
 11. Implement lightweight configuration backup and restore separately from full portable backup.
-12. Exclude the Finnhub key from every export by default.
+12. Include the active Finnhub key in configuration and report metadata exports.
 13. Do not provide public share links or upload exports.
 14. Implement backup reminders: 30 calendar days or 10 saved edits since last backup, whichever occurs first, with a 30-day dismissal.
 15. Record safe export failures in Diagnostics.
-16. Provide exact files and manual tests.
+16. Edit the authorized workspace files directly and add manual tests.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 9B against requirements.md Version 2.2.
+Audit Phase 9B against requirements.md Version 2.3.
 
 Check:
 - Every required CSV exists and escapes values correctly.
@@ -2850,13 +4016,22 @@ Check:
 - Print report contains required tables and charts and works through browser Print to PDF.
 - PNG integration works.
 - Configuration backup is distinct from full portable backup.
-- API key is excluded from all exports.
+- API key is included where settings or report metadata are exported.
 - No upload or public share mechanism exists.
 - Backup reminder triggers follow the exact rules.
 - Export errors are visible and safe.
 - Print styles work on desktop and do not depend on unsupported libraries.
 
 Return blocking export defects, privacy risks, labeling defects, and exact fixes.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2883,6 +4058,110 @@ Return blocking export defects, privacy risks, labeling defects, and exact fixes
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `js/export/csv-export.js`
+- `js/export/print-report.js`
+- `js/export/export-manager.js`
+- `js/charts/chart-export.js`
+- `css/print.css`
+- `index.html`
+- `js/app.js`
+- `service-worker.js`
+- `tests/ui-tests.html`
+- `tests/calculation-tests.html`
+- `tests/index.html`
+- `exports/`
+- `docs/test-results/`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-9b-exports
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/ui-tests.html`
+- `http://localhost:8000/tests/calculation-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 9B: exports and reporting"
+git push -u origin phase-9b-exports
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-9b-accepted -m "phase-9b-accepted accepted"
+git push origin phase-9b-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-9b-exports
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -2917,13 +4196,13 @@ Vendor dependencies, finalize service-worker caching and storage diagnostics, co
 ```text
 Build Phase 10A hardening increment.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Do not add new product features unless required to satisfy acceptance.
 
 Tasks:
 1. Vendor Apache ECharts into vendor/echarts/ and remove the runtime CDN dependency.
 2. Update service-worker static caching to include the app shell, icons, and vendored assets with explicit cache versioning.
-3. Do not precache user exports, API keys, IndexedDB content, or runtime-sensitive URLs.
+3. Do not precache user exports or IndexedDB content; caching static predefined-key configuration and provider URLs is permitted.
 4. Implement safe cache upgrade and old-cache cleanup.
 5. Confirm the app shell launches offline after a successful visit.
 6. Confirm IndexedDB historical data, portfolio state, and cached quotes render when the Mac server is unavailable.
@@ -2932,7 +4211,7 @@ Tasks:
 9. Audit keyboard navigation, labels, landmarks, focus order, visible focus, dialog focus trapping, and announcements.
 10. Audit high contrast and color-blind-safe chart distinctions.
 11. Sanitize all user-entered text and avoid unsafe HTML rendering.
-12. Audit API-key non-exposure in source, logs, diagnostics, exports, backups, URLs, and service-worker caches.
+12. Audit predefined-key consistency, edit/reset behavior, persistence, diagnostics, exports, backups, URLs, and service-worker behavior.
 13. Test Firefox on macOS Big Sur.
 14. Test Safari browser and Home Screen modes on iPhone 13 mini, iOS 26.5.
 15. Test portrait, landscape, safe-area insets, orientation change, touch gestures, file import, backup restore, and horizontal table scrolling.
@@ -2942,28 +4221,39 @@ Tasks:
 19. Test recovery documentation after browser storage loss.
 20. Confirm no public hosting, remote access, router forwarding, backend, or cloud sync is required.
 21. Save final performance, compatibility, and acceptance notes.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
 
 ```text
-Audit Phase 10A hardening against requirements.md Version 2.2.
+Audit Phase 10A hardening against requirements.md Version 2.3.
 
 Check:
 - ECharts is local and offline-capable.
-- Service-worker caches are explicitly versioned and do not contain secrets or user data.
+- Service-worker caches are explicitly versioned; they may contain static predefined-key configuration but not mutable IndexedDB user data.
 - Offline launch works after successful installation.
 - Mac-host, internet, provider, stale, and local-history states are distinct.
 - Storage persistence diagnostics are correct.
 - Accessibility basics pass.
 - User-entered text is safely rendered.
-- API key is absent from every prohibited surface.
+- Predefined and overridden key behavior is consistent across every required surface.
 - Firefox/macOS Big Sur and Safari/iPhone 13 mini are tested.
 - Portrait, landscape, safe area, orientation, gestures, import, restore, and Monte Carlo cancellation pass.
 - Performance notes exist for required symbol/path/horizon combinations.
 - No prohibited deployment or architecture drift exists.
 
 Return blocking, important, and minor defects. Identify exact files and retest steps.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
@@ -2971,7 +4261,7 @@ Return blocking, important, and minor defects. Identify exact files and retest s
 - [ ] Disconnect internet while keeping the Mac server available; inspect states.
 - [ ] Stop the Mac server and launch the installed iPhone app offline.
 - [ ] Update cache version and verify controlled update behavior.
-- [ ] Inspect Cache Storage for secrets and user files.
+- [ ] Inspect Cache Storage for unexpected mutable user files and verify allowed predefined-key assets.
 - [ ] Request storage persistence and inspect Diagnostics.
 - [ ] Run keyboard-only navigation on desktop.
 - [ ] Run screen-reader spot checks for forms, errors, dialogs, and chart summaries.
@@ -2993,6 +4283,113 @@ Return blocking, important, and minor defects. Identify exact files and retest s
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
 
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `vendor/echarts/`
+- `service-worker.js`
+- `manifest.json`
+- `index.html`
+- `assets/icons/`
+- `css/`
+- `js/`
+- `tests/`
+- `docs/test-results/`
+- `docs/private-https-iphone-setup.md`
+- `README.md`
+- `CHANGELOG.md`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-10a-hardening
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/index.html`
+- `http://localhost:8000/tests/storage-tests.html`
+- `http://localhost:8000/tests/data-service-tests.html`
+- `http://localhost:8000/tests/historical-data-tests.html`
+- `http://localhost:8000/tests/calculation-tests.html`
+- `http://localhost:8000/tests/monte-carlo-tests.html`
+- `http://localhost:8000/tests/ui-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 10A: hardening and device validation"
+git push -u origin phase-10a-hardening
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a phase-10a-accepted -m "phase-10a-accepted accepted"
+git push origin phase-10a-accepted
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-10a-hardening
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
+
 ## Phase notes
 
 Phase 1D must be completed before this phase can receive final acceptance.
@@ -3003,7 +4400,7 @@ Phase 1D must be completed before this phase can receive final acceptance.
 
 ## Purpose
 
-Perform the final no-new-features audit against every Version 2.2 requirement, acceptance criterion, non-goal, device target, data-source rule, and privacy constraint.
+Perform the final no-new-features audit against every Version 2.3 requirement, acceptance criterion, non-goal, device target, data-source rule, and privacy constraint.
 
 ## Dependencies
 
@@ -3025,7 +4422,7 @@ Perform the final no-new-features audit against every Version 2.2 requirement, a
 ```text
 Perform Phase 10B final audit.
 
-Authoritative spec: requirements.md, Version 2.2.
+Authoritative spec: requirements.md, Version 2.3.
 Do not add new features unless required to correct a failed acceptance criterion.
 
 Audit at minimum:
@@ -3038,7 +4435,7 @@ Audit at minimum:
 7. Quote-only mode works when local history is missing.
 8. Request queue enforces 60/minute, 30/second, priorities, bounded concurrency, and 429 backoff.
 9. 25 active-symbol cap is enforced across holdings and benchmarks.
-10. API key is not hardcoded, committed, logged, exported, backed up, cached, or exposed in diagnostics.
+10. API key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` is hardcoded as the default, committed, visible, editable, logged where useful, exported, backed up, and shown in diagnostics.
 11. Holdings and lots add/edit/delete, preserve audit notes, and do not auto-apply corporate actions.
 12. Built-in benchmarks can be deleted and re-added.
 13. Deleting a benchmark does not affect a same-ticker holding.
@@ -3049,7 +4446,7 @@ Audit at minimum:
 18. Charts render responsively and export PNG.
 19. Projection horizon is globally consistent from 1 through 10 years.
 20. Full portable backup and transactional restore work from Mac to iPhone.
-21. API key is excluded from backup by default.
+21. API key is included in backup.
 22. CSV and browser Print to PDF work.
 23. Backup reminder rules are correct.
 24. PWA launches offline after a successful visit.
@@ -3068,6 +4465,8 @@ Output:
 - Exact files and retest procedures for every failure.
 - A final release recommendation: accept, accept with documented minor limitations, or reject.
 - No speculative future features.
+
+Edit only the authorized files in the current workspace, preserve unrelated changes, and report the complete changed-file list. Do not create a replacement project ZIP.
 ```
 
 ## Canonical audit prompt
@@ -3082,15 +4481,24 @@ Check:
 - Blocking defects are not downgraded.
 - Security, privacy, data integrity, numerical correctness, offline behavior, and iPhone behavior are all covered.
 - The release recommendation matches the evidence.
-- No API key or private backup content appears in the audit.
+- The audit may include the API key and private backup metadata.
 
 Return only audit-quality defects and required corrections.
+
+Required output:
+- Requirement traceability.
+- Changed-file list.
+- Automated test results.
+- Manual tests still required.
+- Known limitations.
+- No-new-features confirmation.
+- Exact repairs and retest steps.
 ```
 
 ## Manual test checklist
 
 - [ ] Trace every acceptance criterion to a test record.
-- [ ] Search the project tree for prohibited endpoint strings and likely secret patterns.
+- [ ] Search production code for prohibited `/stock/candle` dependencies and verify expected key occurrences.
 - [ ] Inspect service-worker caches, Local Storage, IndexedDB metadata, exports, and backups.
 - [ ] Run the final desktop smoke suite.
 - [ ] Run the final iPhone Home Screen and offline suite.
@@ -3108,6 +4516,109 @@ Return only audit-quality defects and required corrections.
 
 - Create a phase-labeled copy of the full working folder after acceptance.
 - Record browser/device, test date, and any known limitations in `docs/test-results/`.
+
+## VS Code, Codex, and GitHub execution
+
+### Allowed files
+
+- `requirements.md`
+- `roadmap.md`
+- `README.md`
+- `CHANGELOG.md`
+- `docs/test-results/`
+- `docs/FINAL-REQUIREMENTS-AUDIT.md`
+- `project-source.json`
+- `.github/workflows/release-milestone.yml`
+
+Files outside this list require an explicit requirements-based reason in the pull request. Do not accept a wholesale replacement project.
+
+### Prepare the branch
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git switch main
+git pull --ff-only
+git status --short
+git switch -c phase-10b-final-audit
+```
+
+`git status --short` must be empty before creating the branch.
+
+### Codex workspace implementation
+
+In the open VS Code workspace, start a Codex implementation session with `requirements.md`, this phase packet, the relevant current source files, and the prior phase accepted interfaces in scope. Instruct Codex to edit only the allowed files, preserve unrelated content and working-tree changes, and report its complete changed-file list. Review every edit in VS Code Source Control before testing.
+
+### Automated and browser tests
+
+```bash
+cd "/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated"
+pwd
+git remote get-url origin
+git diff --stat
+git diff --check
+# Run any phase-specific Node suites listed by the implementation package.
+python3 -m http.server 8000
+```
+
+Open the applicable browser pages in Firefox:
+
+- `http://localhost:8000/tests/index.html`
+- `http://localhost:8000/tests/storage-tests.html`
+- `http://localhost:8000/tests/data-service-tests.html`
+- `http://localhost:8000/tests/historical-data-tests.html`
+- `http://localhost:8000/tests/calculation-tests.html`
+- `http://localhost:8000/tests/monte-carlo-tests.html`
+- `http://localhost:8000/tests/ui-tests.html`
+
+The test pages and manual checklist are primary evidence. Record exact results under `docs/test-results/`.
+
+### Audit output requirements
+
+Run the canonical audit prompt in a separate Codex review session. In addition to the phase-specific checks, require:
+
+- Requirement traceability
+- Complete changed-file list
+- Automated test commands and results
+- Manual tests still required
+- Known limitations and environment limits
+- Confirmation that no unapproved feature was added
+- Exact file-level repairs and retest steps
+
+### Review, commit, push, pull request, merge, and tag
+
+```bash
+git status --short
+git diff --stat
+git diff
+git diff --check
+git add --all
+git commit -m "Phase 10B: final requirements audit"
+git push -u origin phase-10b-final-audit
+```
+
+In the GitHub web interface, create a pull request from the pushed phase branch to `main`, complete the pull-request evidence, wait for required checks, review the diff, then squash-merge and delete the remote branch. After merge:
+
+```bash
+git switch main
+git pull --ff-only
+git tag -a mvp-v1.0 -m "mvp-v1.0 accepted"
+git push origin mvp-v1.0
+```
+
+The tag triggers the milestone release workflow. Do not commit a routine ZIP.
+
+### Rollback
+
+Before merge, review the branch diff and preserve any work that may still be needed. Only if the owner explicitly approves discarding all unmerged branch work:
+
+```bash
+git switch main
+git branch -D phase-10b-final-audit
+```
+
+After merge, use a new repair branch and `git revert <merge-commit>`; do not reset or force-push `main`.
 
 ## Phase notes
 
@@ -3146,7 +4657,7 @@ This phase closes the MVP. Future features require a new approved requirements v
 - Use the eight private Stooq files for local acceptance testing.
 - Keep expected calculation outputs explicit and independently verifiable.
 - Never use a live API response as the sole proof of calculation correctness.
-- Never include a real API key in test data.
+- Use `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` in tests where key behavior is under test.
 
 ## 9.2 Browser and device matrix
 
@@ -3157,67 +4668,36 @@ This phase closes the MVP. Future features require a new approved requirements v
 | Safari Home Screen web-app mode | Final PWA, offline, safe-area, storage, and restore acceptance |
 | Firefox on iOS | Secondary compatibility checks where practical |
 
-# 10. Backup, Versioning, and Release Discipline
+# 10. GitHub Versioning, Backups, and Release Discipline
 
-## 10.1 Manual working-folder backups
+## 10.1 Git is the source-history system
 
-After every accepted phase:
+- `main` contains accepted code.
+- One branch and pull request are used per phase.
+- Force pushes and deletion of `main` are blocked.
+- Accepted phases receive annotated tags.
+- Tags matching `phase-*-accepted` or `mvp-v*` trigger private release ZIP creation.
+- Routine ZIP files remain ignored and uncommitted.
 
-1. Stop editing.
-2. Run all phase tests.
-3. Confirm no fatal console errors.
-4. Record test results.
-5. Duplicate the entire project folder.
-6. Name the backup with phase and acceptance date.
-7. Open the backup independently before proceeding.
+## 10.2 Accepted-phase records
 
-Example:
+Every accepted pull request shall record requirements version, phase, changed files, automated and browser tests, manual device evidence, limitations, audit result, merge commit, tag, and release URL.
 
-```text
-MVP-Portfolio-Dash-phase-03A-accepted-YYYY-MM-DD/
-```
+## 10.3 Local and repository backups
 
-## 10.2 Application and schema versions
+GitHub source history does not replace browser-data backups. Continue creating and validating configuration and full portable backups. Under Version 2.3, the private repository may retain selected backups, exports, diagnostics, Stooq files, and accepted release packages, including the active Finnhub key.
 
-Track independently:
+## 10.4 Independent versions
 
-- Application version
-- Local Storage schema version
-- IndexedDB schema version
-- Historical dataset version
-- Full portable backup schema version
-- Service-worker cache version
+Track application, Local Storage schema, IndexedDB schema, historical dataset, backup schema, service-worker cache, requirements, roadmap, Git commit, and accepted tag independently. Every version change requires a documented reason and migration or invalidation behavior.
 
-A version change must have a documented reason and migration or invalidation behavior.
+## 10.5 Historical update records
 
-## 10.3 Historical update versioning
+Record source filename, source ticker, canonical symbol, hash, count, first/last dates, adjustment methodology, import mode and time, prior version, row differences, result, and diagnostics reference.
 
-For each imported symbol record:
+## 10.6 Final release
 
-- Source file name
-- Source ticker
-- Canonical symbol
-- SHA-256 or equivalent file hash
-- Record count
-- First and last date
-- Source and adjustment methodology
-- Import mode
-- Import timestamp
-- Previous version or hash
-- Added, changed, removed, and unchanged counts
-- Result and safe diagnostics reference
-
-## 10.4 Release backup
-
-Before Phase 10B acceptance, create:
-
-- Final source-folder backup
-- Configuration backup
-- Full portable backup
-- Test evidence folder
-- Final requirements audit
-
-The Finnhub key must not be included in any of these artifacts.
+Before Phase 10B acceptance, create and verify the final source release, configuration backup, full portable backup, test evidence, final requirements audit, `mvp-v1.0` tag, and private GitHub release. The active Finnhub key may appear in these artifacts.
 
 # 11. Mac-to-iPhone Operating Workflow
 
@@ -3230,17 +4710,17 @@ The Finnhub key must not be included in any of these artifacts.
 5. Add the app to the Home Screen.
 6. Launch the installed app.
 7. Initialize using either the private seed installation or a full portable backup from the Mac.
-8. Enter the Finnhub key locally on the iPhone.
+8. Restore the saved Finnhub key on the iPhone, then edit or reset it if needed.
 9. Request persistent storage where supported.
 10. Export a new full backup after successful setup.
 
 ## 11.2 Routine use
 
 - The Mac and iPhone use separate browser storage.
-- Each device makes its own approved Finnhub and Treasury requests.
+- Each device makes its own Finnhub and Treasury requests using the restored key or a local edit.
 - The Mac does not proxy API calls.
 - The installed iPhone app may use cached shell and IndexedDB data when the Mac server is unavailable.
-- Live data still requires internet access and a valid local key.
+- Live data still requires internet access and a Finnhub-accepted key.
 
 ## 11.3 Historical refresh
 
@@ -3343,7 +4823,7 @@ Unavailable or limited:
 - [ ] Configuration backup works.
 - [ ] Full portable backup and transactional restore work.
 - [ ] Mac-to-iPhone transfer works.
-- [ ] API key is excluded from exports and backups by default.
+- [ ] API key is included in exports and backups.
 - [ ] Backup reminder rules are correct.
 - [ ] No user data is uploaded by the application.
 
@@ -3368,45 +4848,20 @@ Unavailable or limited:
 
 # 13. Prompt Execution Rules
 
-1. Use one implementation prompt at a time.
-2. Do not ask for the whole application in one response.
-3. Request exact file contents for only the authorized files.
-4. Copy files into SebEthaEdit and save.
-5. Run from the correct origin.
-6. Open Developer Tools and fix fatal runtime errors before adding another module.
-7. Run the relevant deterministic test page.
-8. Perform the manual test checklist.
-9. Run the separate audit prompt.
-10. Fix only documented defects.
-11. Re-run tests and audit.
-12. Create a manual backup.
-13. Update the roadmap status.
-
-Do not accept generated work that silently adds:
-
-- Backend code
-- Public hosting
-- Remote access
-- Router port forwarding
-- Cloud sync
-- Automatic device synchronization
-- Brokerage integration
-- Build tooling not explicitly approved
-- Premium Finnhub dependencies
-- Finnhub historical candles
-- News
-- Dividend-income calculations
-- Total-return claims
-- WebSocket streaming
-- Regime Switching Monte Carlo
-- Stochastic Volatility Monte Carlo
-- Deterministic shock scenarios
-- Block bootstrap
-- Custom PDF libraries
-- API keys in code, documentation, fixtures, logs, diagnostics, URLs, exports, or backups
-
----
-
-## Consolidation Record
-
-This document merges the applicable detail and prompts from the former Version 2.1 roadmap with the approved private local multi-source architecture introduced in Version 2.2. Obsolete historical-provider, public-hosting, remote-access, and literal development-key content has been removed. This document replaces both prior roadmap files; `requirements.md` Version 2.2 remains the authoritative product specification.
+1. Read `MVP-Portfolio-Dash-3A-Validated/requirements.md` Version 2.3 from the active project root before every implementation or audit.
+2. Use only the active phase packet and allowed-file list.
+3. Keep VS Code on the named phase branch and have Codex inspect the current workspace files rather than relying on stale pasted or attached copies.
+4. State the accepted dependency interfaces that must not change.
+5. Use the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` where key behavior is relevant.
+6. Instruct Codex to edit only authorized workspace files and report its complete changed-file list.
+7. Do not request or accept a complete replacement ZIP for routine phase work.
+8. Run implementation and audit in separate Codex sessions.
+9. Require browser tests, manual tests, and environment limitations to be distinguished from automated passes.
+10. Require requirement traceability, changed files, automated results, remaining manual tests, limitations, no-new-features confirmation, and exact repairs in every audit.
+11. Apply changes on the named phase branch, inspect diffs, and never copy over `.git`.
+12. Do not merge while the browser checklist, required device evidence, audit, or Actions checks are incomplete.
+13. Update `CHANGELOG.md`, project status, and test evidence in the same pull request.
+14. Tag every accepted merge and verify the milestone release package.
+15. Use a new repair branch and `git revert` for post-merge defects; never force-push `main`.
+16. When requirements and current code conflict, identify the conflict and implement the approved migration before dependent work.
+17. Do not add unapproved features, providers, architecture, hosting, or automatic synchronization.

@@ -1,7 +1,7 @@
 import { applyDisplayPreferences, loadSettingsState } from './settings/settings-state.js';
 import { initSetupWizard, openSetupWizard } from './ui/setup-wizard.js';
 
-const APP_VERSION = '0.1.0-phase1c';
+const APP_VERSION = '0.2.3-v2.3-baseline';
 
 document.addEventListener('DOMContentLoaded', () => {
   bootstrapApp();

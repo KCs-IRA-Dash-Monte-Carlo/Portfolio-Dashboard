@@ -1,5 +1,13 @@
 # Historical Data Validation Report
 
+**Dataset version:** `2026-07-09`
+
+**Manifest:** [`../data/historical/manifest.json`](../data/historical/manifest.json)
+
+This report records validation evidence for the fixed private seed dataset. The
+manifest and `requirements.md` are authoritative for runtime metadata and
+interpretation.
+
 ## Overall conclusion
 
 The eight local text files are sufficient for the current MVP's daily historical charts, aligned analytics, and eight-symbol correlated Monte Carlo design.
@@ -36,7 +44,10 @@ The eight local text files are sufficient for the current MVP's daily historical
 - Each security has exactly the same trading dates as SPY over its available range.
 - AVDV and AVUV begin on 2019-09-27; this limits the eight-symbol common history but still leaves more than twice the 756-observation target.
 - Historical volume is fractional in several ETF files. This is evidence that the files are adjusted or transformed rather than raw exchange OHLCV.
-- The exact adjustment method is not documented in the files. Treat the series as provider-adjusted with unknown methodology until the source confirms split and dividend treatment.
+- The source text files do not self-describe their adjustment method. The
+  project manifest and Requirements v2.3 classify them as split-adjusted and
+  dividend-unadjusted; analytics must retain that explicit label and must not
+  claim total-return accuracy.
 - Several extreme intraday highs or lows exist. Some coincide with known market-dislocation dates; others may be bad ticks. Close-based analytics are less affected, but candlestick rendering should preserve a quality flag rather than silently alter values.
 
 ## Recommended implementation policy
@@ -45,7 +56,8 @@ The eight local text files are sufficient for the current MVP's daily historical
 2. Parse and validate them through one local historical-data service.
 3. Normalize ticker suffixes such as `SPY.US` to canonical symbols such as `SPY`.
 4. Store normalized records in IndexedDB using a compound `[symbol, date]` key.
-5. Use `CLOSE` for return calculations and Monte Carlo only after assigning an explicit `adjustment: unknown-provider-adjusted` metadata value.
+5. Use `CLOSE` for return calculations and Monte Carlo with the manifest's
+   `priceAdjustment: split-adjusted` and `dividendAdjustment: none` metadata.
 6. Do not use fractional historical volume for liquidity or turnover analytics.
 7. Flag suspicious intraday wicks for Diagnostics and chart annotations; do not mutate source values silently.
 8. Track dataset version, file hash, import date, first date, last date, and observation count per symbol.

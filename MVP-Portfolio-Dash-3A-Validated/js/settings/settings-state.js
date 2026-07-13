@@ -1,6 +1,11 @@
+import {
+  FINNHUB_API_KEY_SOURCES,
+  PREDEFINED_FINNHUB_API_KEY
+} from '../config/finnhub.js';
+
 const STORAGE_KEY = 'mvpPortfolioDash.settings.v1';
-const APP_VERSION = '0.1.0-phase1c';
-const SETTINGS_SCHEMA_VERSION = 1;
+const APP_VERSION = '0.2.3-v2.3-baseline';
+const SETTINGS_SCHEMA_VERSION = 2;
 
 const DEFAULT_LOTS = [
   {
@@ -43,7 +48,7 @@ const DEFAULT_MONTE_CARLO_SETTINGS = Object.freeze({
 });
 
 const DEFAULT_EXPORT_PREFERENCES = Object.freeze({
-  includeApiKeyInBackup: false,
+  includeApiKeyInBackup: true,
   backupReminderEnabled: true,
   backupReminderDays: 30,
   backupReminderEditCount: 10
@@ -100,8 +105,9 @@ export function createDefaultSettingsState() {
     },
     api: {
       provider: 'finnhub',
-      apiKey: '',
-      hasKey: false,
+      apiKey: PREDEFINED_FINNHUB_API_KEY,
+      hasKey: true,
+      keySource: FINNHUB_API_KEY_SOURCES.PREDEFINED,
       lastUpdatedAt: null,
       storageWarningAccepted: false
     },
@@ -170,6 +176,21 @@ export function resetSettingsStateForTesting() {
 export function getSettingsStorageKey() {
   return STORAGE_KEY;
 }
+
+export function getActiveFinnhubApiKey(state = loadSettingsState()) {
+  return normalizeSettingsState(state).api.apiKey;
+}
+
+export function resetFinnhubApiKey(state) {
+  const next = normalizeSettingsState(state);
+  next.api.apiKey = PREDEFINED_FINNHUB_API_KEY;
+  next.api.hasKey = true;
+  next.api.keySource = FINNHUB_API_KEY_SOURCES.PREDEFINED;
+  next.api.lastUpdatedAt = new Date().toISOString();
+  return next;
+}
+
+export { PREDEFINED_FINNHUB_API_KEY, FINNHUB_API_KEY_SOURCES };
 
 export function computeActiveSymbols(holdings = [], benchmarks = []) {
   const symbols = new Set();
@@ -266,6 +287,16 @@ function normalizeSettingsState(state) {
   next.projectionHorizonYears = clampInteger(state.projectionHorizonYears, 1, 10, defaults.projectionHorizonYears);
   next.activeSymbols = computeActiveSymbols(next.holdings, next.benchmarks);
   next.api.hasKey = Boolean(next.api.apiKey);
+  if (!next.api.apiKey) {
+    next.api.apiKey = PREDEFINED_FINNHUB_API_KEY;
+    next.api.hasKey = true;
+    next.api.keySource = FINNHUB_API_KEY_SOURCES.PREDEFINED;
+  }
+  if (!Object.values(FINNHUB_API_KEY_SOURCES).includes(next.api.keySource)) {
+    next.api.keySource = next.api.apiKey === PREDEFINED_FINNHUB_API_KEY
+      ? FINNHUB_API_KEY_SOURCES.PREDEFINED
+      : FINNHUB_API_KEY_SOURCES.USER_OVERRIDE;
+  }
 
   return next;
 }

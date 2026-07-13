@@ -4,6 +4,7 @@ import {
   createHttpError,
   normalizeLiveDataError
 } from "./live-data-errors.js";
+import { PREDEFINED_FINNHUB_API_KEY } from "../config/finnhub.js";
 
 export const FINNHUB_CLIENT_VERSION = "2.2-phase-2f";
 export const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
@@ -325,14 +326,9 @@ function normalizeRequestQueue(requestQueue, explicitAdapter) {
 }
 
 function normalizeApiKeyProvider(provider) {
-  if (typeof provider !== "function") {
-    throw new LiveDataError(
-      LIVE_DATA_ERROR_CODES.API_KEY_MISSING,
-      "Provide a runtime Finnhub API-key reader from Settings.",
-      { scope: "configuration" }
-    );
-  }
-  return provider;
+  return typeof provider === "function"
+    ? provider
+    : () => PREDEFINED_FINNHUB_API_KEY;
 }
 
 function buildRequestUrl(baseUrl, endpoint, params, apiKey) {

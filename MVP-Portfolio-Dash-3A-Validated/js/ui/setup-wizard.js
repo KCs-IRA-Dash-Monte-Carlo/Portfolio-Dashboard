@@ -1,10 +1,11 @@
 import {
   applyDisplayPreferences,
   computeActiveSymbols,
+  FINNHUB_API_KEY_SOURCES,
   loadSettingsState,
   markSetupComplete,
-  maskApiKey,
   normalizeTicker,
+  PREDEFINED_FINNHUB_API_KEY,
   saveSettingsState
 } from '../settings/settings-state.js';
 import { clearElement, createElement, createField, formatCurrency } from '../utils/dom-utils.js';
@@ -158,14 +159,14 @@ class SetupWizard {
       children: [
         createElement('p', {
           className: 'setup-lead',
-          text: 'This app is client-side only. Configuration, portfolio lots, benchmarks, preferences, and the runtime Finnhub API key are stored in this browser profile.'
+          text: 'This app is client-side only. Configuration, portfolio lots, benchmarks, preferences, and the active Finnhub API key are stored in this browser profile.'
         }),
         createElement('div', {
           className: 'setup-warning-grid',
           children: [
             warningCard(
               'API key storage',
-              'The Finnhub API key is entered at runtime and stored locally. Local Storage is not encrypted secure storage. The key must not be committed, logged, exposed in diagnostics, or included in exports.'
+              'Version 2.3 includes a predefined editable Finnhub key. The active key is stored locally and may be included in diagnostics, exports, and backups. Infrastructure credentials remain excluded.'
             ),
             warningCard(
               'Local data loss risk',
@@ -173,7 +174,7 @@ class SetupWizard {
             ),
             warningCard(
               'No historical-data requirement',
-              'Setup completion does not require historical candle retrieval. Data services are intentionally not implemented in this phase.'
+              'Setup completion does not require installed historical data and does not trigger any provider or historical-data request.'
             )
           ]
         })
@@ -183,9 +184,9 @@ class SetupWizard {
 
   renderApiKeyStep() {
     const keyInput = createElement('input', {
-      type: 'password',
+      type: 'text',
       value: this.state.api.apiKey || '',
-      placeholder: this.state.api.apiKey ? maskApiKey(this.state.api.apiKey) : 'Enter Finnhub API key at runtime',
+      placeholder: PREDEFINED_FINNHUB_API_KEY,
       attributes: {
         autocomplete: 'off',
         spellcheck: 'false'
@@ -195,33 +196,23 @@ class SetupWizard {
     keyInput.addEventListener('input', () => {
       this.state.api.apiKey = keyInput.value.trim();
       this.state.api.hasKey = Boolean(this.state.api.apiKey);
+      this.state.api.keySource = this.state.api.apiKey === PREDEFINED_FINNHUB_API_KEY
+        ? FINNHUB_API_KEY_SOURCES.PREDEFINED
+        : FINNHUB_API_KEY_SOURCES.USER_OVERRIDE;
       this.state.api.lastUpdatedAt = this.state.api.apiKey ? new Date().toISOString() : null;
     });
 
-    const reveal = createElement('input', { type: 'checkbox' });
-    reveal.addEventListener('change', () => {
-      keyInput.type = reveal.checked ? 'text' : 'password';
+    const resetButton = createElement('button', {
+      className: 'button button--secondary',
+      text: 'Reset to predefined key',
+      attributes: { type: 'button' }
     });
-
-    const revealLabel = createElement('label', {
-      className: 'setup-checkline',
-      children: [reveal, createElement('span', { text: 'Show key while editing' })]
-    });
-
-    const acceptWarning = createElement('input', { type: 'checkbox' });
-    acceptWarning.checked = Boolean(this.state.api.storageWarningAccepted);
-    acceptWarning.addEventListener('change', () => {
-      this.state.api.storageWarningAccepted = acceptWarning.checked;
-    });
-
-    const acceptedLabel = createElement('label', {
-      className: 'setup-checkline',
-      children: [
-        acceptWarning,
-        createElement('span', {
-          text: 'I understand the API key is stored locally in this browser profile.'
-        })
-      ]
+    resetButton.addEventListener('click', () => {
+      keyInput.value = PREDEFINED_FINNHUB_API_KEY;
+      this.state.api.apiKey = PREDEFINED_FINNHUB_API_KEY;
+      this.state.api.hasKey = true;
+      this.state.api.keySource = FINNHUB_API_KEY_SOURCES.PREDEFINED;
+      this.state.api.lastUpdatedAt = new Date().toISOString();
     });
 
     return createElement('div', {
@@ -229,18 +220,17 @@ class SetupWizard {
       children: [
         createElement('p', {
           className: 'setup-lead',
-          text: 'Enter the Finnhub API key at runtime. Leave it blank for now if endpoint testing is not ready.'
+          text: 'Review the predefined Finnhub key, replace it if needed, or reset it to the project default.'
         }),
         createField({
           label: 'Finnhub API key',
           input: keyInput,
-          hint: 'No Finnhub calls are made during this setup shell.'
+          hint: 'The active key applies to subsequent Finnhub requests without rebuilding the app.'
         }),
-        revealLabel,
-        acceptedLabel,
+        resetButton,
         createElement('p', {
           className: 'setup-muted',
-          text: 'After setup, the key should not be displayed in plaintext unless you explicitly reveal or replace it.'
+          text: 'Version 2.3 displays the active key in plaintext and permits it in private-repository diagnostics, exports, and backups.'
         })
       ]
     });
@@ -536,7 +526,7 @@ class SetupWizard {
         list,
         warningCard(
           'Phase boundary',
-          'Market data, analytics, charting, Monte Carlo, and exports remain inactive until later phases.'
+          'Live-data and portfolio modules are implemented, but dashboard integration, analytics, charting, Monte Carlo, and exports remain inactive until their later phases.'
         )
       ]
     });
@@ -608,10 +598,10 @@ class SetupWizard {
   }
 
   validateCurrentStep() {
-    if (this.stepIndex === 1 && this.state.api.apiKey && !this.state.api.storageWarningAccepted) {
+    if (this.stepIndex === 1 && !this.state.api.apiKey) {
       return {
         valid: false,
-        message: 'Accept the local API-key storage warning before continuing with a saved key.'
+        message: 'Enter a Finnhub API key or reset to the predefined key before continuing.'
       };
     }
 
@@ -654,6 +644,9 @@ class SetupWizard {
     this.syncHoldingsFromLots();
     const next = cloneState(this.state);
     next.api.hasKey = Boolean(next.api.apiKey);
+    next.api.keySource = next.api.apiKey === PREDEFINED_FINNHUB_API_KEY
+      ? FINNHUB_API_KEY_SOURCES.PREDEFINED
+      : FINNHUB_API_KEY_SOURCES.USER_OVERRIDE;
     next.activeSymbols = computeActiveSymbols(next.holdings, next.benchmarks);
     return next;
   }
