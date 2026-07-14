@@ -2,6 +2,26 @@
 
 All notable project specification and repository-workflow changes are recorded here.
 
+## [2.3-phase-6a] - 2026-07-14
+
+- Implemented the Phase 6A Analytics Engine using only Historical Data Service
+  normalized Stooq close history.
+- Added split-adjusted, dividend-unadjusted price-return approximation utilities
+  for arithmetic and log returns, normalized performance, exact alignment,
+  CAGR, alpha, beta, and headline maximum drawdown.
+- Preserved fixed shares, floating market-value weights, acquisition dates, and
+  contribution-neutral performance; daily rebalancing and raw-account-value
+  drawdown are excluded.
+- Added deterministic fixtures for exact return intervals, partial-year CAGR,
+  configured benchmarks, risk-free-rate periodicity, contribution neutrality,
+  invalid requested dates, and unavailable states.
+- Completed local automated validation: calculations 51/51, data service 11/11,
+  historical data 38/38, Phase 2F Node 19/19, Phase 3B and security regressions,
+  plus analytics syntax/import checks.
+- No Monte Carlo, direct historical network request, Finnhub candle dependency,
+  or replacement project ZIP was added. Pull-request merge and accepted tag are
+  pending.
+
 ## [2.3-phase-5a] - 2026-07-14
 
 - Accepted Phase 5A through squash merge `b30cc30` and tag
