@@ -39,9 +39,9 @@
   <script type="module">
     import {
       createDefaultSettingsState,
+      DEFAULT_FINNHUB_API_KEY,
       getSettingsStorageKey,
       loadSettingsState,
-      PREDEFINED_FINNHUB_API_KEY,
       resetFinnhubApiKey,
       saveSettingsState,
       resetSettingsStateForTesting
@@ -97,12 +97,17 @@
       return defaultState.projectionHorizonYears >= 1 && defaultState.projectionHorizonYears <= 10;
     });
     check('settings storage key is local-only', () => getSettingsStorageKey() === 'mvpPortfolioDash.settings.v1');
-    check('Version 2.3 predefined key is the editable default', () => {
-      return defaultState.api.apiKey === PREDEFINED_FINNHUB_API_KEY
-        && defaultState.api.hasKey === true
-        && defaultState.api.keySource === 'predefined';
+    check('Version 2.3 ships without a Finnhub key', () => {
+      return defaultState.api.apiKey === DEFAULT_FINNHUB_API_KEY
+        && defaultState.api.hasKey === false
+        && defaultState.api.keySource === 'session-entry';
     });
     check('API key backup inclusion defaults off', () => defaultState.exportPreferences.includeApiKeyInBackup === false);
+    check('backup reminder configuration is absent', () => {
+      return !Object.keys(defaultState.exportPreferences).some((key) => key.includes('Reminder'))
+        && !Object.hasOwn(defaultState.backup, 'editsSinceLastBackup')
+        && !Object.hasOwn(defaultState.backup, 'dismissedReminderUntil');
+    });
 
     const diagnosticSnapshot = await new LiveDataDiagnostics({
       requestQueue: { getBudgetStatus: () => ({ available: true }) }
@@ -138,27 +143,31 @@
     });
 
     saveSettingsState(resetFinnhubApiKey(loadSettingsState()), { incrementEditCount: false });
-    check('API-key reset remains available in the page session', () => {
+    check('API-key clear removes the runtime session key', () => {
       const state = loadSettingsState();
-      return state.api.apiKey === PREDEFINED_FINNHUB_API_KEY && state.api.keySource === 'predefined';
+      return state.api.apiKey === '' && state.api.hasKey === false && state.api.keySource === 'session-entry';
     });
 
     resetSettingsStateForTesting();
 
     renderSummary();
     initSetupWizard();
+    check('wizard has six steps with no Backup Reminder step', () => {
+      const labels = [...document.querySelectorAll('.setup-steps li')].map((item) => item.textContent);
+      return labels.length === 6 && labels.includes('Projection Horizon') && !labels.includes('Backup Reminder');
+    });
 
     document.querySelector('.setup-footer .button--primary').click();
     const renderedKeyInput = document.querySelector('.setup-step input[type="password"]');
-    check('wizard renders the active API key in a masked field', () => {
-      return renderedKeyInput && renderedKeyInput.value === PREDEFINED_FINNHUB_API_KEY;
+    check('wizard renders an empty masked API-key field', () => {
+      return renderedKeyInput && renderedKeyInput.value === '';
     });
     renderedKeyInput.value = 'browser-ui-override';
     renderedKeyInput.dispatchEvent(new Event('input', { bubbles: true }));
     const resetButton = [...document.querySelectorAll('.setup-step button')]
-      .find((button) => button.textContent === 'Reset to predefined key');
+      .find((button) => button.textContent === 'Clear session key');
     resetButton.click();
-    check('wizard reset control restores the predefined key', () => renderedKeyInput.value === PREDEFINED_FINNHUB_API_KEY);
+    check('wizard clear control removes the session key', () => renderedKeyInput.value === '');
 
     document.querySelector('.setup-footer .button--primary').click();
     const lotRowsBeforeAdd = document.querySelectorAll('.setup-table tbody tr').length;
@@ -169,7 +178,8 @@
     const [tickerInput, sharesInput, dateInput, priceInput] = addedLotRow.querySelectorAll('input');
     check('setup Add lot appends a row and focuses its ticker', () => {
       return document.querySelectorAll('.setup-table tbody tr').length === lotRowsBeforeAdd + 1
-        && document.activeElement === tickerInput;
+        && document.activeElement === tickerInput
+        && tickerInput.value === '';
     });
 
     tickerInput.value = 'QQQ';
@@ -185,6 +195,37 @@
     dateInput.dispatchEvent(new Event('input', { bubbles: true }));
     priceInput.value = '100';
     priceInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+    document.querySelector('.setup-footer .button--primary').click();
+    const benchmarkRowsBeforeAdd = document.querySelectorAll('.setup-table tbody tr').length;
+    const addBenchmarkButton = [...document.querySelectorAll('.setup-step button')]
+      .find((button) => button.textContent === 'Add benchmark');
+    addBenchmarkButton.click();
+    const addedBenchmarkRow = [...document.querySelectorAll('.setup-table tbody tr')].at(-1);
+    const benchmarkTickerInput = addedBenchmarkRow.querySelector('input[aria-label="Benchmark ticker"]');
+    check('setup Add benchmark appends a blank row and focuses its ticker', () => {
+      return document.querySelectorAll('.setup-table tbody tr').length === benchmarkRowsBeforeAdd + 1
+        && document.activeElement === benchmarkTickerInput
+        && benchmarkTickerInput.value === '';
+    });
+    benchmarkTickerInput.value = 'QQQX';
+    benchmarkTickerInput.dispatchEvent(new Event('input', { bubbles: true }));
+    const benchmarkLabelInput = addedBenchmarkRow.querySelector('input[aria-label="Benchmark display label"]');
+    benchmarkLabelInput.value = 'QQQ test benchmark';
+    benchmarkLabelInput.dispatchEvent(new Event('input', { bubbles: true }));
+    document.querySelector('.setup-footer .button--primary').click();
+    check('Projection Horizon is the only setup preference control', () => {
+      return document.getElementById('setup-title').textContent === 'Projection Horizon'
+        && document.querySelectorAll('.setup-step select').length === 1
+        && !document.querySelector('.setup-step input[type="color"], .setup-step input[type="range"]')
+        && !document.querySelector('.setup-step').textContent.includes('Theme');
+    });
+    document.querySelector('.setup-footer .button--primary').click();
+    check('Projection Horizon proceeds directly to Review', () => document.getElementById('setup-title').textContent === 'Review');
+    document.querySelector('.setup-footer .button--ghost').click();
+    document.querySelector('.setup-footer .button--ghost').click();
+    document.querySelector('.setup-footer .button--ghost').click();
+
     const saveForLaterButton = [...document.querySelectorAll('.setup-footer button')]
       .find((button) => button.textContent === 'Save and close later');
     saveForLaterButton.click();

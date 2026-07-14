@@ -1,5 +1,6 @@
 import {
   applyDisplayPreferences,
+  getEffectiveTheme,
   loadSettingsState,
   saveSettingsState
 } from './settings/settings-state.js';
@@ -7,8 +8,14 @@ import { SYMBOL_REGISTRY_CHANGED_EVENT } from './core/symbol-registry.js';
 import { initSetupWizard, openSetupWizard } from './ui/setup-wizard.js';
 import { initPortfolioPhase3B } from './ui/portfolio-phase-3b.js?v=0.2.3-phase-3b-2';
 import { initBenchmarkManagement } from './ui/benchmark-manager.js?v=0.2.3-phase-4a-3';
+import {
+  CHART_DATA_STATES,
+  CHART_THEME_CHANGED_EVENT,
+  mountChartManagers
+} from './charts/chart-manager.js';
 
-const APP_VERSION = '0.2.3-v2.3-phase-4a';
+const APP_VERSION = '0.2.3-v2.3-phase-5a';
+const chartManagers = new Map();
 
 document.addEventListener('DOMContentLoaded', () => {
   bootstrapApp();
@@ -22,6 +29,7 @@ function bootstrapApp() {
   wireShellActions();
   initPortfolioPhase3B();
   initBenchmarkManagement();
+  initCharts();
   renderDependentDataState(state);
   registerServiceWorker();
   initSetupWizard();
@@ -80,6 +88,10 @@ function wireShellActions() {
   window.addEventListener(SYMBOL_REGISTRY_CHANGED_EVENT, (event) => {
     renderDependentDataState({ dependentDataState: event.detail?.dependentDataState });
   });
+  window.addEventListener('mvp:chart-data-ready', (event) => {
+    const manager = chartManagers.get(event.detail?.type);
+    if (manager) manager.setPreparedData(event.detail.prepared);
+  });
 }
 
 function wireThemeChoices() {
@@ -95,17 +107,20 @@ function wireThemeChoices() {
   };
 
   const currentState = loadSettingsState();
-  setActiveChoice(document.documentElement.dataset.theme || currentState.theme);
+  setActiveChoice(currentState.theme);
 
   buttons.forEach((button) => {
     button.addEventListener('click', () => {
       const theme = button.dataset.themeChoice;
-      if (!['light', 'dark'].includes(theme)) return;
+      if (!['system', 'light', 'dark'].includes(theme)) return;
 
       const nextState = loadSettingsState();
       nextState.theme = theme;
       applyDisplayPreferences(nextState);
       setActiveChoice(theme);
+      window.dispatchEvent(new CustomEvent(CHART_THEME_CHANGED_EVENT, {
+        detail: { theme: getEffectiveTheme(theme) }
+      }));
 
       try {
         saveSettingsState(nextState, { incrementEditCount: false });
@@ -113,6 +128,40 @@ function wireThemeChoices() {
         // The selected theme still applies for this page when storage is blocked.
       }
     });
+  });
+
+  const systemTheme = window.matchMedia?.('(prefers-color-scheme: dark)');
+  systemTheme?.addEventListener?.('change', () => {
+    const nextState = loadSettingsState();
+    if (nextState.theme !== 'system') return;
+    applyDisplayPreferences(nextState);
+    setActiveChoice('system');
+    window.dispatchEvent(new CustomEvent(CHART_THEME_CHANGED_EVENT, {
+      detail: { theme: getEffectiveTheme(nextState) }
+    }));
+  });
+}
+
+function initCharts() {
+  chartManagers.forEach((manager) => manager.destroy());
+  chartManagers.clear();
+  mountChartManagers(document, {
+    echarts: window.echarts,
+    theme: getEffectiveTheme(loadSettingsState())
+  }).forEach((manager, type) => chartManagers.set(type, manager));
+
+  window.addEventListener('mvp:portfolio-changed', () => {
+    chartManagers.forEach((manager) => {
+      if (manager.chart) {
+        manager.setStatus(CHART_DATA_STATES.STALE, 'Portfolio inputs changed. Supply refreshed prepared series to update this chart.');
+      }
+    });
+  });
+  window.addEventListener(SYMBOL_REGISTRY_CHANGED_EVENT, () => {
+    const comparison = chartManagers.get('comparison');
+    if (comparison?.chart) {
+      comparison.setStatus(CHART_DATA_STATES.STALE, 'Benchmark inputs changed. Supply refreshed prepared series to update this chart.');
+    }
   });
 }
 

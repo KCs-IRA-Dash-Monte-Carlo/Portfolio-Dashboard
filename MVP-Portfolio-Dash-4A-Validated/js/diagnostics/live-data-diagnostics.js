@@ -22,7 +22,7 @@ export class LiveDataDiagnostics {
     this.lastApiState = "not-tested";
     this.getApiKeySource = typeof options.getApiKeySource === "function"
       ? options.getApiKeySource
-      : () => FINNHUB_API_KEY_SOURCES.PREDEFINED;
+      : () => FINNHUB_API_KEY_SOURCES.SESSION;
   }
 
   async record(event) {

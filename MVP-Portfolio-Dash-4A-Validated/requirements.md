@@ -1,12 +1,12 @@
 # Retirement Portfolio Dashboard
-## Private Local Multi-Source MVP Requirements Specification
+## Personal-Use GitHub-Hosted Multi-Source MVP Requirements Specification
 
 **Version:** 2.3
 
-**Status:** Approved GitHub, VS Code, Codex, and predefined-key revision
+**Status:** Approved GitHub hosting, Firefox mobile, credential-exclusion, and Phase 5A revision
 
-**Primary Constraint:** Finnhub free-tier live data plus private local Stooq history  
-**Target Build Type:** Client-side PWA hosted on the owner's Mac over trusted home Wi-Fi; edited in VS Code with Codex and source controlled in a private GitHub repository
+**Primary Constraint:** Finnhub free-tier live data plus bundled Stooq history
+**Target Build Type:** Personal-use client-side PWA publicly hosted with GitHub Pages; edited in VS Code with Codex and source controlled in a public GitHub repository
 
 ---
 
@@ -16,9 +16,9 @@
 |---|---|
 | Requirements version | 2.3 |
 | Effective date | 2026-07-12 |
-| Working-environment revision | 2026-07-13 |
+| Working-environment revision | 2026-07-14 |
 | Supersedes | Version 2.2 in full |
-| Source repository | Private GitHub repository on `github.com` |
+| Source repository | Public GitHub repository on `github.com` |
 | Organization display name | `KCs IRA Dash - Monte Carlo` |
 | Organization login | `KCs-IRA-Dash-Monte-Carlo` |
 | Repository name | `Portfolio-Dashboard` |
@@ -28,28 +28,28 @@
 | Integrated editor runtime | Electron 37.7.0; Chromium 138.0.7204.251; Node.js 22.20.0; V8 13.8.258.32-electron.0 |
 | Development OS | Darwin x64 20.6.0 |
 | VS Code workspace and Git root | `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard` |
-| Active project root | `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated` |
+| Active project root | `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-4A-Validated` |
 | GitHub authentication | Git over SSH using the configured `git@github.com` remote |
-| Current accepted code baseline | Phase 3A |
-| Current active work | Version 2.3 baseline acceptance through Phase 3A; Phase 3B is next and not started |
+| Current accepted code baseline | Phase 4A |
+| Current active work | Phase 5A Chart Manager |
 
-Version 2.3 preserves the Version 2.2 product, data-source, device, and private deployment scope. It changes the development workflow and Finnhub-key policy:
+Version 2.3 preserves the parameter-driven product and approved data sources while revising deployment, mobile-browser, export, and credential policy:
 
-1. The private GitHub repository becomes the authoritative source-control and release-history system.
-2. The predefined Finnhub key is committed with the project and may appear in source, documentation, tests, logs, diagnostics, URLs, exports, and backups.
-3. The user may replace the predefined key during setup or later in Settings without rebuilding the application.
-4. The eight Stooq production files, portfolio backups, and exports may be committed to the private repository.
-5. Accepted milestones are tagged and may publish ZIP packages as private repository releases.
+1. The public GitHub repository is the authoritative source-control and release-history system and GitHub Pages is the MVP runtime host.
+2. No Finnhub key is bundled. A user-entered key must not appear in source, documentation, tests, logs, diagnostics, request URLs, exports, backups, or release artifacts.
+3. The owner may enter or replace a runtime-only Finnhub key without rebuilding the application.
+4. Public hosting, shared GitHub Pages URLs, remote internet access, optional cloud synchronization, and router port forwarding are within deployment scope, although GitHub Pages requires no router forwarding.
+5. Accepted milestones are tagged and may publish repository releases without replacement project ZIPs during phase implementation.
 6. Browser-based test pages remain the primary acceptance tests; Node and GitHub Actions checks supplement but do not replace them.
 
-The no-cloud-sync requirement applies to application data synchronization between the Mac and iPhone. It does not prohibit private source control, release packages, committed Stooq files, backups, or exports in the approved GitHub repository.
+The application remains for the owner's personal use. Public availability of the hosted URL does not create multi-user accounts, brokerage access, or permission to expose a Finnhub credential.
 
 ## 1. Project Objective
 
-Build a private, local, client-side retirement portfolio dashboard using:
+Build a personal-use, GitHub-hosted, client-side retirement portfolio dashboard using:
 
 - Finnhub free-tier U.S. stock and ETF endpoints for current quote snapshots and market context
-- Private Stooq daily historical files for split-adjusted, dividend-unadjusted OHLCV history
+- Bundled Stooq daily historical files for split-adjusted, dividend-unadjusted OHLCV history
 - An approved public no-key source for the risk-free rate
 
 The application shall provide:
@@ -63,15 +63,13 @@ The application shall provide:
 - GBM and Historical Bootstrap Monte Carlo projections
 - Local persistence
 - Offline-capable PWA shell
-- CSV export
-- Print-to-PDF reporting
 - Full portable backup and restore between the Mac and iPhone
 
 The application must function without an application backend and without premium Finnhub datasets.
 
 The application must be parameter-driven and reusable. It must not be hardcoded around the initial portfolio.
 
-The application is for the owner’s personal use only. Public hosting, public distribution of the bundled historical files, remote internet access, cloud synchronization, and router port forwarding are excluded from the MVP.
+The application is for the owner’s personal use only. However, public hosting via GitHub Pages, public distribution through shared URLs, remote internet access, cloud synchronization, and router port forwarding are included in scope.
 
 ## 2. Approved Data Sources and Operating Constraints
 
@@ -136,8 +134,7 @@ The MVP must not require:
 - Full tick data
 - Deep international coverage
 - Non-U.S. market data unless explicitly approved
-- Company news
-- Market news
+
 
 ### 2.4 Finnhub free-tier operating limits
 
@@ -163,18 +160,18 @@ Primary desktop target:
 
 Primary mobile target:
 
-- Safari on iPhone 13 mini
+- Mozilla Firefox on iPhone 13 mini
 - iOS 26.5
 - Device model: NLAD3LL/A
-- Access only while connected to the same trusted home Wi-Fi as the Mac host
+- Access through Mozilla Firefox to the GitHub-hosted URL over an internet connection
 
-Firefox on iOS may be tested as a secondary browser, but Safari and Home Screen web-app mode are the primary iPhone targets.
+Safari on iOS may be tested as a secondary browser, but Mozilla Firefox and Home Screen web-app mode opened from the GitHub-hosted URL are the primary iPhone targets.
 
 ### 3.3 iOS constraints
 
 Testing must cover:
 
-- Local HTTPS trust
+- GitHub Pages HTTPS access
 - Home Screen installation
 - Local Storage and IndexedDB persistence
 - Service-worker behavior
@@ -183,8 +180,7 @@ Testing must cover:
 - Full backup restore
 - Portrait and landscape layouts
 - Touch gestures
-- Storage-loss and eviction recovery
-- Mac host unavailable after the application has been cached
+- GitHub Pages unavailable after the application has been cached
 
 ### 3.4 JavaScript compatibility
 
@@ -219,11 +215,9 @@ The MVP must be:
 - No application backend
 - No brokerage connection
 - No user account system
-- No cloud synchronization
 - No required build system unless later explicitly approved
-- Hosted privately from the owner’s Mac
-- Accessible only on the trusted home Wi-Fi
-- Served from a stable local HTTPS origin for final iPhone PWA use
+- Hosted publicly on Github
+- Accessible via www on any browser with internet
 
 Required files:
 
@@ -245,39 +239,40 @@ Development shall use:
 - Darwin x64 20.6.0 on the development Mac
 - The Codex extension connected to the owner's ChatGPT Plus subscription
 - The VS Code Source Control view and integrated terminal for local Git inspection and commands
-- A private GitHub repository on `github.com`
+- A public GitHub repository on `github.com`
 - Organization display name: `KCs IRA Dash - Monte Carlo`
 - Organization login: `KCs-IRA-Dash-Monte-Carlo`
 - Repository name: `Portfolio-Dashboard`
 - SSH remote: `git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git`
 - VS Code workspace and Git root: `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard`
-- Active project root: `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/MVP-Portfolio-Dash-3A-Validated`
+- Active project root: `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard/`
 
-Open the Git repository root as the VS Code workspace and treat the nested active project root as the application working directory. Codex must read this project's `MVP-Portfolio-Dash-3A-Validated/requirements.md` and `MVP-Portfolio-Dash-3A-Validated/roadmap.md`; a similarly named file outside the active project root is not authoritative for this build unless the owner explicitly reconciles it. Codex must edit only phase-authorized files, preserve unrelated working-tree changes, and report the files it changed. Review every Codex edit in the Source Control diff before testing or committing.
+Open the Git repository root as the VS Code workspace and treat the nested active project root as the application working directory. Codex must read this project's `requirements.md` and `roadmap.md`; they are authoritative for this build. Codex must edit only phase-authorized files, preserve unrelated working-tree changes, and report the files it changed. Review every Codex edit in the Source Control diff before testing or committing.
 
 Git operations shall use the configured `origin` SSH URL. Verify it with `git remote get-url origin`; set it with `git remote set-url origin git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git` when necessary. GitHub pull requests, checks, merges, rulesets, and releases may be managed in the GitHub web interface. GitHub CLI is not required.
 
-The VS Code-bundled Electron, Chromium, Node.js, and V8 versions describe the editor and extension-host environment only. They do not replace the project's Firefox, Safari, browser-origin, service-worker, IndexedDB, or physical-device acceptance tests. A bundled VS Code Node.js version also does not guarantee that a `node` executable is available in the integrated terminal; terminal-based Node suites run only when `node --version` succeeds.
+The VS Code-bundled Electron, Chromium, Node.js, and V8 versions describe the editor and extension-host environment only. They do not replace the project's Firefox, Mozilla Firefox, browser-origin, service-worker, IndexedDB, or physical-device acceptance tests. A bundled VS Code Node.js version also does not guarantee that a `node` executable is available in the integrated terminal; terminal-based Node suites run only when `node --version` succeeds.
 
 `main` shall contain accepted work. Development from Phase 3B onward shall use one phase branch, one pull request, automated checks where available, and an accepted-phase tag. A one-person repository shall not require an outside reviewer or signed commits. Force pushes and deletion of `main` shall be blocked.
 
-The repository may contain the predefined Finnhub key, the eight approved Stooq production files, portfolio backups, exports, diagnostics, and accepted release packages. SSH private keys and local HTTPS private certificate keys remain excluded because they authenticate infrastructure rather than the Finnhub account.
+The repository may not contain a Finnhub key. It may contain the eight approved Stooq production files, credential-free portfolio backups, diagnostics, and accepted release artifacts. SSH private keys, GitHub tokens, and private certificate keys remain excluded.
 
-### 4.1 Private local-network hosting
+### 4.1 Hosting the MVP on GitHub
 
-The final personal-use origin must use a stable hostname or reserved local IP, a stable port, and HTTPS trusted by the iPhone.
+The MVP shall be hosted as a public static site with GitHub Pages from the approved public repository. The published HTTPS URL is the stable application origin and may be shared, while use of the application remains personal to the owner.
 
-The project must not require:
+Required hosting behavior:
 
-- Public DNS
-- Public static hosting
-- Router port forwarding
-- Dynamic DNS
-- Remote internet access
-- VPN access
-- Server-side API proxying
+- Publish only client-side static assets; do not add an application backend or server-side Finnhub proxy.
+- Open the hosted URL in Mozilla Firefox on desktop and iPhone.
+- Keep all Finnhub credentials out of repository content, GitHub Pages assets, logs, URLs, exports, backups, workflows, and release artifacts.
+- Preserve the relative asset paths, manifest, and service-worker scope required by a GitHub Pages project site.
+- Treat a change of Pages URL, custom domain, or path as an origin migration for browser-held application state.
+- Permit public distribution through shared URLs and remote internet access.
+- Permit optional cloud synchronization and router port forwarding within the owner's deployment scope; neither is required for the GitHub Pages runtime.
+- Keep VPN access and custom domains optional.
 
-Changing protocol, hostname, IP address, or port may create a separate browser origin and therefore separate Local Storage, IndexedDB, and service-worker state. The setup documentation must warn the user to keep the final origin stable.
+
 
 ## 5. Initial Portfolio Defaults
 
@@ -301,11 +296,10 @@ On first launch, present a setup wizard.
 
 The wizard must support:
 
-- A prepopulated, editable Finnhub API key field containing `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
-- Plaintext display and direct editing of the current key
-- Reset to the predefined key
+- An empty Finnhub API key field for optional runtime-only entry
+- Masked display and direct editing of the current session key
+- Clear-session-key control
 - Immediate validation through an approved Finnhub endpoint when requested
-- Warning that local browser data can be lost or evicted
 - Initial portfolio review
 - Add/edit/delete holdings
 - Add/edit/delete acquisition lots
@@ -317,42 +311,34 @@ The wizard must support:
 - Historical installation progress
 - Full-backup restore option for initializing the iPhone
 
-The predefined key must allow setup to proceed without manual credential entry. The user may replace it during setup or later in Settings. A changed key applies to subsequent Finnhub requests without rebuilding the application.
+Setup must allow the owner to proceed without entering a credential. A key entered during setup or later in Settings applies to subsequent Finnhub requests without rebuilding the application and must be re-entered after a page reload.
 
 Setup must not require successful historical-data installation or successful Finnhub validation before completion. If live authentication fails, the app shall retain the entered key, classify the error, and permit cached or local-history operation. If historical installation fails, the app shall allow quote-only or cached operation while disabling or marking unavailable modules that require history.
 
-On a new iPhone installation, the user may initialize the app by either:
+On a new iPhone installation, the user may initialize the app by:
 
-1. Installing the private bundled Stooq seed dataset, or
-2. Restoring a full portable backup exported from the Mac.
+1. Opening the published GitHub Pages URL in Mozilla Firefox.
 
-A restored full backup shall restore the Finnhub key when present. After successful iPhone setup, the app should request persistent storage where supported and recommend a full backup.
+A restored full backup must never restore or contain a Finnhub key. After successful iPhone setup, the app may request persistent storage where supported and recommend a credential-free full backup.
 
-## 7. Predefined Finnhub API Key Configuration
-
-The project-defined Finnhub API key is:
-
-```text
-d976km1r01qs09n8cp90d976km1r01qs09n8cp9g
-```
+## 7. Runtime Finnhub API Key Configuration
 
 Required behavior:
 
-- Store the predefined value in a plainly identifiable configuration or constants module.
-- Prepopulate setup and Settings with this value.
-- Permit the user to replace the value during setup and after setup.
-- Permit reset to the predefined value.
+- Ship an empty default and no credential value.
+- Accept an optional owner-entered value during setup and after setup.
+- Permit the owner to clear the current session value.
 - Apply a changed value to future Finnhub requests without rebuilding the app.
-- Preserve the current value in Local Storage, configuration backups, full portable backups, diagnostics, and repository-controlled fixtures where those components include settings.
+- Keep the current value only in page-session memory and exclude it from Local Storage, IndexedDB, configuration backups, full portable backups, diagnostics, and repository-controlled fixtures.
+- Send the value in the approved authentication header so it never appears in request URLs.
 - Treat authentication rejection, quota exhaustion, and malformed responses as ordinary normalized provider errors.
 
 Owner-approved exposure policy:
 
-- The key may be hardcoded in source code.
-- The key may be committed to GitHub.
-- The key may appear in `requirements.md`, `roadmap.md`, `README.md`, examples, test fixtures, console output, diagnostics, request URLs, screenshots, exports, backups, release packages, and audit records.
-- GitHub secret-scanning or push-protection warnings for this exact Finnhub key may be bypassed or disabled by an authorized repository or organization administrator.
-- No masking, redaction, rotation, opt-in warning, or exclusion rule is required for this key.
+- A Finnhub key may not be hardcoded or committed.
+- A Finnhub key may not appear in source, documentation, examples, tests, logs, diagnostics, URLs, screenshots, exports, backups, releases, or audit records.
+- Redaction remains defense in depth, not permission to persist or emit the credential.
+- GitHub secret scanning and push protection shall remain enabled where available.
 
 This policy applies only to the Finnhub free-account key. SSH private keys, GitHub authentication tokens, and private HTTPS certificate keys are not project content and must remain outside the repository.
 
@@ -412,14 +398,18 @@ Use:
 - No periodic rebalancing
 - Fixed share counts unless the user edits portfolio lots
 
-### 8.7 Taxes
+### 8.7 Realized gains and taxes
+
+Include:
+
+- Realized gains based on explicit user-recorded lot disposals
+- Disposal date, disposed shares, proceeds per share, cost-basis allocation, and realized gain/loss
+- A clear distinction between realized gains and unrealized gain/loss
 
 Exclude:
 
-- Realized gains
 - Tax optimization
 - Tax filing
-- Tax-lot disposal accounting
 - Wash-sale handling
 
 
@@ -601,18 +591,14 @@ Diagnostics must show:
 
 The app must not assume that persistent storage will be granted.
 
-### 11.5 Data-loss warning
+### 11.5 Backup and synchronization
 
-Because the application has no backend and no cloud sync, the app must warn users that browser-local data may be lost, cleared, or evicted, especially on iOS.
-
-Required mitigation:
+Required data-portability behavior:
 
 - Configuration backup export
 - Full portable backup export including historical data
 - Restore from backup import
 - Periodic export reminder
-- Warning during setup
-- Warning in Settings
 
 Periodic export reminder rule:
 
@@ -838,15 +824,15 @@ Each major dashboard module must support applicable states:
 - Historical dataset stale
 - Historical quality warning
 - Adjustment metadata missing
-- Local Mac host unavailable
-- Local certificate invalid
+- GitHub Pages host unavailable
+- Hosted HTTPS origin invalid
 - Application update unavailable
 - Offline shell active
 
 The UI must clearly distinguish:
 
 - Internet or Finnhub failure
-- Local Mac host failure
+- GitHub Pages host failure
 - Historical-data absence
 - Historical-data validation failure
 - Local cached operation
@@ -1012,6 +998,10 @@ If the filtered window lacks sufficient data, show a clear insufficient-data sta
 ## 22. Charts
 
 Use Apache ECharts.
+
+Phase 5A shall load the pinned unminified development distribution from
+`https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.js`. Phase 10A shall
+vendor the accepted distribution and remove the runtime CDN dependency.
 
 Required MVP charts:
 
@@ -1288,8 +1278,7 @@ Display projection horizon and date context on:
 - Forward-looking charts
 - Monte Carlo visualizations
 - Relevant summary cards
-- CSV exports
-- Print-to-PDF reports
+- PNG chart exports where the projected date is visible in the chart
 
 The UI must distinguish between:
 
@@ -1422,9 +1411,8 @@ Do not rely on color alone to communicate financial gain/loss or chart identity.
 
 Include a Settings area containing:
 
-- Current Finnhub API key shown in plaintext
-- Edit, save, validate, and reset-to-default controls for the Finnhub key
-- Display of the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` as the reset target
+- Empty-by-default, masked Finnhub API key entry for the current page session
+- Edit, validate, and clear-session controls for the Finnhub key
 - Theme selection
 - Accent color
 - Chart palette
@@ -1461,9 +1449,9 @@ Include Diagnostics showing:
 - Application version
 - Git commit, branch, and accepted-phase tag where available
 - Current browser origin
-- Local Mac host reachability when detectable
-- Current Finnhub API key in plaintext
-- Source of the active key: predefined default, user override, or restored backup
+- GitHub Pages reachability when detectable
+- Whether a runtime Finnhub key is present, without revealing its value
+- Source of the active key: current session entry or legacy migration
 - Last quote refresh
 - Last successful historical import
 - API status
@@ -1493,48 +1481,15 @@ Include Diagnostics showing:
 - Stale data warnings
 - Derived-data invalidation status
 
-Diagnostics and console logging may include the Finnhub key and complete Finnhub request URLs. User-entered portfolio notes must still be rendered safely.
+Diagnostics and console logging must never include a Finnhub key or an authentication header. Failed-request URLs and parameters must be credential-free. User-entered portfolio notes must still be rendered safely.
 
 ## 34. Export and Backup
 
-### 34.1 CSV export
-
-Support CSV export for:
-
-- Holdings
-- Lots
-- Portfolio analytics
-- Historical comparison data where available
-- Simulation summaries
-- Benchmark results
-- Projection horizon
-- Projection end date
-- Current Finnhub API key and live-data settings where configuration metadata is included
-
-### 34.2 Print-to-PDF report
-
-MVP report export shall use a print-optimized report page and the browser’s native Print to PDF function.
-
-The printable report should include:
-
-- Charts
-- Tables
-- Current prices
-- Portfolio analytics
-- Monte Carlo outputs
-- Projection horizon
-- Projection end date
-- Data freshness timestamps
-- Stale-data warnings
-- Current Finnhub API key in the report metadata or settings appendix
-
-Custom client-side PDF generation is deferred.
-
-### 34.3 PNG export
+### 34.1 PNG export
 
 Charts must support PNG export through ECharts-compatible functionality.
 
-### 34.4 Configuration backup
+### 34.2 Configuration backup
 
 Configuration backup shall include:
 
@@ -1544,14 +1499,13 @@ Configuration backup shall include:
 - Settings
 - Active-symbol preferences
 - Projection settings
-- Current Finnhub API key
-- Key source metadata: predefined, user override, or restored
+- A boolean indicating whether runtime live-data setup is needed, never the key value
 
-### 34.5 Full portable backup
+### 34.3 Full portable backup
 
 Full portable backup shall include:
 
-- All configuration backup fields, including the current Finnhub API key
+- All credential-free configuration backup fields
 - Normalized historical candles
 - Historical dataset metadata
 - Historical quality flags
@@ -1559,9 +1513,9 @@ Full portable backup shall include:
 - Cached metadata where practical
 - Diagnostics history where practical
 
-The full backup is the supported Mac-to-iPhone transfer method. Restoring a full backup shall restore the saved API key and permit later editing or reset to the predefined key.
+Full backup restore may initialize another browser profile, but the owner must enter the Finnhub key separately for that page session.
 
-### 34.6 Backup integrity
+### 34.4 Backup integrity
 
 Backup files must include:
 
@@ -1572,9 +1526,9 @@ Backup files must include:
 - Record counts
 - Integrity checksum where practical
 
-Restore must validate the entire file before changing stored data. Failed restore must not leave partial state. Portfolio backups and exports may be committed to the private GitHub repository.
+Restore must validate the entire file before changing stored data. Failed restore must not leave partial state. Backups must remain credential-free before they are synchronized or retained in the public repository.
 
-## 35. Progressive Web App and Home-Wi-Fi Access
+## 35. Progressive Web App and GitHub Pages Access
 
 Build the application as an installable PWA where supported.
 
@@ -1585,7 +1539,7 @@ Include:
 - Application icons
 - Offline shell caching
 - Static asset caching
-- Stable private HTTPS origin for final iPhone use
+- Stable GitHub Pages HTTPS origin for final iPhone use
 
 Cache:
 
@@ -1595,9 +1549,9 @@ Cache:
 - Fonts
 - Static assets
 - Vendored ECharts
-- Private bundled Stooq seed files or the resources required to reinstall them
+- Bundled Stooq seed files or the resources required to reinstall them
 
-When offline or when the Mac host is unavailable after installation, the iPhone application should:
+When offline or when GitHub Pages is unavailable after installation, the iPhone application should:
 
 - Continue to load from its service-worker cache
 - Display saved portfolio configuration
@@ -1607,7 +1561,7 @@ When offline or when the Mac host is unavailable after installation, the iPhone 
 - Clearly indicate that application updates are unavailable
 - Clearly indicate when live internet quotes are unavailable
 
-The Mac or local server is required for:
+The GitHub Pages host is required for:
 
 - Initial installation
 - Application updates
@@ -1616,7 +1570,7 @@ The Mac or local server is required for:
 
 Use explicit cache versioning so updates can invalidate stale static caches.
 
-The project must not open router ports or expose the local server to the public internet.
+Remote internet access is supported through the public GitHub Pages URL. Router port forwarding is in scope for optional owner-managed infrastructure but is not needed for the GitHub Pages deployment.
 
 ## 36. Input Validation and Data Integrity
 
@@ -1865,8 +1819,6 @@ Responsible for:
 
 Responsible for:
 
-- CSV export
-- Print report page
 - PNG export integration
 - Configuration backup
 - Full portable backup
@@ -1926,23 +1878,21 @@ Configurable items include:
 
 ## 43. Security and Privacy
 
-Because the application is client-side and privately hosted:
+Because the application is client-side and publicly hosted for the owner's personal use:
 
 - Do not send portfolio data to an application backend.
 - Do not upload selected historical files to an application service.
-- Do not transmit normalized candles or calculated return series to the Mac host after the page is loaded.
-- The approved private GitHub repository may contain source code, the predefined Finnhub key, Stooq files, backups, exports, diagnostics, and accepted release packages.
-- The Finnhub key may be displayed, logged, exported, backed up, committed, and included in request URLs under the Version 2.3 owner-approved policy.
+- Do not transmit normalized candles or calculated return series except through an explicitly configured owner-approved cloud synchronization feature.
+- The approved public GitHub repository may contain source code, Stooq files, credential-free backups, diagnostics, and accepted release artifacts.
+- A Finnhub key must remain runtime-only, masked in the UI, sent only in an authentication header, and excluded from every persisted or emitted artifact.
 - Document that Local Storage is not encrypted secure storage.
 - Sanitize user-entered text before rendering.
 - Avoid unsafe `innerHTML` use with untrusted values.
-- Use trusted local HTTPS for the final iPhone origin.
-- Restrict application access to the trusted home Wi-Fi.
-- Do not configure router port forwarding.
-- Do not expose the running application to the public internet.
-- Keep GitHub SSH private keys, GitHub tokens, and local HTTPS certificate private keys outside the repository.
+- Use GitHub Pages HTTPS for the final iPhone origin.
+- Support remote access through the public hosted URL while clearly stating that application use is personal.
+- Keep GitHub SSH private keys, GitHub tokens, Finnhub keys, and private certificate keys outside the repository.
 
-Finnhub and Treasury requests shall be made directly from the user’s browser. The Mac host must not act as an API proxy. GitHub is a development and archival system, not the application runtime or an automatic Mac-to-iPhone synchronization service.
+Finnhub and Treasury requests shall be made directly from the user’s browser. GitHub Pages is the static application runtime and must not act as an API proxy. Optional cloud synchronization may be added only with explicit owner configuration and credential exclusion.
 
 ## 44. Error Handling
 
@@ -1962,8 +1912,8 @@ Provide clear user-facing errors for:
 - Storage quota failure
 - IndexedDB failure
 - Service worker failure
-- Local Mac host unavailable
-- Local certificate invalid
+- GitHub Pages host unavailable
+- Hosted HTTPS origin invalid
 - Application update unavailable
 - GitHub workflow or release-package failure where surfaced in development documentation
 
@@ -1972,7 +1922,7 @@ Errors must:
 - State what failed.
 - State whether cached data is being used.
 - State whether the failure affects live data, local history, or application updates.
-- Preserve the active API key so the user can inspect or edit it.
+- Preserve the active API key only in current page-session memory so the user can edit or clear it.
 - Be recorded in Diagnostics where appropriate, including detailed request metadata when available.
 - Never fabricate a successful state or substitute data silently.
 
@@ -2021,8 +1971,8 @@ Browser test pages served from the project’s normal HTTP or HTTPS origin are t
 Test:
 
 - First launch
-- Setup wizard with the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
-- API key display, save, update, validation, reset, reload persistence, diagnostics display, export, backup, and restore
+- Setup wizard with an empty runtime-only Finnhub key field
+- API key entry, masked display, update, validation, clear, reload removal, diagnostic exclusion, URL exclusion, export exclusion, and backup exclusion
 - Add/edit/delete holdings and lots
 - Multiple lots per ticker
 - Add/delete/re-add built-in benchmarks
@@ -2033,21 +1983,17 @@ Test:
 - Private seed-history installation and manual Stooq replacement
 - Import conflict preview, rollback, and historical quality warnings
 - Corporate-action manual adjustment notice/workflow
-- Offline startup and Mac-host-unavailable startup after installation
+- Offline startup and GitHub Pages-unavailable startup after installation
 - Cached fallback and explicit availability states
 - Theme and projection-horizon persistence
 - Monte Carlo include/exclude, progress, cancellation, and stale-run behavior
-- CSV, PNG, and browser Print-to-PDF exports
+- PNG chart export
 - Configuration backup, full portable backup, and full iPhone restore
 - GitHub milestone ZIP generation for accepted tags
 
 ### 47.2 Data-source tests
 
-Use the predefined development key:
-
-```text
-d976km1r01qs09n8cp90d976km1r01qs09n8cp9g
-```
+Use an owner-supplied session key only for explicitly authorized live endpoint checks. Automated fixtures must use non-secret placeholders and must not emit credentials.
 
 Verify the permitted Finnhub endpoints:
 
@@ -2074,11 +2020,11 @@ Use deterministic fixtures to test cost basis, account value, portfolio weights,
 
 ### 47.5 Compatibility tests
 
-Test Firefox on macOS Big Sur 11.7.11, Safari on iPhone 13 mini iOS 26.5, Safari Home Screen mode, and Firefox iOS where practical.
+Test Firefox on macOS Big Sur 11.7.11, Mozilla Firefox on iPhone 13 mini iOS 26.5, Mozilla Firefox Home Screen mode, and Firefox iOS where practical.
 
-### 47.6 Home-Wi-Fi and offline tests
+### 47.6 GitHub Pages and offline tests
 
-Test stable local HTTPS, trusted iPhone certificate, same-Wi-Fi access, no router forwarding, Home Screen installation, offline relaunch, Mac-server-unavailable relaunch, cache-version updates, persistence status, and recovery after local data loss.
+Test the stable GitHub Pages HTTPS URL, public shared-URL access, Mozilla Firefox on iPhone, Home Screen installation, offline relaunch, Pages-unavailable relaunch, service-worker scope under the project path, cache-version updates, and persistence status. Optional cloud synchronization and router-forwarded owner infrastructure require separate tests when configured.
 
 ### 47.7 Responsive and mobile tests
 
@@ -2095,15 +2041,15 @@ GitHub Actions shall use an available repository or organization runner, default
 - No production dependency on `/stock/candle`
 - Milestone release ZIP creation from accepted tags
 
-The repository workflow must not claim that GitHub-hosted Linux checks validate Firefox/macOS, Safari/iPhone, IndexedDB on the real origin, service workers, local HTTPS trust, or touch behavior.
+The repository workflow must not claim that GitHub-hosted Linux checks validate Firefox/macOS, Mozilla Firefox/iPhone, IndexedDB on the real Pages origin, service workers, Home Screen behavior, or touch behavior.
 
 ## 48. Acceptance Criteria
 
 The MVP is accepted only when:
 
 1. Finnhub free-tier endpoints provide live quotes and market context without requiring premium datasets.
-2. The predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` is present in project configuration and is editable during and after setup.
-3. The active key persists, is visible in Settings and Diagnostics, and is included in configuration and full backups.
+2. No Finnhub key appears in project configuration, source, documentation, tests, logs, diagnostics, URLs, exports, backups, or releases.
+3. An owner-entered key remains available only for the current page session, is masked in the UI, and can be edited or cleared.
 4. Historical analytics use the committed private Stooq daily files rather than Finnhub historical candles.
 5. Historical prices are identified as split-adjusted and dividend-unadjusted, and returns are not presented as exact total return.
 6. The request queue enforces the approved Finnhub limits and the 25-symbol active limit is enforced across holdings and benchmarks.
@@ -2115,37 +2061,29 @@ The MVP is accepted only when:
 12. GBM and whole-vector Historical Bootstrap are the only MVP Monte Carlo methods.
 13. Simulations run in workers, report progress, support cancellation, and reject stale results.
 14. Required charts render on desktop and iPhone layouts and support PNG export.
-15. CSV, Print-to-PDF, configuration backup, full portable backup, and transactional restore work.
-16. A full backup can initialize or update the iPhone and restores the Finnhub key.
+15. PNG chart export, configuration backup, full portable backup, and transactional restore work; CSV and Print-to-PDF are absent from application deliverables.
+16. A credential-free full backup can initialize or update the iPhone, after which the key is entered separately for the session.
 17. Historical, API, offline, host, import, storage, stale, and quality states are distinct.
-18. The PWA loads offline after a successful visit and the installed iPhone app can launch from cached assets when the Mac server is unavailable.
-19. Firefox/macOS Big Sur and Safari/iPhone 13 mini compatibility tests pass.
+18. The PWA loads offline after a successful visit and the installed iPhone app can launch from cached assets when GitHub Pages is unavailable.
+19. Firefox/macOS Big Sur and Mozilla Firefox/iPhone 13 mini compatibility tests pass.
 20. Dark/light themes, accessibility basics, safe rendering, precision, and date behavior pass.
-21. The project remains parameter-driven, modular, client-side, and free of an application backend or automatic cloud synchronization.
-22. No public hosting, remote runtime access, VPN requirement, or router port forwarding is required.
+21. The project remains parameter-driven, modular, client-side, and free of an application backend; optional cloud synchronization remains explicitly configured.
+22. Public GitHub Pages hosting, shared-URL distribution, and remote runtime access work; cloud synchronization and router port forwarding are permitted in scope without being required for Pages.
 23. GitHub `main` represents accepted work, phase branches use pull requests, required checks pass, and accepted phases are tagged.
-24. The eight Stooq files, backups, exports, and accepted milestone packages may be retained in the private repository.
+24. The eight Stooq files, credential-free backups, and accepted milestone artifacts may be retained in the public repository.
 25. Browser test evidence remains authoritative where CI cannot reproduce the target environment.
-26. The final iPhone origin uses trusted, stable local HTTPS.
+26. The final iPhone origin uses the stable GitHub Pages HTTPS URL.
 
 ## 49. Explicit Non-Goals
 
 Do not add to MVP:
 
-- Public hosting
-- Public distribution of the private Stooq files
-- Remote internet access to the dashboard
-- Router port forwarding
-- VPN-based remote access
-- Cloud synchronization
-- Automatic cross-device synchronization
 - Application backend
 - Brokerage account connectivity
 - Automated trading
 - Order execution
 - Tax filing
 - Tax optimization
-- Realized-gain tax-lot disposal accounting
 - User accounts
 - Continuous quote polling
 - Automatic high-frequency polling
@@ -2166,7 +2104,8 @@ Do not add to MVP:
 - SEC filings
 - Ownership data
 - Company executives
-- Custom client-side PDF generation library
+- CSV export
+- Print-to-PDF reporting or a custom client-side PDF library
 
 ## 50. Future Version Candidates
 
@@ -2180,7 +2119,6 @@ Potential future features, only if explicitly approved later:
 - Regime Switching Monte Carlo
 - Stochastic Volatility Monte Carlo
 - Larger-symbol portfolio mode
-- Cloud sync
 - Paid data-provider support
 - Brokerage import
 - Advanced table filtering/search
@@ -2200,16 +2138,16 @@ The accepted Version 2.2 work through Phase 3A is preserved. Version 2.3 develop
 1. Open `/Users/nicholasoconnell/Desktop/Portfolio-Dashboard` as the VS Code workspace, use `MVP-Portfolio-Dash-3A-Validated` as the active project root, and verify that `origin` is `git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git`.
 2. Connect the Codex extension to the owner's ChatGPT Plus subscription and confirm the validated Phase 3A project is the workspace baseline.
 3. Commit and tag the exact Phase 3A baseline as `phase-3a-accepted-v2.2`.
-4. Create `v2.3-api-key-baseline`, implement the predefined/editable-key migration required by Sections 6, 7, 32, 33, 34, 43, 44, and 47, audit it, merge it, and tag `v2.3-baseline`.
+4. Maintain the runtime-only credential exclusion required by Sections 6, 7, 32, 33, 34, 43, 44, and 47.
 5. Create and complete `phase-3b`.
 6. Continue sequentially through Phase 4A, 5A, 6A, 7A, 7B, 7C, 8A, 9A, 9B, 10A, and 10B.
-7. Complete deferred Phase 1D on the target home Wi-Fi before final iPhone, offline, restore, and Phase 10 acceptance.
+7. Complete GitHub Pages deployment and final Firefox/iPhone, offline, restore, and Phase 10 acceptance.
 
 Phase descriptions remain:
 
 - Phase 0: approved endpoint verification
 - Phase 1A–1C: application foundation, persistence, and setup
-- Phase 1D: private home-Wi-Fi HTTPS
+- Phase 1D: GitHub Pages HTTPS deployment
 - Phase 2A–2F: request queue, Stooq pipeline, Historical Data Service, and Finnhub live services
 - Phase 3A: accepted portfolio model and engine
 - Phase 3B: portfolio UI and corporate-action workflow
@@ -2219,7 +2157,7 @@ Phase descriptions remain:
 - Phase 7A–7C: worker infrastructure, GBM, and Historical Bootstrap
 - Phase 8A: projection horizon and visuals
 - Phase 9A: full portable backup and restore
-- Phase 9B: exports and reporting
+- Phase 9B: PNG integration and credential-free backup support
 - Phase 10A: hardening and target-device validation
 - Phase 10B: final audit and release decision
 
@@ -2256,34 +2194,32 @@ The application must clearly communicate these limitations:
 - Dividend history and dividend-income calculations are excluded from MVP.
 - Historical data may be missing, stale, or insufficient for some symbols.
 - New symbols require compatible local history imports for historical analytics.
-- Mac and iPhone browser storage are separate.
-- No automatic cross-device synchronization exists.
-- Browser Local Storage and IndexedDB are not cloud backup.
-- iOS may evict local site data.
-- The Mac host is required for initial installation and application updates, but not for cached offline operation after installation.
-- Live quotes require internet access even when the Mac host is available.
+- Browser profiles maintain separate local state unless optional cloud synchronization is explicitly configured.
+- The GitHub Pages host is required for initial installation and application updates, but not for cached offline operation after installation.
+- Live quotes require internet access even when the application shell is cached.
 - Monte Carlo results are probabilistic model outputs, not guaranteed forecasts.
 - Historical drift, volatility, and correlations may not persist.
-- The dashboard is intended only for private use on the trusted home Wi-Fi.
+- The dashboard is intended for the owner's personal use even though its GitHub Pages URL is public and shareable.
 
 ## 54. Final MVP Product Definition
 
-The completed MVP is a private, customizable, parameter-driven retirement portfolio dashboard and installable PWA that:
+The completed MVP is a personal-use, customizable, parameter-driven retirement portfolio dashboard and installable PWA that:
 
-- Is hosted from the owner’s Mac on the trusted home Wi-Fi.
-- Is accessible on Firefox desktop and Safari on an iPhone 13 mini.
-- Is source controlled in the private `KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard` GitHub repository.
-- Uses the predefined, editable Finnhub key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` for live quote snapshots and market context.
-- Uses committed private Stooq files for split-adjusted, dividend-unadjusted daily history.
+- Is hosted publicly through GitHub Pages and can be reached remotely from a shared URL.
+- Is accessible on Firefox desktop and Mozilla Firefox on an iPhone 13 mini.
+- Is source controlled in the public `KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard` GitHub repository.
+- Accepts an optional runtime-only Finnhub key for live quote snapshots and market context without placing it in source, storage, URLs, diagnostics, exports, or backups.
+- Uses committed Stooq files for split-adjusted, dividend-unadjusted daily history.
 - Supports manual full-series Stooq replacement imports.
 - Tracks editable multi-lot U.S. stock and ETF holdings.
+- Includes realized gains based on explicit user-recorded lot disposals.
 - Provides price-return approximation analytics and configurable benchmark comparisons.
 - Provides GBM and Historical Bootstrap Monte Carlo projections in Web Workers.
 - Supports global 1–10 year projection horizons.
-- Provides responsive charts, CSV, PNG, browser Print-to-PDF, configuration backup, and full portable backup/restore.
-- Restores the Finnhub key with full portable backups and permits later editing or reset.
-- Stores application data locally on each device with no automatic cross-device synchronization.
-- Uses private GitHub source control and milestone releases without using GitHub as the application runtime.
+- Provides responsive charts, PNG export, configuration backup, and full portable backup/restore; CSV and Print-to-PDF are not application deliverables.
+- Keeps all backups credential-free and requires session key entry after restore.
+- Stores application data locally and permits optional explicitly configured cloud synchronization.
+- Uses public GitHub source control, GitHub Pages runtime hosting, and milestone releases.
 - Supports offline relaunch after installation and local caching.
 - Clearly reports missing, stale, insufficient, quote-only, provider, host, network, import, and storage states.
-- Requires no application backend, brokerage connection, public hosting, remote runtime access, cloud synchronization, or router port forwarding.
+- Requires no application backend or brokerage connection; public hosting, remote access, cloud synchronization, and router port forwarding are within scope.

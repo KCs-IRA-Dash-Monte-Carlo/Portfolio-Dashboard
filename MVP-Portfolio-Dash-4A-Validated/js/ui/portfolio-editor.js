@@ -36,6 +36,10 @@ export class PortfolioEditor {
 
   render() {
     const summary = summarizePortfolio(this.portfolio);
+    const holdingViews = this.portfolio.holdings.map((holding, index) => ({
+      holding,
+      summary: summary.holdings[index]
+    })).sort(compareHoldingViews);
     this.root.replaceChildren();
     this.root.insertAdjacentHTML('beforeend', `
       <div class="portfolio-toolbar">
@@ -53,8 +57,7 @@ export class PortfolioEditor {
       return;
     }
 
-    this.portfolio.holdings.forEach((holding, holdingIndex) => {
-      const holdingSummary = summary.holdings[holdingIndex];
+    holdingViews.forEach(({ holding, summary: holdingSummary }) => {
       const holdingSummaryText = `${holding.active ? 'Active holding' : 'Inactive holding'} · ${formatNumber(holdingSummary.shares)} shares · ${formatCurrency(holdingSummary.costBasis)} cost basis`;
       const article = document.createElement('article');
       article.className = 'holding-card';
@@ -63,9 +66,9 @@ export class PortfolioEditor {
         <header class="holding-card__header">
           <div class="holding-card__summary"><h3>${escapeHtml(holding.ticker)}</h3><p title="${escapeHtml(holdingSummaryText)}">${escapeHtml(holdingSummaryText)}</p></div>
           <div class="holding-card__actions">
-            <button class="button button--secondary" type="button" data-portfolio-action="add-lot">Add lot</button>
-            <button class="button button--secondary" type="button" data-portfolio-action="edit-holding">Edit holding</button>
-            <button class="button button--danger" type="button" data-portfolio-action="delete-holding">Delete holding</button>
+            <button class="button button--secondary" type="button" data-portfolio-action="add-lot" aria-label="Add ${escapeHtml(holding.ticker)} lot">Add lot</button>
+            <button class="button button--secondary" type="button" data-portfolio-action="edit-holding" aria-label="Edit ${escapeHtml(holding.ticker)} holding">Edit</button>
+            <button class="button button--danger" type="button" data-portfolio-action="delete-holding" aria-label="Delete ${escapeHtml(holding.ticker)} holding">Delete</button>
           </div>
         </header>
         <div class="lot-table-scroll"><table class="lot-table">
@@ -73,19 +76,20 @@ export class PortfolioEditor {
           <tbody></tbody>
         </table></div>`;
       const tbody = article.querySelector('tbody');
-      holding.lots.forEach((lot, lotIndex) => {
+      const lotCosts = new Map(holdingSummary.lots.map((lot) => [lot.lotId, lot.cost]));
+      [...holding.lots].sort(compareLotsByAcquisitionDate).forEach((lot) => {
         const row = document.createElement('tr');
         row.dataset.lotId = lot.id;
         row.innerHTML = `
           <td data-label="Acquired">${escapeHtml(formatShortDate(lot.acquisitionDate))}</td>
           <td data-label="Shares">${formatNumber(lot.shares)}</td>
           <td data-label="Price/share">${formatCurrency(lot.purchasePricePerShare)}</td>
-          <td data-label="Invested cost">${formatCurrency(holdingSummary.lots[lotIndex].cost)}</td>
+          <td data-label="Invested cost">${formatCurrency(lotCosts.get(lot.id))}</td>
           <td data-label="Audit note" class="lot-note"></td>
           <td data-label="Actions"><div class="lot-actions">
-            <button class="button button--secondary" type="button" data-portfolio-action="edit-lot">Edit</button>
-            <button class="button button--secondary" type="button" data-portfolio-action="manual-adjustment">Manual adjustment</button>
-            <button class="button button--danger" type="button" data-portfolio-action="delete-lot">Delete</button>
+            <button class="button button--secondary" type="button" data-portfolio-action="edit-lot" aria-label="Edit ${escapeHtml(holding.ticker)} lot acquired ${escapeHtml(lot.acquisitionDate)}">Edit</button>
+            <button class="button button--secondary" type="button" data-portfolio-action="manual-adjustment" aria-label="Manually adjust ${escapeHtml(holding.ticker)} lot acquired ${escapeHtml(lot.acquisitionDate)}" title="Manual adjustment">Adjust</button>
+            <button class="button button--danger" type="button" data-portfolio-action="delete-lot" aria-label="Delete ${escapeHtml(holding.ticker)} lot acquired ${escapeHtml(lot.acquisitionDate)}">Delete</button>
           </div></td>`;
         const noteCell = row.querySelector('.lot-note');
         noteCell.textContent = lot.auditNote || '—';
@@ -234,6 +238,27 @@ export class PortfolioEditor {
     const related = selector && this.root.querySelector(`[data-holding-id="${CSS.escape(selector)}"] button`);
     (related || fallback)?.focus({ preventScroll: true });
   }
+}
+
+function compareHoldingViews(left, right) {
+  const dateComparison = earliestAcquisitionDate(left.holding)
+    .localeCompare(earliestAcquisitionDate(right.holding));
+  if (dateComparison !== 0) return dateComparison;
+
+  const costComparison = right.summary.costBasis - left.summary.costBasis;
+  if (costComparison !== 0) return costComparison;
+  return left.holding.ticker.localeCompare(right.holding.ticker);
+}
+
+function compareLotsByAcquisitionDate(left, right) {
+  const dateComparison = left.acquisitionDate.localeCompare(right.acquisitionDate);
+  return dateComparison || left.id.localeCompare(right.id);
+}
+
+function earliestAcquisitionDate(holding) {
+  return holding.lots.reduce((earliest, lot) => (
+    !earliest || lot.acquisitionDate < earliest ? lot.acquisitionDate : earliest
+  ), '');
 }
 
 function formatShortDate(value) {

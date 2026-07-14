@@ -1,6 +1,6 @@
 import {
   FINNHUB_API_KEY_SOURCES,
-  PREDEFINED_FINNHUB_API_KEY
+  DEFAULT_FINNHUB_API_KEY
 } from "../config/finnhub.js";
 
 export const APP_VERSION = "0.2.3-v2.3-phase-3b";
@@ -84,8 +84,8 @@ export const INDEXED_DB_STORE_DEFINITIONS = Object.freeze([
 export function createDefaultApiSettingsMetadata() {
   return {
     provider: "finnhub",
-    hasApiKey: Boolean(PREDEFINED_FINNHUB_API_KEY),
-    keySource: FINNHUB_API_KEY_SOURCES.PREDEFINED,
+    hasApiKey: Boolean(DEFAULT_FINNHUB_API_KEY),
+    keySource: FINNHUB_API_KEY_SOURCES.SESSION,
     apiKeyLastUpdatedAt: null,
     lastCapabilityCheckAt: null
   };
@@ -130,7 +130,7 @@ export function sanitizeApiSettings(apiSettings = {}) {
   normalized.hasApiKey = Boolean(normalized.hasApiKey);
   normalized.keySource = Object.values(FINNHUB_API_KEY_SOURCES).includes(normalized.keySource)
     ? normalized.keySource
-    : FINNHUB_API_KEY_SOURCES.PREDEFINED;
+    : FINNHUB_API_KEY_SOURCES.SESSION;
   return normalized;
 }
 

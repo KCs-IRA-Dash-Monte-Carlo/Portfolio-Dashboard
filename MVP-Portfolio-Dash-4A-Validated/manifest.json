@@ -1,7 +1,7 @@
 {
   "name": "Retirement Portfolio Dashboard",
   "short_name": "Portfolio Dash",
-  "description": "Local client-side retirement portfolio dashboard PWA shell.",
+  "description": "Personal-use client-side retirement portfolio dashboard hosted with GitHub Pages.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

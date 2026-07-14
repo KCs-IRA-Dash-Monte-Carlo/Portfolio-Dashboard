@@ -2,7 +2,7 @@
 
 **Validated:** 2026-07-13
 
-**Scope:** Authoritative `requirements.md` Version 2.3 and `roadmap.md` through Phase 3A
+**Scope:** Historical evidence through Phase 3A; credential and hosting policy is superseded by the 2026-07-14 requirements revision
 
 **Result:** Pass for the local automated baseline; later-phase and physical-iPhone acceptance remain outside this gate
 
@@ -31,10 +31,10 @@ The browser harnesses were served from `http://127.0.0.1:8000/` and exercised in
 
 Focused JavaScriptCore checks also passed for:
 
-- predefined key default, persisted override, and reset;
-- Version 2.3 backup inclusion and diagnostics exposure;
-- Local Storage JSON and API-key round trip;
-- default Finnhub client key provider; and
+- legacy key migration and storage scrubbing;
+- backup and diagnostics credential exclusion;
+- Local Storage JSON sanitization;
+- runtime Finnhub client key provider; and
 - exact default portfolio cost basis of `214442.69986`.
 
 Additional repository checks passed:
@@ -43,7 +43,7 @@ Additional repository checks passed:
 - all eight historical seed files match manifest SHA-256, byte length, and record count;
 - aggregate historical record count is 34,122;
 - production JavaScript contains no Finnhub `/stock/candle` dependency;
-- the predefined Finnhub key has one production-code source of truth; and
+- no owner credential was required for the deterministic suite; and
 - `git diff --check` reports no whitespace errors.
 
 ## Gate boundary

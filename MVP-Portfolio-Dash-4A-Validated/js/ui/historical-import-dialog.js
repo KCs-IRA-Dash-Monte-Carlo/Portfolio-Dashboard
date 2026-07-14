@@ -159,7 +159,7 @@ export class HistoricalImportDialog {
     header.append(title, closeButton);
 
     const instructions = this.document.createElement("p");
-    instructions.textContent = "Select one or more complete Stooq daily text files. Desktop browsers and Safari on iPhone can choose multiple files from the system file picker or iOS Files.";
+    instructions.textContent = "Select one or more complete Stooq daily text files. Desktop browsers and Mozilla Firefox on iPhone can choose multiple files from the system file picker or iOS Files.";
 
     const fileInput = this.document.createElement("input");
     fileInput.type = "file";

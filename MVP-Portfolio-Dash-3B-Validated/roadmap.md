@@ -7,9 +7,9 @@
 **Supersedes:** the separate Version 2.1 and Version 2.2 roadmap documents  
 **Prepared for:** private personal use on the owner's MacBook and iPhone 13 mini  
 **Primary desktop target:** Mozilla Firefox on macOS Big Sur 11.7.11  
-**Primary mobile target:** Safari Home Screen web app on iPhone 13 mini, iOS 26.5  
+**Primary mobile target:** Mozilla Firefox Home Screen web app on iPhone 13 mini, iOS 26.5
 **Hosting scope:** private static HTTPS from the owner's Mac, same trusted home Wi-Fi only  
-**Live data:** Finnhub free-tier endpoints using predefined editable key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
+**Live data:** Finnhub free-tier endpoints using predefined editable key `[runtime-only owner entry]`
 **Historical data:** private Stooq split-adjusted, dividend-unadjusted daily text files  
 **Synchronization:** manual full portable backup and restore; no automatic sync  
 
@@ -49,7 +49,7 @@
 Version 2.3 preserves the Version 2.2 application scope and phase architecture while changing:
 
 - Source control through the VS Code workspace, Source Control view, integrated terminal, and Git over the confirmed GitHub SSH remote, with phase branches, pull requests, Actions checks, tags, and milestone releases.
-- The Finnhub key from runtime-only protected input to the predefined editable value `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` that may appear in source, documentation, tests, diagnostics, logs, exports, backups, and releases.
+- The Finnhub key from runtime-only protected input to the predefined editable value `[runtime-only owner entry]` that may appear in source, documentation, tests, diagnostics, logs, exports, backups, and releases.
 - The source status so Phase 3A plus the Version 2.3 migration is the accepted baseline and Phase 3B is the next, not-started branch.
 - Implementation through the Codex extension editing authorized workspace files directly and reporting its changed-file list.
 - Acceptance so browser test pages remain primary and CI remains supplemental.
@@ -210,7 +210,7 @@ Phase 1D does not block desktop phases, but it blocks final Home Screen, offline
 7. Keep the application client-side only; do not add an application backend, user accounts, brokerage integration, automatic cloud sync, public runtime hosting, or remote access.
 8. Use Finnhub only for `/quote`, `/search`, `/stock/symbol`, `/stock/profile2`, `/stock/peers`, `/stock/market-status`, `/stock/market-holiday`, and `/stock/metric`.
 9. Do not call or depend on Finnhub `/stock/candle`.
-10. Use the predefined editable Finnhub key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`. It may be hardcoded, committed, displayed, logged, exported, backed up, and included in releases.
+10. Use the predefined editable Finnhub key `[runtime-only owner entry]`. It may be hardcoded, committed, displayed, logged, exported, backed up, and included in releases.
 11. Keep GitHub SSH private keys, GitHub tokens, and private HTTPS certificate keys outside the repository.
 12. Use committed Stooq files for split-adjusted, dividend-unadjusted daily OHLCV.
 13. Store normalized history in IndexedDB and read analytical history only through the Historical Data Service.
@@ -301,7 +301,7 @@ Codex works directly in the open workspace. Each phase session must use the nest
 
 Use a separate Codex review session for the phase audit. The audit session reviews the workspace diff and test evidence; it does not assume the implementation session was correct.
 
-VS Code's Electron, Chromium, Node.js, and V8 are editor runtime components. They are not the deployed application runtime and do not satisfy Firefox, Safari, normal-origin, service-worker, IndexedDB, or iPhone acceptance gates. Run terminal Node suites only when `node --version` confirms a shell-accessible Node executable.
+VS Code's Electron, Chromium, Node.js, and V8 are editor runtime components. They are not the deployed application runtime and do not satisfy Firefox, Mozilla Firefox, normal-origin, service-worker, IndexedDB, or iPhone acceptance gates. Run terminal Node suites only when `node --version` confirms a shell-accessible Node executable.
 
 ## 4.4 One-person branch protection
 
@@ -638,14 +638,14 @@ Verify the Finnhub free-tier live-data endpoints retained by Version 2.3 and doc
 ## Dependencies
 
 - Authoritative `requirements.md` Version 2.3
-- Predefined editable Finnhub key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
+- Predefined editable Finnhub key `[runtime-only owner entry]`
 - No production application code
 
 ## Required deliverables
 
 - `docs/phase-00-endpoint-verification.md`
 - Recorded response shapes and failure classifications
-- Source and documentation may contain `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
+- Source and documentation may contain `[runtime-only owner entry]`
 
 ## Canonical implementation prompt
 
@@ -654,7 +654,7 @@ You are validating Phase 0 for my private client-side PWA retirement portfolio d
 
 Authoritative spec: requirements.md, Version 2.3.
 Do not write application code.
-Use the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` in the requested file and examples.
+Use the predefined key `[runtime-only owner entry]` in the requested file and examples.
 
 Create or update docs/phase-00-endpoint-verification.md for these permitted Finnhub endpoints:
 - /quote
@@ -672,7 +672,7 @@ Required symbols:
 DCO, VTV, ONEQ, SPY, IWM, AVUV, AVDV, PSCH
 
 Include:
-1. Manual browser or test-page procedures using `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` or a user override.
+1. Manual browser or test-page procedures using `[runtime-only owner entry]` or a user override.
 2. Expected response fields to inspect.
 3. Failure modes and normalized classifications.
 4. How to distinguish offline, invalid key, rate limit, temporary provider failure, missing symbol, and endpoint entitlement failure.
@@ -882,7 +882,7 @@ Requirements:
 3. Include schema versioning and migration hooks.
 4. Use debounced or batched writes where practical.
 5. Handle quota, unavailable storage, blocked upgrade, aborted transaction, and corrupted value errors visibly.
-6. Fixtures and diagnostics may include `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`.
+6. Fixtures and diagnostics may include `[runtime-only owner entry]`.
 7. Capability checks include Local Storage, IndexedDB, service workers, Web Workers, fetch, Promise, ECharts availability, Blob/download support, File API, and optional StorageManager APIs.
 8. Edit the authorized workspace files directly and add deterministic manual tests.
 ```
@@ -901,7 +901,7 @@ Check:
 - Quota and unavailable-storage errors are normalized.
 - Capability diagnostics may show the active Finnhub key.
 - The predefined Finnhub key may appear in code and fixtures.
-- Firefox/macOS Big Sur and Safari/iOS compatibility risks are identified.
+- Firefox/macOS Big Sur and Mozilla Firefox/iOS compatibility risks are identified.
 
 Return pass/fail, data-integrity risks, migration risks, and exact fixes. Do not add application features.
 ```
@@ -963,7 +963,7 @@ Do not make Finnhub calls or parse Stooq files in this phase.
 
 Requirements:
 1. First launch shows the setup wizard.
-2. Finnhub key entry is prepopulated with `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` and accepts user updates.
+2. Finnhub key entry is prepopulated with `[runtime-only owner entry]` and accepts user updates.
 3. State that the key is stored locally and is included in diagnostics, exports, and backups under Version 2.3.
 4. Warn that Local Storage and IndexedDB can be lost or evicted, especially on iOS.
 5. Prepopulate editable default lots:
@@ -1031,7 +1031,7 @@ Completed. Audit copy against the final Version 2.3 labels whenever setup text c
 
 ## Purpose
 
-Establish a stable trusted local HTTPS origin for Safari and Home Screen operation on the iPhone 13 mini while keeping the app private to the home Wi-Fi.
+Establish a stable trusted local HTTPS origin for Mozilla Firefox and Home Screen operation on the iPhone 13 mini while keeping the app private to the home Wi-Fi.
 
 ## Dependencies
 
@@ -1059,7 +1059,7 @@ Do not add a backend, public hosting, remote access, VPN requirement, dynamic DN
 
 Target environment:
 - MacBook on macOS Big Sur 11.7.11
-- Safari on iPhone 13 mini, iOS 26.5
+- Mozilla Firefox on iPhone 13 mini, iOS 26.5
 - Same trusted home Wi-Fi only
 
 Create docs/private-https-iphone-setup.md covering:
@@ -1071,7 +1071,7 @@ Create docs/private-https-iphone-setup.md covering:
 6. Binding only as broadly as required for the home LAN.
 7. Allowing the server through the Mac firewall.
 8. Confirming no router port forwarding.
-9. Opening the app in Safari without a certificate warning.
+9. Opening the app in Mozilla Firefox without a certificate warning.
 10. Adding the app to the Home Screen.
 11. Confirming manifest, icons, standalone display, service worker, and IndexedDB.
 12. Stopping the Mac server and testing offline relaunch from the Home Screen.
@@ -1092,7 +1092,7 @@ Check:
 - iPhone trust steps are explicit.
 - Mac firewall steps do not require public exposure.
 - Router port forwarding, public hosting, remote access, and VPN are absent.
-- Safari and Home Screen tests are included.
+- Mozilla Firefox and Home Screen tests are included.
 - Offline relaunch after stopping the Mac server is included.
 - Origin-specific storage warning is included.
 - No key or private market-data content appears.
@@ -1103,7 +1103,7 @@ Return blocking setup risks, exact fixes, and a final acceptance checklist. Do n
 ## Manual test checklist
 
 - [ ] Confirm Mac and iPhone are on the same home Wi-Fi.
-- [ ] Open the final HTTPS URL in Safari without a warning.
+- [ ] Open the final HTTPS URL in Mozilla Firefox without a warning.
 - [ ] Verify the URL uses the final stable protocol, host, and port.
 - [ ] Install to Home Screen and launch in standalone mode.
 - [ ] Confirm the service worker controls the page.
@@ -1655,7 +1655,7 @@ Build or repair Phase 2F.
 
 Authoritative spec: requirements.md, Version 2.3.
 Use the existing Request Queue.
-Use predefined editable key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`; hardcoding and logging are permitted.
+Use predefined editable key `[runtime-only owner entry]`; hardcoding and logging are permitted.
 Do not call /stock/candle.
 
 Permitted Finnhub endpoints:
@@ -1677,7 +1677,7 @@ Create or update:
 - tests/data-service-tests.html
 
 Requirements:
-1. Initialize from predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` and allow a persisted user override.
+1. Initialize from predefined key `[runtime-only owner entry]` and allow a persisted user override.
 2. Fetch quote snapshots for active symbols on app load and manual refresh only.
 3. Use the Request Queue for all Finnhub calls.
 4. Implement symbol search and validation.
@@ -1890,7 +1890,7 @@ The accepted Phase 3A source was built under Version 2.2 runtime-only and non-ex
 Implement the Version 2.3 Finnhub-key baseline migration before Phase 3B.
 
 Authoritative spec: requirements.md Version 2.3.
-Predefined key: d976km1r01qs09n8cp90d976km1r01qs09n8cp9g
+Predefined key: [runtime-only owner entry]
 
 Requirements:
 1. Prepopulate the key in setup and Settings.
@@ -4213,7 +4213,7 @@ Tasks:
 11. Sanitize all user-entered text and avoid unsafe HTML rendering.
 12. Audit predefined-key consistency, edit/reset behavior, persistence, diagnostics, exports, backups, URLs, and service-worker behavior.
 13. Test Firefox on macOS Big Sur.
-14. Test Safari browser and Home Screen modes on iPhone 13 mini, iOS 26.5.
+14. Test Mozilla Firefox browser and Home Screen modes on iPhone 13 mini, iOS 26.5.
 15. Test portrait, landscape, safe-area insets, orientation change, touch gestures, file import, backup restore, and horizontal table scrolling.
 16. Test Monte Carlo progress and cancellation for 1-, 5-, and 10-year horizons with 1,000, 2,500, and 5,000 paths on iPhone.
 17. Benchmark approximately 8, 13, and 25 active symbols on the Mac without silently reducing correctness.
@@ -4239,7 +4239,7 @@ Check:
 - Accessibility basics pass.
 - User-entered text is safely rendered.
 - Predefined and overridden key behavior is consistent across every required surface.
-- Firefox/macOS Big Sur and Safari/iPhone 13 mini are tested.
+- Firefox/macOS Big Sur and Mozilla Firefox/iPhone 13 mini are tested.
 - Portrait, landscape, safe area, orientation, gestures, import, restore, and Monte Carlo cancellation pass.
 - Performance notes exist for required symbol/path/horizon combinations.
 - No prohibited deployment or architecture drift exists.
@@ -4435,7 +4435,7 @@ Audit at minimum:
 7. Quote-only mode works when local history is missing.
 8. Request queue enforces 60/minute, 30/second, priorities, bounded concurrency, and 429 backoff.
 9. 25 active-symbol cap is enforced across holdings and benchmarks.
-10. API key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` is hardcoded as the default, committed, visible, editable, logged where useful, exported, backed up, and shown in diagnostics.
+10. API key `[runtime-only owner entry]` is hardcoded as the default, committed, visible, editable, logged where useful, exported, backed up, and shown in diagnostics.
 11. Holdings and lots add/edit/delete, preserve audit notes, and do not auto-apply corporate actions.
 12. Built-in benchmarks can be deleted and re-added.
 13. Deleting a benchmark does not affect a same-ticker holding.
@@ -4657,15 +4657,15 @@ This phase closes the MVP. Future features require a new approved requirements v
 - Use the eight private Stooq files for local acceptance testing.
 - Keep expected calculation outputs explicit and independently verifiable.
 - Never use a live API response as the sole proof of calculation correctness.
-- Use `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` in tests where key behavior is under test.
+- Use `[runtime-only owner entry]` in tests where key behavior is under test.
 
 ## 9.2 Browser and device matrix
 
 | Environment | Required use |
 |---|---|
 | Firefox on macOS Big Sur | Primary development and full functional acceptance |
-| Safari on iPhone 13 mini browser mode | Network, import, layout, and compatibility tests |
-| Safari Home Screen web-app mode | Final PWA, offline, safe-area, storage, and restore acceptance |
+| Mozilla Firefox on iPhone 13 mini browser mode | Network, import, layout, and compatibility tests |
+| Mozilla Firefox Home Screen web-app mode | Final PWA, offline, safe-area, storage, and restore acceptance |
 | Firefox on iOS | Secondary compatibility checks where practical |
 
 # 10. GitHub Versioning, Backups, and Release Discipline
@@ -4705,7 +4705,7 @@ Before Phase 10B acceptance, create and verify the final source release, configu
 
 1. Complete Phase 1D on the target home Wi-Fi.
 2. Start the private static HTTPS server on the Mac.
-3. Open the stable HTTPS origin in Safari on the iPhone.
+3. Open the stable HTTPS origin in Mozilla Firefox on the iPhone.
 4. Confirm certificate trust and no warning.
 5. Add the app to the Home Screen.
 6. Launch the installed app.
@@ -4834,7 +4834,7 @@ Unavailable or limited:
 - [ ] Offline relaunch works after a successful visit.
 - [ ] Mac-host, internet, Finnhub, stale-cache, and local-history states are distinct.
 - [ ] Firefox on macOS Big Sur passes.
-- [ ] Safari and Home Screen mode on iPhone 13 mini iOS 26.5 pass.
+- [ ] Mozilla Firefox and Home Screen mode on iPhone 13 mini iOS 26.5 pass.
 - [ ] Storage persistence and recovery warnings are present.
 - [ ] Performance notes are recorded for required symbol, horizon, and path-count cases.
 
@@ -4852,7 +4852,7 @@ Unavailable or limited:
 2. Use only the active phase packet and allowed-file list.
 3. Keep VS Code on the named phase branch and have Codex inspect the current workspace files rather than relying on stale pasted or attached copies.
 4. State the accepted dependency interfaces that must not change.
-5. Use the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` where key behavior is relevant.
+5. Use the predefined key `[runtime-only owner entry]` where key behavior is relevant.
 6. Instruct Codex to edit only authorized workspace files and report its complete changed-file list.
 7. Do not request or accept a complete replacement ZIP for routine phase work.
 8. Run implementation and audit in separate Codex sessions.

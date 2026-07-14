@@ -1,7 +1,7 @@
-export const PREDEFINED_FINNHUB_API_KEY = "d976km1r01qs09n8cp90d976km1r01qs09n8cp9g";
+// A credential is entered by the owner at runtime and is never shipped with the app.
+export const DEFAULT_FINNHUB_API_KEY = "";
 
 export const FINNHUB_API_KEY_SOURCES = Object.freeze({
-  PREDEFINED: "predefined",
-  USER_OVERRIDE: "user-override",
-  RESTORED: "restored-backup"
+  SESSION: "session-entry",
+  LEGACY_MIGRATION: "legacy-migration"
 });

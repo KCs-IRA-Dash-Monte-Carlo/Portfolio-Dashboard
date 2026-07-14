@@ -163,12 +163,12 @@ Primary desktop target:
 
 Primary mobile target:
 
-- Safari on iPhone 13 mini
+- Mozilla Firefox on iPhone 13 mini
 - iOS 26.5
 - Device model: NLAD3LL/A
 - Access only while connected to the same trusted home Wi-Fi as the Mac host
 
-Firefox on iOS may be tested as a secondary browser, but Safari and Home Screen web-app mode are the primary iPhone targets.
+Firefox on iOS may be tested as a secondary browser, but Mozilla Firefox and Home Screen web-app mode are the primary iPhone targets.
 
 ### 3.3 iOS constraints
 
@@ -257,7 +257,7 @@ Open the Git repository root as the VS Code workspace and treat the nested activ
 
 Git operations shall use the configured `origin` SSH URL. Verify it with `git remote get-url origin`; set it with `git remote set-url origin git@github.com:KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard.git` when necessary. GitHub pull requests, checks, merges, rulesets, and releases may be managed in the GitHub web interface. GitHub CLI is not required.
 
-The VS Code-bundled Electron, Chromium, Node.js, and V8 versions describe the editor and extension-host environment only. They do not replace the project's Firefox, Safari, browser-origin, service-worker, IndexedDB, or physical-device acceptance tests. A bundled VS Code Node.js version also does not guarantee that a `node` executable is available in the integrated terminal; terminal-based Node suites run only when `node --version` succeeds.
+The VS Code-bundled Electron, Chromium, Node.js, and V8 versions describe the editor and extension-host environment only. They do not replace the project's Firefox, Mozilla Firefox, browser-origin, service-worker, IndexedDB, or physical-device acceptance tests. A bundled VS Code Node.js version also does not guarantee that a `node` executable is available in the integrated terminal; terminal-based Node suites run only when `node --version` succeeds.
 
 `main` shall contain accepted work. Development from Phase 3B onward shall use one phase branch, one pull request, automated checks where available, and an accepted-phase tag. A one-person repository shall not require an outside reviewer or signed commits. Force pushes and deletion of `main` shall be blocked.
 
@@ -301,7 +301,7 @@ On first launch, present a setup wizard.
 
 The wizard must support:
 
-- A prepopulated, editable Finnhub API key field containing `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
+- A prepopulated, editable Finnhub API key field containing `[runtime-only owner entry]`
 - Plaintext display and direct editing of the current key
 - Reset to the predefined key
 - Immediate validation through an approved Finnhub endpoint when requested
@@ -333,7 +333,7 @@ A restored full backup shall restore the Finnhub key when present. After success
 The project-defined Finnhub API key is:
 
 ```text
-d976km1r01qs09n8cp90d976km1r01qs09n8cp9g
+[runtime-only owner entry]
 ```
 
 Required behavior:
@@ -1424,7 +1424,7 @@ Include a Settings area containing:
 
 - Current Finnhub API key shown in plaintext
 - Edit, save, validate, and reset-to-default controls for the Finnhub key
-- Display of the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` as the reset target
+- Display of the predefined key `[runtime-only owner entry]` as the reset target
 - Theme selection
 - Accent color
 - Chart palette
@@ -2021,7 +2021,7 @@ Browser test pages served from the project’s normal HTTP or HTTPS origin are t
 Test:
 
 - First launch
-- Setup wizard with the predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g`
+- Setup wizard with the predefined key `[runtime-only owner entry]`
 - API key display, save, update, validation, reset, reload persistence, diagnostics display, export, backup, and restore
 - Add/edit/delete holdings and lots
 - Multiple lots per ticker
@@ -2046,7 +2046,7 @@ Test:
 Use the predefined development key:
 
 ```text
-d976km1r01qs09n8cp90d976km1r01qs09n8cp9g
+[runtime-only owner entry]
 ```
 
 Verify the permitted Finnhub endpoints:
@@ -2074,7 +2074,7 @@ Use deterministic fixtures to test cost basis, account value, portfolio weights,
 
 ### 47.5 Compatibility tests
 
-Test Firefox on macOS Big Sur 11.7.11, Safari on iPhone 13 mini iOS 26.5, Safari Home Screen mode, and Firefox iOS where practical.
+Test Firefox on macOS Big Sur 11.7.11, Mozilla Firefox on iPhone 13 mini iOS 26.5, Mozilla Firefox Home Screen mode, and Firefox iOS where practical.
 
 ### 47.6 Home-Wi-Fi and offline tests
 
@@ -2095,14 +2095,14 @@ GitHub Actions shall use an available repository or organization runner, default
 - No production dependency on `/stock/candle`
 - Milestone release ZIP creation from accepted tags
 
-The repository workflow must not claim that GitHub-hosted Linux checks validate Firefox/macOS, Safari/iPhone, IndexedDB on the real origin, service workers, local HTTPS trust, or touch behavior.
+The repository workflow must not claim that GitHub-hosted Linux checks validate Firefox/macOS, Mozilla Firefox/iPhone, IndexedDB on the real origin, service workers, local HTTPS trust, or touch behavior.
 
 ## 48. Acceptance Criteria
 
 The MVP is accepted only when:
 
 1. Finnhub free-tier endpoints provide live quotes and market context without requiring premium datasets.
-2. The predefined key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` is present in project configuration and is editable during and after setup.
+2. The predefined key `[runtime-only owner entry]` is present in project configuration and is editable during and after setup.
 3. The active key persists, is visible in Settings and Diagnostics, and is included in configuration and full backups.
 4. Historical analytics use the committed private Stooq daily files rather than Finnhub historical candles.
 5. Historical prices are identified as split-adjusted and dividend-unadjusted, and returns are not presented as exact total return.
@@ -2119,7 +2119,7 @@ The MVP is accepted only when:
 16. A full backup can initialize or update the iPhone and restores the Finnhub key.
 17. Historical, API, offline, host, import, storage, stale, and quality states are distinct.
 18. The PWA loads offline after a successful visit and the installed iPhone app can launch from cached assets when the Mac server is unavailable.
-19. Firefox/macOS Big Sur and Safari/iPhone 13 mini compatibility tests pass.
+19. Firefox/macOS Big Sur and Mozilla Firefox/iPhone 13 mini compatibility tests pass.
 20. Dark/light themes, accessibility basics, safe rendering, precision, and date behavior pass.
 21. The project remains parameter-driven, modular, client-side, and free of an application backend or automatic cloud synchronization.
 22. No public hosting, remote runtime access, VPN requirement, or router port forwarding is required.
@@ -2271,9 +2271,9 @@ The application must clearly communicate these limitations:
 The completed MVP is a private, customizable, parameter-driven retirement portfolio dashboard and installable PWA that:
 
 - Is hosted from the owner’s Mac on the trusted home Wi-Fi.
-- Is accessible on Firefox desktop and Safari on an iPhone 13 mini.
+- Is accessible on Firefox desktop and Mozilla Firefox on an iPhone 13 mini.
 - Is source controlled in the private `KCs-IRA-Dash-Monte-Carlo/Portfolio-Dashboard` GitHub repository.
-- Uses the predefined, editable Finnhub key `d976km1r01qs09n8cp90d976km1r01qs09n8cp9g` for live quote snapshots and market context.
+- Uses the predefined, editable Finnhub key `[runtime-only owner entry]` for live quote snapshots and market context.
 - Uses committed private Stooq files for split-adjusted, dividend-unadjusted daily history.
 - Supports manual full-series Stooq replacement imports.
 - Tracks editable multi-lot U.S. stock and ETF holdings.

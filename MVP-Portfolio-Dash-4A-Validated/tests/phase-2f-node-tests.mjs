@@ -203,7 +203,8 @@ test("Every Finnhub request is queued with safe metadata", async () => {
   assert.equal(queue.calls[0].metadata.endpoint, FINNHUB_ENDPOINTS.QUOTE);
   assert.equal(queue.calls[0].metadata.priority, FINNHUB_PRIORITIES.HOLDING_QUOTE);
   assert.equal(JSON.stringify(queue.calls[0]).includes("runtime-test-key"), false);
-  assert.equal(routes.calls[0].params.token, "runtime-test-key");
+  assert.equal(routes.calls[0].params.token, undefined);
+  assert.equal(routes.calls[0].options.headers["X-Finnhub-Token"], "runtime-test-key");
 });
 
 test("Only approved Finnhub endpoints are accepted", async () => {

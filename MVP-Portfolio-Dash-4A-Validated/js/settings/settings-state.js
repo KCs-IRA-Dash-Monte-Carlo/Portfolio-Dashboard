@@ -1,13 +1,13 @@
 import {
   FINNHUB_API_KEY_SOURCES,
-  PREDEFINED_FINNHUB_API_KEY
+  DEFAULT_FINNHUB_API_KEY
 } from '../config/finnhub.js';
 import { assertActiveSymbolLimit } from '../core/symbol-registry.js';
 
 const STORAGE_KEY = 'mvpPortfolioDash.settings.v1';
 const APP_VERSION = '0.2.3-v2.3-phase-4a';
 const SETTINGS_SCHEMA_VERSION = 2;
-let runtimeFinnhubApiKey = PREDEFINED_FINNHUB_API_KEY;
+let runtimeFinnhubApiKey = DEFAULT_FINNHUB_API_KEY;
 
 const DEFAULT_LOTS = [
   {
@@ -50,10 +50,7 @@ const DEFAULT_MONTE_CARLO_SETTINGS = Object.freeze({
 });
 
 const DEFAULT_EXPORT_PREFERENCES = Object.freeze({
-  includeApiKeyInBackup: false,
-  backupReminderEnabled: true,
-  backupReminderDays: 30,
-  backupReminderEditCount: 10
+  includeApiKeyInBackup: false
 });
 
 export function createDefaultSettingsState() {
@@ -107,9 +104,9 @@ export function createDefaultSettingsState() {
     },
     api: {
       provider: 'finnhub',
-      apiKey: PREDEFINED_FINNHUB_API_KEY,
-      hasKey: true,
-      keySource: FINNHUB_API_KEY_SOURCES.PREDEFINED,
+      apiKey: DEFAULT_FINNHUB_API_KEY,
+      hasKey: false,
+      keySource: FINNHUB_API_KEY_SOURCES.SESSION,
       lastUpdatedAt: null,
       storageWarningAccepted: false
     },
@@ -128,9 +125,7 @@ export function createDefaultSettingsState() {
     monteCarloSettings: { ...DEFAULT_MONTE_CARLO_SETTINGS },
     exportPreferences: { ...DEFAULT_EXPORT_PREFERENCES },
     backup: {
-      lastExportedAt: null,
-      editsSinceLastBackup: 0,
-      dismissedReminderUntil: null
+      lastExportedAt: null
     },
     portfolioRevision: 0,
     registryRevision: 0,
@@ -156,6 +151,7 @@ export function loadSettingsState() {
     const legacyApiKey = parsed?.api?.apiKey;
     if (typeof legacyApiKey === 'string' && legacyApiKey.trim()) {
       runtimeFinnhubApiKey = legacyApiKey.trim();
+      parsed.api.keySource = FINNHUB_API_KEY_SOURCES.LEGACY_MIGRATION;
     }
 
     const normalized = applyRuntimeApiKey(normalizeSettingsState(migrateSettingsState(parsed)));
@@ -169,14 +165,10 @@ export function loadSettingsState() {
   }
 }
 
-export function saveSettingsState(nextState, options = {}) {
+export function saveSettingsState(nextState, _options = {}) {
   const normalized = normalizeSettingsState(nextState);
   assertActiveSymbolLimit(normalized);
   normalized.updatedAt = new Date().toISOString();
-
-  if (options.incrementEditCount !== false) {
-    normalized.backup.editsSinceLastBackup += 1;
-  }
 
   runtimeFinnhubApiKey = normalized.api.apiKey;
   persistSettingsState(normalized);
@@ -194,7 +186,7 @@ export function markSetupComplete(state) {
 
 export function resetSettingsStateForTesting() {
   window.localStorage.removeItem(STORAGE_KEY);
-  runtimeFinnhubApiKey = PREDEFINED_FINNHUB_API_KEY;
+  runtimeFinnhubApiKey = DEFAULT_FINNHUB_API_KEY;
   return createDefaultSettingsState();
 }
 
@@ -208,14 +200,14 @@ export function getActiveFinnhubApiKey(state = loadSettingsState()) {
 
 export function resetFinnhubApiKey(state) {
   const next = normalizeSettingsState(state);
-  next.api.apiKey = PREDEFINED_FINNHUB_API_KEY;
-  next.api.hasKey = true;
-  next.api.keySource = FINNHUB_API_KEY_SOURCES.PREDEFINED;
+  next.api.apiKey = DEFAULT_FINNHUB_API_KEY;
+  next.api.hasKey = false;
+  next.api.keySource = FINNHUB_API_KEY_SOURCES.SESSION;
   next.api.lastUpdatedAt = new Date().toISOString();
   return next;
 }
 
-export { PREDEFINED_FINNHUB_API_KEY, FINNHUB_API_KEY_SOURCES };
+export { DEFAULT_FINNHUB_API_KEY, FINNHUB_API_KEY_SOURCES };
 
 export function computeActiveSymbols(holdings = [], benchmarks = []) {
   const symbols = new Set();
@@ -238,11 +230,21 @@ export function computeActiveSymbols(holdings = [], benchmarks = []) {
 export function applyDisplayPreferences(state) {
   const root = document.documentElement;
   const normalized = normalizeSettingsState(state);
-  const preferredTheme = resolveTheme(normalized.theme);
 
-  root.dataset.theme = preferredTheme;
-  root.style.setProperty('--accent', normalized.accentColor);
-  root.style.setProperty('--font-scale', String(normalized.fontScale));
+  if (normalized.theme === 'system') {
+    root.removeAttribute('data-theme');
+  } else {
+    root.dataset.theme = normalized.theme;
+  }
+
+  root.style.removeProperty('--accent');
+  root.style.removeProperty('--font-scale');
+}
+
+export function getEffectiveTheme(stateOrTheme = 'system') {
+  const theme = typeof stateOrTheme === 'string' ? stateOrTheme : stateOrTheme?.theme;
+  if (theme === 'light' || theme === 'dark') return theme;
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 export function maskApiKey(apiKey) {
@@ -294,11 +296,12 @@ function normalizeSettingsState(state) {
       ...defaults.monteCarloSettings,
       ...(state.monteCarloSettings || {})
     },
-    exportPreferences: {
-      ...defaults.exportPreferences,
-      ...(state.exportPreferences || {})
-    },
-    backup: { ...defaults.backup, ...(state.backup || {}) }
+    exportPreferences: { includeApiKeyInBackup: false },
+    backup: {
+      lastExportedAt: typeof state.backup?.lastExportedAt === 'string'
+        ? state.backup.lastExportedAt
+        : null
+    }
   };
 
   next.dependentDataState = {
@@ -323,15 +326,8 @@ function normalizeSettingsState(state) {
   next.projectionHorizonYears = clampInteger(state.projectionHorizonYears, 1, 10, defaults.projectionHorizonYears);
   next.activeSymbols = computeActiveSymbols(next.holdings, next.benchmarks);
   next.api.hasKey = Boolean(next.api.apiKey);
-  if (!next.api.apiKey) {
-    next.api.apiKey = PREDEFINED_FINNHUB_API_KEY;
-    next.api.hasKey = true;
-    next.api.keySource = FINNHUB_API_KEY_SOURCES.PREDEFINED;
-  }
   if (!Object.values(FINNHUB_API_KEY_SOURCES).includes(next.api.keySource)) {
-    next.api.keySource = next.api.apiKey === PREDEFINED_FINNHUB_API_KEY
-      ? FINNHUB_API_KEY_SOURCES.PREDEFINED
-      : FINNHUB_API_KEY_SOURCES.USER_OVERRIDE;
+    next.api.keySource = FINNHUB_API_KEY_SOURCES.SESSION;
   }
 
   return next;
@@ -339,11 +335,9 @@ function normalizeSettingsState(state) {
 
 function applyRuntimeApiKey(state) {
   const next = state;
-  next.api.apiKey = runtimeFinnhubApiKey || PREDEFINED_FINNHUB_API_KEY;
+  next.api.apiKey = runtimeFinnhubApiKey || DEFAULT_FINNHUB_API_KEY;
   next.api.hasKey = Boolean(next.api.apiKey);
-  next.api.keySource = next.api.apiKey === PREDEFINED_FINNHUB_API_KEY
-    ? FINNHUB_API_KEY_SOURCES.PREDEFINED
-    : FINNHUB_API_KEY_SOURCES.USER_OVERRIDE;
+  next.api.keySource = FINNHUB_API_KEY_SOURCES.SESSION;
   return next;
 }
 
@@ -407,16 +401,6 @@ function normalizeBenchmark(benchmark) {
     includeInProjectionTables: benchmark.includeInProjectionTables !== false,
     type: 'benchmark'
   };
-}
-
-function resolveTheme(theme) {
-  if (theme === 'light' || theme === 'dark') return theme;
-
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return 'dark';
-  }
-
-  return 'light';
 }
 
 function clampNumber(value, min, max, fallback) {
