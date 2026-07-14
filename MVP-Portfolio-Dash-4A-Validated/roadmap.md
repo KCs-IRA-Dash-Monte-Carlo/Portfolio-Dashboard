@@ -1954,7 +1954,7 @@ git push origin v2.3-baseline
 Do not create `phase-3b` until this migration is merged and tagged.
 
 # Phase 3B - Portfolio UI and Corporate-Action Workflow
-**Status:** Next phase; not started
+**Status:** Accepted; preserved by tag `phase-3b-accepted`
 
 ## Purpose
 
@@ -2187,7 +2187,7 @@ Do not proceed to Phase 4A until the holding and lot workflows are accepted.
 
 
 # Phase 4A - Benchmark and Active-Symbol Management
-**Status:** Not yet accepted
+**Status:** Accepted; preserved by tag `phase-4a-accepted`
 
 ## Purpose
 
