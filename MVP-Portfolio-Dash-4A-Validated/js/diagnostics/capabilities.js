@@ -127,7 +127,7 @@ export function checkBlobDownload() {
       return available('Blob/download support is available.');
     }
 
-    return unavailable('warning', 'Blob/download support is incomplete. Future CSV, backup, and PNG downloads may need fallback handling.');
+    return unavailable('warning', 'Blob/download support is incomplete. Backup and PNG downloads may need fallback handling.');
   } catch (error) {
     return unavailable('warning', 'Blob/download support check failed.');
   }

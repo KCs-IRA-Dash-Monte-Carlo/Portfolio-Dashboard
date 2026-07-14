@@ -4,7 +4,7 @@ import {
   createHttpError,
   normalizeLiveDataError
 } from "./live-data-errors.js";
-import { PREDEFINED_FINNHUB_API_KEY } from "../config/finnhub.js";
+import { DEFAULT_FINNHUB_API_KEY } from "../config/finnhub.js";
 
 export const FINNHUB_CLIENT_VERSION = "2.2-phase-2f";
 export const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
@@ -196,12 +196,15 @@ export class FinnhubClient {
     });
 
     const execute = async () => {
-      const url = buildRequestUrl(this.baseUrl, endpoint, params, runtimeApiKey);
+      const url = buildRequestUrl(this.baseUrl, endpoint, params);
       const abortContext = createAbortContext(options.signal, this.timeoutMs);
       try {
         const response = await this.fetchImpl(url, {
           method: "GET",
-          headers: { Accept: "application/json" },
+          headers: {
+            Accept: "application/json",
+            "X-Finnhub-Token": runtimeApiKey
+          },
           signal: abortContext.signal,
           cache: "no-store",
           credentials: "omit"
@@ -328,17 +331,16 @@ function normalizeRequestQueue(requestQueue, explicitAdapter) {
 function normalizeApiKeyProvider(provider) {
   return typeof provider === "function"
     ? provider
-    : () => PREDEFINED_FINNHUB_API_KEY;
+    : () => DEFAULT_FINNHUB_API_KEY;
 }
 
-function buildRequestUrl(baseUrl, endpoint, params, apiKey) {
+function buildRequestUrl(baseUrl, endpoint, params) {
   const url = new URL(`${baseUrl}${endpoint}`);
   for (const [key, value] of Object.entries(params || {})) {
     if (value !== undefined && value !== null && value !== "") {
       url.searchParams.set(key, String(value));
     }
   }
-  url.searchParams.set("token", apiKey);
   return url.toString();
 }
 

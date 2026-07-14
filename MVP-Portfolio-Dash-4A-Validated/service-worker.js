@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'portfolio-dash-static-v0.2.3-phase-4a-3';
+const CACHE_VERSION = 'portfolio-dash-static-v0.2.3-phase-5a-2';
 
 const STATIC_ASSETS = [
   './',
@@ -7,13 +7,16 @@ const STATIC_ASSETS = [
   './css/base.css',
   './css/layout.css',
   './css/themes.css',
-  './css/print.css',
   './css/setup-wizard.css',
   './css/portfolio-editor.css',
   './css/benchmark-manager.css',
   './js/app.js',
   './js/config/finnhub.js',
   './js/core/symbol-registry.js',
+  './js/charts/chart-manager.js',
+  './js/charts/chart-options.js',
+  './js/charts/chart-export.js',
+  './js/charts/chart-state.js',
   './js/settings/settings-state.js',
   './js/ui/setup-wizard.js',
   './js/ui/lot-editor.js',

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Version 2.3 Tests Through Phase 3B</title>
+  <title>Version 2.3 Tests Through Phase 5A</title>
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/themes.css">
@@ -12,8 +12,8 @@
   <header class="app-header" role="banner">
     <div>
       <p class="eyebrow">Test index</p>
-      <h1>Version 2.3 Tests Through Phase 3B</h1>
-      <p class="app-header__summary">Run the baseline shell check here, then use the linked deterministic harnesses for persistence, setup, live data, historical data, and portfolio calculations.</p>
+      <h1>Version 2.3 Tests Through Phase 5A</h1>
+      <p class="app-header__summary">Run the shell check here, then use the linked deterministic harnesses for persistence, setup, live data, historical data, portfolio calculations, benchmark management, and charts.</p>
     </div>
     <p><a class="button" href="../index.html">Open app</a></p>
   </header>
@@ -34,11 +34,11 @@
       <h3>Phase harnesses</h3>
       <ul class="plain-list">
         <li><a href="storage-tests.html">Persistence and browser storage</a></li>
-        <li><a href="setup-wizard-tests.html">Setup wizard and Version 2.3 API-key defaults</a></li>
+        <li><a href="setup-wizard-tests.html">Setup wizard and runtime-only API-key behavior</a></li>
         <li><a href="data-service-tests.html?autorun=1">Phase 2F live-data services</a></li>
         <li><a href="historical-data-tests.html">Historical data import and service</a></li>
         <li><a href="calculation-tests.html">Phase 3A portfolio calculations</a></li>
-        <li><a href="ui-tests.html">Phase 3B portfolio UI and corporate-action workflow</a></li>
+        <li><a href="ui-tests.html">Phase 3B–5A portfolio, benchmark, and Chart Manager UI</a></li>
       </ul>
     </section>
 
@@ -46,11 +46,11 @@
       <h2 id="manual-checks-title">Manual checks</h2>
       <ul class="plain-list">
         <li>Open the app from localhost, not as a file URL.</li>
-        <li>Confirm all nine panels are reachable from the navigation.</li>
+        <li>Confirm all eight panels are reachable from the navigation.</li>
         <li>Complete the Phase 3B checklist in <code>docs/PHASE-3B-MANUAL-TESTS.md</code>.</li>
         <li>Confirm keyboard focus is visible.</li>
         <li>Confirm Light and Dark controls change the theme.</li>
-        <li>Confirm the predefined Finnhub key is visible and editable in setup.</li>
+        <li>Confirm the Finnhub key field starts empty, accepts a session key, and never persists it.</li>
       </ul>
     </aside>
   </main>
@@ -63,11 +63,14 @@
       '../css/base.css',
       '../css/layout.css',
       '../css/themes.css',
-      '../css/print.css',
       '../css/portfolio-editor.css',
       '../js/app.js',
       '../js/ui/portfolio-editor.js',
       '../js/ui/lot-editor.js',
+      '../js/charts/chart-manager.js',
+      '../js/charts/chart-options.js',
+      '../js/charts/chart-export.js',
+      '../js/charts/chart-state.js',
       './ui-tests.html',
       '../js/config/finnhub.js',
       './index.html'

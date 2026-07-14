@@ -5,7 +5,6 @@ import {
   loadSettingsState,
   markSetupComplete,
   normalizeTicker,
-  PREDEFINED_FINNHUB_API_KEY,
   saveSettingsState
 } from '../settings/settings-state.js';
 import { clearElement, createElement, createField, formatCurrency } from '../utils/dom-utils.js';
@@ -13,12 +12,11 @@ import { calculateLotCost } from '../portfolio/portfolio-engine.js';
 import { settingsStateToPortfolio } from './portfolio-settings-state-adapter.js';
 
 const STEPS = [
-  'Storage Warnings',
+  'Privacy',
   'API Key',
   'Portfolio Lots',
   'Benchmarks',
-  'Preferences',
-  'Backup Reminder',
+  'Projection Horizon',
   'Review'
 ];
 
@@ -147,8 +145,6 @@ class SetupWizard {
       case 4:
         return this.renderPreferencesStep();
       case 5:
-        return this.renderBackupStep();
-      case 6:
         return this.renderReviewStep();
       default:
         return this.renderWarningsStep();
@@ -168,11 +164,7 @@ class SetupWizard {
           children: [
             warningCard(
               'API key storage',
-              'The predefined project key remains available after reload. A replacement key is held only in memory, is excluded from browser storage and backups, and must be re-entered after a full page reload.'
-            ),
-            warningCard(
-              'Local data loss risk',
-              'Local Storage and IndexedDB can be cleared by the user, browser settings, private browsing behavior, profile resets, or storage pressure. iOS may evict local site data after periods of non-use.'
+              'The key you enter is held only in memory, is excluded from source, browser storage, diagnostics, request URLs, exports, and backups, and must be re-entered after a full page reload.'
             ),
             warningCard(
               'No historical-data requirement',
@@ -188,7 +180,7 @@ class SetupWizard {
     const keyInput = createElement('input', {
       type: 'password',
       value: this.state.api.apiKey || '',
-      placeholder: PREDEFINED_FINNHUB_API_KEY,
+      placeholder: 'Enter key for this session (optional)',
       attributes: {
         autocomplete: 'off',
         spellcheck: 'false'
@@ -198,22 +190,20 @@ class SetupWizard {
     keyInput.addEventListener('input', () => {
       this.state.api.apiKey = keyInput.value.trim();
       this.state.api.hasKey = Boolean(this.state.api.apiKey);
-      this.state.api.keySource = this.state.api.apiKey === PREDEFINED_FINNHUB_API_KEY
-        ? FINNHUB_API_KEY_SOURCES.PREDEFINED
-        : FINNHUB_API_KEY_SOURCES.USER_OVERRIDE;
+      this.state.api.keySource = FINNHUB_API_KEY_SOURCES.SESSION;
       this.state.api.lastUpdatedAt = this.state.api.apiKey ? new Date().toISOString() : null;
     });
 
     const resetButton = createElement('button', {
       className: 'button button--secondary',
-      text: 'Reset to predefined key',
+      text: 'Clear session key',
       attributes: { type: 'button' }
     });
     resetButton.addEventListener('click', () => {
-      keyInput.value = PREDEFINED_FINNHUB_API_KEY;
-      this.state.api.apiKey = PREDEFINED_FINNHUB_API_KEY;
-      this.state.api.hasKey = true;
-      this.state.api.keySource = FINNHUB_API_KEY_SOURCES.PREDEFINED;
+      keyInput.value = '';
+      this.state.api.apiKey = '';
+      this.state.api.hasKey = false;
+      this.state.api.keySource = FINNHUB_API_KEY_SOURCES.SESSION;
       this.state.api.lastUpdatedAt = new Date().toISOString();
     });
 
@@ -222,7 +212,7 @@ class SetupWizard {
       children: [
         createElement('p', {
           className: 'setup-lead',
-          text: 'Review the predefined Finnhub key, replace it if needed, or reset it to the project default.'
+          text: 'Enter a Finnhub key for this page session, or continue without one for local-history and quote-unavailable workflows.'
         }),
         createField({
           label: 'Finnhub API key',
@@ -417,6 +407,8 @@ class SetupWizard {
     addButton.addEventListener('click', () => {
       this.addBenchmark();
       this.render();
+      const rows = this.panel.querySelectorAll('.setup-table tbody tr');
+      rows[rows.length - 1]?.querySelector('input[aria-label="Benchmark ticker"]')?.focus({ preventScroll: true });
     });
 
     wrapper.append(table, createElement('div', { className: 'setup-actions-inline', children: [addButton] }));
@@ -424,21 +416,6 @@ class SetupWizard {
   }
 
   renderPreferencesStep() {
-    const themeSelect = createElement('select');
-    [
-      ['system', 'Use system setting'],
-      ['light', 'Light'],
-      ['dark', 'Dark']
-    ].forEach(([value, label]) => {
-      const option = createElement('option', { value, text: label });
-      option.selected = this.state.theme === value;
-      themeSelect.append(option);
-    });
-    themeSelect.addEventListener('change', () => {
-      this.state.theme = themeSelect.value;
-      applyDisplayPreferences(this.state);
-    });
-
     const horizonSelect = createElement('select');
     for (let year = 1; year <= 10; year += 1) {
       const option = createElement('option', {
@@ -452,62 +429,14 @@ class SetupWizard {
       this.state.projectionHorizonYears = Number.parseInt(horizonSelect.value, 10);
     });
 
-    const accentInput = createElement('input', { type: 'color', value: this.state.accentColor || '#2563eb' });
-    accentInput.addEventListener('input', () => {
-      this.state.accentColor = accentInput.value;
-      applyDisplayPreferences(this.state);
-    });
-
-    const fontInput = createElement('input', {
-      type: 'range',
-      value: String(this.state.fontScale || 1),
-      attributes: { min: '0.85', max: '1.25', step: '0.05' }
-    });
-    fontInput.addEventListener('input', () => {
-      this.state.fontScale = Number(fontInput.value);
-      applyDisplayPreferences(this.state);
-    });
-
     return createElement('div', {
       className: 'setup-step setup-form-grid',
       children: [
         createElement('p', {
           className: 'setup-lead setup-grid-span',
-          text: 'Choose display preferences and the single global projection horizon. This horizon will later apply to all forward-looking modules.'
+          text: 'Choose the single global projection horizon. This horizon will later apply to all forward-looking modules.'
         }),
-        createField({ label: 'Theme', input: themeSelect }),
-        createField({ label: 'Projection horizon', input: horizonSelect, hint: 'Allowed range: 1 to 10 years.' }),
-        createField({ label: 'Accent color', input: accentInput }),
-        createField({ label: 'Font scale', input: fontInput })
-      ]
-    });
-  }
-
-  renderBackupStep() {
-    const reminder = createElement('input', { type: 'checkbox' });
-    reminder.checked = this.state.exportPreferences.backupReminderEnabled !== false;
-    reminder.addEventListener('change', () => {
-      this.state.exportPreferences.backupReminderEnabled = reminder.checked;
-    });
-
-    return createElement('div', {
-      className: 'setup-step',
-      children: [
-        createElement('p', {
-          className: 'setup-lead',
-          text: 'Because the app has no backend or cloud sync, browser-local data is not a backup.'
-        }),
-        warningCard(
-          'Backup/export reminder',
-          'Use manual backup export after setup and after meaningful portfolio or benchmark changes. A later phase will implement full backup export and restore. The reminder rule is 30 calendar days or 10 saved edits, whichever comes first, with a 30-day dismissal option.'
-        ),
-        createElement('label', {
-          className: 'setup-checkline',
-          children: [
-            reminder,
-            createElement('span', { text: 'Enable backup/export reminders when export support is implemented.' })
-          ]
-        })
+        createField({ label: 'Projection horizon', input: horizonSelect, hint: 'Allowed range: 1 to 10 years.' })
       ]
     });
   }
@@ -613,13 +542,6 @@ class SetupWizard {
   }
 
   validateCurrentStep() {
-    if (this.stepIndex === 1 && !this.state.api.apiKey) {
-      return {
-        valid: false,
-        message: 'Enter a Finnhub API key or reset to the predefined key before continuing.'
-      };
-    }
-
     if (this.stepIndex === 2) {
       if (this.state.lots.length === 0) {
         return { valid: false, message: 'Add at least one lot or go back and close setup without completing it.' };
@@ -654,9 +576,7 @@ class SetupWizard {
     this.syncHoldingsFromLots();
     const next = cloneState(this.state);
     next.api.hasKey = Boolean(next.api.apiKey);
-    next.api.keySource = next.api.apiKey === PREDEFINED_FINNHUB_API_KEY
-      ? FINNHUB_API_KEY_SOURCES.PREDEFINED
-      : FINNHUB_API_KEY_SOURCES.USER_OVERRIDE;
+    next.api.keySource = FINNHUB_API_KEY_SOURCES.SESSION;
     next.activeSymbols = computeActiveSymbols(next.holdings, next.benchmarks);
     return next;
   }
@@ -692,10 +612,10 @@ class SetupWizard {
   }
 
   addLot() {
-    const ticker = 'NEW';
-    const holdingId = `holding-${ticker.toLowerCase()}-${makeId()}`;
+    const ticker = '';
+    const holdingId = `holding-pending-${makeId()}`;
     this.state.lots.push({
-      id: `lot-${ticker.toLowerCase()}-${makeId()}`,
+      id: `lot-pending-${makeId()}`,
       holdingId,
       ticker,
       shares: 1,
@@ -708,9 +628,9 @@ class SetupWizard {
 
   addBenchmark() {
     this.state.benchmarks.push({
-      id: `benchmark-new-${makeId()}`,
-      ticker: 'NEW',
-      label: 'NEW',
+      id: `benchmark-pending-${makeId()}`,
+      ticker: '',
+      label: '',
       active: true,
       builtIn: false,
       includeInCharts: true,

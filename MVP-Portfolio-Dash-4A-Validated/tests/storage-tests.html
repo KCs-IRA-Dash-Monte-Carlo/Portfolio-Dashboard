@@ -56,7 +56,7 @@
   <header>
     <h1>Storage Tests</h1>
     <p class="note">
-      Phase 1B persistence regression harness updated for the Version 2.3 predefined-key baseline.
+      Phase 1B persistence regression harness updated for the Version 2.3 runtime-only key policy.
     </p>
   </header>
 
@@ -141,7 +141,7 @@
       assert(Array.isArray(state.activeSymbols), 'activeSymbols should be an array.');
       assert(Array.isArray(state.benchmarks), 'benchmarks should be an array.');
       assert(state.apiSettings.provider === 'finnhub', 'API settings metadata should identify Finnhub provider.');
-      assert(state.apiSettings.hasApiKey === true, 'Default state should contain the predefined API key.');
+      assert(state.apiSettings.hasApiKey === false, 'Default state must not contain an API key.');
       assert(!Object.hasOwn(state.apiSettings, 'apiKey'), 'Local state must not contain an API key.');
       assert(['system', 'dark', 'light'].includes(state.theme), 'Theme should be system, dark, or light.');
       assert(typeof state.accentColor === 'string', 'Accent color should be present.');

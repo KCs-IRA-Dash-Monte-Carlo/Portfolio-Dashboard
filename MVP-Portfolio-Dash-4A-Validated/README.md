@@ -13,7 +13,8 @@ Supporting documents are:
 - [`docs/historical_data_validation_report.md`](docs/historical_data_validation_report.md)
   records seed-dataset validation evidence and known quality flags.
 - [`docs/baseline_validation.md`](docs/baseline_validation.md) records the
-  accepted Version 2.3 automated baseline evidence through Phase 3A.
+  accepted Version 2.3 automated baseline evidence through Phase 3A; its earlier
+  credential assumptions are superseded by the current requirements.
 
 If supporting documentation conflicts with either authoritative document,
 `requirements.md` takes precedence, followed by `roadmap.md`.
@@ -21,46 +22,37 @@ If supporting documentation conflicts with either authoritative document,
 ## Current implementation status
 
 The repository contains the application shell, persistence and setup modules,
-historical-data pipeline, live-data services, and Phase 3A portfolio engine.
-Phase 3A is the accepted baseline described by the roadmap.
-
-The Version 2.3 predefined/editable Finnhub-key migration is implemented in
-this baseline. Following the clear-text-storage security remediation, a
-user-entered replacement is kept only in page-session memory and is removed
-from legacy Local Storage state. It is excluded from backups by default.
+historical-data pipeline, live-data services, portfolio engine, benchmark
+manager, and Phase 5A Chart Manager. A user-entered Finnhub key is kept only in
+page-session memory and removed from legacy Local Storage state.
 
 ## Approved architecture
 
 - Finnhub supplies current quotes, symbol lookup, company metadata, market
   context, and basic metrics through the request queue.
 - Finnhub `/stock/candle` is prohibited. Historical prices come only from the
-  committed private Stooq files and normalized IndexedDB records.
+  committed Stooq files and normalized IndexedDB records.
 - The U.S. Treasury Fiscal Data API supplies the 13-week bill rate. A manually
   supplied rate is allowed when clearly labeled.
-- The application remains client-side and privately hosted on the owner's Mac
-  for same-home-Wi-Fi use. GitHub is source control and release
-  history, not the application runtime host or application-data sync service.
-- There is no application backend, public runtime hosting, router forwarding,
-  brokerage connection, or automatic cloud synchronization.
+- The application remains client-side and is publicly hosted for the owner's
+  personal use through GitHub Pages. Remote shared-URL access, optional cloud
+  synchronization, and router port forwarding are in scope; Pages requires no
+  router forwarding.
+- There is no application backend, brokerage connection, or user-account system.
 
 ## Version 2.3 key policy
 
-Version 2.3 defines a project-provided Finnhub key that is editable and
-resettable. User-entered replacements are deliberately not persisted: they are
-held only in memory for the current page session and excluded from Local
-Storage, diagnostics metadata, exports, and backups. This security policy
-supersedes older roadmap text that calls for clear-text persistence.
-
-This owner-approved policy permits that Finnhub key in the private repository.
-It does not permit GitHub tokens, SSH private keys, local HTTPS private keys, or
-other infrastructure credentials to be committed. Keep repository access
-private as required by Version 2.3.
+Version 2.3 ships no Finnhub credential. An owner-entered value is held only in
+memory for the current page session, sent in the approved authentication header,
+and excluded from Local Storage, IndexedDB, source, documentation, tests, logs,
+diagnostics, request URLs, exports, backups, workflows, and releases. GitHub
+tokens, SSH private keys, and private certificate keys are also excluded.
 
 ## Stable integration contracts
 
 ### Historical data
 
-The private seed contains AVDV, AVUV, DCO, IWM, ONEQ, PSCH, SPY, and VTV.
+The bundled seed contains AVDV, AVUV, DCO, IWM, ONEQ, PSCH, SPY, and VTV.
 `data/historical/manifest.json` is the machine-readable authority for seed file
 names, hashes, counts, dates, and adjustment metadata. Do not change a seed file
 without regenerating the manifest.
@@ -157,6 +149,19 @@ edits, search/filter changes, and history-status reads do not publish it.
 Holding and lot saves separately publish `mvp:portfolio-changed`; chart
 consumers that depend on both portfolio composition and benchmark selection
 must subscribe to both events.
+
+### Chart Manager
+
+`ChartManager` owns ECharts instance lifecycle, state presentation, time-filter
+selection, explicit series toggles, zoom reset, PNG export, bounded responsive
+resize, orientation updates, theme recreation, and touch-gesture isolation. It
+accepts only upstream-prepared series and performs no portfolio or analytics
+calculations. Stooq-derived inputs display the required split-adjusted,
+dividend-unadjusted price-return approximation label.
+
+The application mounts comparison, account-value, allocation, drawdown,
+confidence-fan, and percentile-band containers. Later modules publish prepared
+data with `mvp:chart-data-ready` and a `{ type, prepared }` detail payload.
 
 ## Development workflow
 

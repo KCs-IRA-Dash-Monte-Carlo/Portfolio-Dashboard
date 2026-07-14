@@ -2,6 +2,25 @@
 
 All notable project specification and repository-workflow changes are recorded here.
 
+## [2.3-phase-5a] - 2026-07-14
+
+- Added the Phase 5A Chart Manager with comparison, account-value, allocation,
+  and drawdown support plus future Monte Carlo fan/band containers.
+- Added prepared-series contracts, all seven time filters, explicit series
+  toggles, zoom reset, PNG export, bounded responsive resizing, orientation
+  handling, safe theme recreation, and chart availability/warning states.
+- Added iPhone 13 mini safe-area and overflow protections and swipeable-tab
+  gesture isolation.
+- Removed CSV export and Print-to-PDF reporting from application deliverables.
+- Revised deployment to public GitHub Pages with Mozilla Firefox as the primary
+  iPhone browser; remote shared-URL access, optional cloud synchronization, and
+  router port forwarding are in scope while use remains personal to the owner.
+- Removed the bundled Finnhub credential, made key entry runtime-only, moved
+  authentication out of request URLs, and kept credentials out of persisted or
+  emitted artifacts.
+- Added realized gains from explicit lot disposals to the product requirements;
+  no financial calculation was added to chart modules.
+
 ## [2.3-phase-3b] - 2026-07-13
 
 - Added explicit-save holding and multi-lot CRUD backed by the accepted Phase 3A model, validation, and calculations.
@@ -16,7 +35,7 @@ All notable project specification and repository-workflow changes are recorded h
 ### Changed
 
 - Replaced requirements and roadmap Version 2.2 with Version 2.3.
-- Adopted private GitHub Enterprise Cloud source control for `KCs IRA Dash - Monte Carlo/Portfolio-Dashboard`.
+- Adopted GitHub source control for `KCs IRA Dash - Monte Carlo/Portfolio-Dashboard` (visibility and hosting were revised in Phase 5A).
 - Standardized VS Code 1.106.3, the Codex extension connected to ChatGPT Plus,
   the integrated terminal and Source Control view, and Git over SSH for repository operations.
 - Defined `main` as accepted source, phase branches and pull requests for development, Actions checks, accepted tags, and milestone releases.
@@ -34,13 +53,12 @@ All notable project specification and repository-workflow changes are recorded h
 - Version 2.3 key migration: implemented for the consolidated baseline.
 - Phase 3B: next roadmap phase; it has not started, and its implementation and
   tests are not present in this baseline.
-- Phase 1D: deferred until target home Wi-Fi is available.
+- Phase 1D: originally deferred; superseded by the GitHub Pages deployment packet.
 
 ## [2.3-baseline] - 2026-07-13
 
-- Centralized the predefined Finnhub key and added editable/resettable setup behavior.
-- Persisted the active key and enabled its use in diagnostics and future backups/exports.
-- Added Finnhub-client default-key behavior while preserving user overrides.
+- Recorded the original baseline credential behavior, now superseded by the
+  Phase 5A runtime-only credential-exclusion policy.
 - Updated setup, storage, diagnostics, and data-service regression expectations.
 - Removed the obsolete Finnhub candle-policy source artifact.
 - Consolidated authoritative documentation and adopted the VS Code/Codex/SSH workflow.
@@ -50,5 +68,5 @@ All notable project specification and repository-workflow changes are recorded h
 ## [2.2] - 2026-07-11
 
 - Rescoped historical data from Finnhub candles to private Stooq files.
-- Established private Mac-hosted, same-home-Wi-Fi PWA scope.
+- Established the original Mac-hosted scope, superseded by public GitHub Pages hosting in Phase 5A.
 - Completed Phase 1A through 2F and built the Phase 3A portfolio engine.
