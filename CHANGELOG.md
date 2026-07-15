@@ -2,6 +2,24 @@
 
 All notable project specification and repository-workflow changes are recorded here. Yeah right, you know I didn't get that correct to start.
 
+## [2.3-phase-8a] - 2026-07-15
+
+- Validated the Phase 8A global Projection Horizon and Monte Carlo projection
+  visuals through the owner-completed manual checklist and the Firefox browser
+  harness (36/36 passing).
+- Added one persisted global integer horizon from 1 through 10 years, using
+  252 statistical trading days per projection year and a separately displayed
+  projected-through calendar date.
+- Applied the accepted horizon snapshot to approved Monte Carlo output,
+  confidence-fan and percentile-band visuals, PNG context, and credential-free
+  backup metadata hooks.
+- Invalidated active and completed projection output when the horizon changes;
+  changes validate while typing and only commit on an explicit control change.
+- Added responsive desktop and iPhone 13 mini validation coverage, including
+  portrait and landscape orientation checks.
+- No scenario analysis, application backend, brokerage integration, provider,
+  or credential persistence was added.
+
 ## [2.3-phase-6a] - 2026-07-14
 
 - Implemented the Phase 6A Analytics Engine using only Historical Data Service

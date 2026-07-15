@@ -2,8 +2,9 @@ import { assertValidMonteCarloInputs } from "./mc-inputs.js";
 import { createSeededRandom } from "./random.js";
 import { percentileBands, summarizeEndingValues } from "./statistics.js";
 import { normalizeDateOnly } from "../utils/date-utils.js";
+import { projectionTradingDays, TRADING_DAYS_PER_PROJECTION_YEAR } from "../utils/projection-date-utils.js";
 
-export const TRADING_DAYS_PER_YEAR = 252;
+export const TRADING_DAYS_PER_YEAR = TRADING_DAYS_PER_PROJECTION_YEAR;
 export const MAX_LOOKBACK_RETURNS = 756;
 export const ALIGNED_HISTORY_SOURCE = "historical-data-service-indexeddb";
 
@@ -48,7 +49,7 @@ export function prepareBootstrapRun(inputs, alignedHistory) {
   const returns = deriveAlignedArithmeticReturnVectors(validatedInputs.includedSymbols, alignedHistory, validatedInputs.lookbackReturns);
   const totalInitialValue = validatedInputs.includedSymbols.reduce((sum, item) => sum + item.initialValue, 0);
   if (!Number.isFinite(totalInitialValue) || totalInitialValue <= 0) throw codedError("INVALID_INITIAL_VALUE", "Portfolio initial value must be positive and finite.");
-  const totalDays = validatedInputs.horizonYears * TRADING_DAYS_PER_YEAR;
+  const totalDays = projectionTradingDays(validatedInputs.horizonYears);
   return {
     inputs: validatedInputs, returns, totalInitialValue, totalDays,
     random: createSeededRandom(validatedInputs.seed), endingValues: new Float64Array(validatedInputs.pathCount),

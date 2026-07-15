@@ -29,6 +29,12 @@
     import { ALIGNED_HISTORY_SOURCE, deriveAlignedLogReturns, runGbmSimulation } from "../js/monte-carlo/gbm.js";
     import { estimateLogReturnStatistics, percentile } from "../js/monte-carlo/statistics.js";
     import { deriveAlignedArithmeticReturnVectors, prepareBootstrapRun, runBootstrapSimulation, simulateBootstrapPath } from "../js/monte-carlo/bootstrap.js";
+    import { addCalendarYears, createProjectionDateContext, parseProjectionHorizon, projectionTradingDays } from "../js/utils/projection-date-utils.js";
+    import { applyProjectionHorizonToMonteCarloInputs, createProjectionExportMetadata, createProjectionRunSnapshot, saveProjectionHorizon, validateAcceptedProjectionResult } from "../js/settings/projection-settings.js";
+    import { createConfidenceFanPreparedData } from "../js/charts/mc-confidence-fan.js";
+    import { createPercentileBandsPreparedData } from "../js/charts/mc-percentile-bands.js";
+    import { createProjectionPngMetadata } from "../js/charts/chart-export.js";
+    import { getSettingsStorageKey, loadSettingsState } from "../js/settings/settings-state.js";
 
     const tests = [];
     const test = (name, fn) => tests.push({ name, fn });
@@ -83,6 +89,38 @@
       equal(validateMonteCarloInputs({ ...inputs(), pathCount: undefined }).value.pathCount, 5000);
       equal(SUPPORTED_PATH_COUNTS.join(","), "1000,2500,5000");
     });
+    test("Projection horizon accepts only whole years 1 through 10 and maps to 252-day years", () => {
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach((value) => equal(parseProjectionHorizon(String(value)), value));
+      [0, 11, 1.5, "1.5", "", "NaN", "5 years", " 2.0 "].forEach((value) => equal(parseProjectionHorizon(value), null));
+      equal(projectionTradingDays(1), 252); equal(projectionTradingDays(10), 2520);
+    });
+    test("Projection calendar date is human-readable and separate from statistical steps", () => {
+      const context = createProjectionDateContext(5, "2026-05-15");
+      equal(context.projectedThroughDate, "2031-05-15");
+      equal(context.projectedThroughLabel, "May 15, 2031");
+      equal(context.tradingDays, 1260);
+      equal(addCalendarYears("2024-02-29", 1).toISOString().slice(0, 10), "2025-02-28");
+    });
+    test("Projection setting persists a valid change, marks simulations stale, and exposes safe export metadata", () => {
+      let state = { projectionHorizonYears: 5, dependentDataState: { simulations: "completed" } };
+      const result = saveProjectionHorizon("7", {
+        loadState: () => structuredClone(state), saveState: (next) => (state = structuredClone(next)), startDate: "2026-05-15"
+      });
+      assert(result.accepted && result.changed); equal(state.projectionHorizonYears, 7); equal(state.dependentDataState.simulations, "stale");
+      equal(result.context.tradingDays, 1764); equal(createProjectionExportMetadata(result.context).projectedThroughDate, "2033-05-15");
+      equal(applyProjectionHorizonToMonteCarloInputs({ method: "gbm" }, 7).horizonYears, 7);
+      assert(!saveProjectionHorizon("7.5", { loadState: () => state, saveState: () => state }).accepted);
+    });
+    test("Malformed persisted horizons are rejected instead of coerced", () => {
+      const key = getSettingsStorageKey();
+      const previous = localStorage.getItem(key);
+      try {
+        localStorage.setItem(key, JSON.stringify({ schemaVersion: 2, projectionHorizonYears: "7.5" }));
+        equal(loadSettingsState().projectionHorizonYears, 5);
+      } finally {
+        if (previous === null) localStorage.removeItem(key); else localStorage.setItem(key, previous);
+      }
+    });
     test("Input validation preserves selected supported path counts", () => {
       for (const pathCount of SUPPORTED_PATH_COUNTS) equal(validateMonteCarloInputs(inputs({ pathCount })).value.pathCount, pathCount);
       const invalid = validateMonteCarloInputs(inputs({ pathCount: 3000 }));
@@ -119,6 +157,22 @@
       equal(first.endingValueDistribution.count, 1000); equal(JSON.stringify(first), JSON.stringify(second));
       assert(first.p10 <= first.p50 && first.p50 <= first.p90);
       equal(first.confidenceFan.length, 253); equal(first.percentileBands.length, 253);
+    });
+    test("Projection visual adapters preserve completed Monte Carlo percentiles and expose unavailable states", () => {
+      const result = runGbmSimulation(gbmInputs(), fixtureHistory());
+      const context = createProjectionDateContext(1, "2026-05-15");
+      const fan = createConfidenceFanPreparedData(result, context);
+      const bands = createPercentileBandsPreparedData(result, context);
+      equal(fan.status, "ready"); equal(bands.status, "ready"); equal(fan.confidenceFan.length, 253); equal(bands.percentileBands.length, 253);
+      assert(fan.summary.includes("252 statistical trading days") && fan.methodologyLabel.includes("GBM"));
+      assert(createConfidenceFanPreparedData(null, context).status === "unavailable");
+      assert(createPercentileBandsPreparedData(null, context).status === "unavailable");
+      const invalid = { ...result, totalTradingDays: 251 };
+      assert(!validateAcceptedProjectionResult(invalid, context).accepted);
+      assert(createConfidenceFanPreparedData(invalid, context).status === "unavailable");
+      const snapshot = createProjectionRunSnapshot({ projectionHorizonYears: 1 }, "2026-05-15");
+      equal(snapshot.context.projectedThroughDate, "2027-05-15");
+      equal(createProjectionPngMetadata(snapshot.context).projectedThroughDate, "2027-05-15");
     });
     test("Bootstrap retains symbol order, dates, and no more than 756 aligned arithmetic return vectors", () => {
       const closes = {
@@ -332,6 +386,7 @@
       return actual.length === expected.length && actual.every((value, index) => Math.abs(value - expected[index]) <= tolerance);
     }
     document.querySelector("#run-tests").addEventListener("click", run);
+    if (new URLSearchParams(window.location.search).get("autorun") === "1") run();
   </script>
 </body>
 </html>

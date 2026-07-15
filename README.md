@@ -15,6 +15,9 @@ Supporting documents are:
 - [`docs/baseline_validation.md`](docs/baseline_validation.md) records the
   accepted Version 2.3 automated baseline evidence through Phase 3A; its earlier
   credential assumptions are superseded by the current requirements.
+- [`docs/test-results/phase-8a-manual-tests.md`](docs/test-results/phase-8a-manual-tests.md)
+  records the passed Phase 8A Projection Horizon manual validation and its
+  Firefox automated-test complement.
 
 If supporting documentation conflicts with either authoritative document,
 `requirements.md` takes precedence, followed by `roadmap.md`.
@@ -23,10 +26,12 @@ If supporting documentation conflicts with either authoritative document,
 
 The repository contains the application shell, persistence and setup modules,
 historical-data pipeline, live-data services, portfolio engine, benchmark
-manager, and the accepted Phase 5A Chart Manager. Phase 5A is recorded by
-squash merge `b30cc30` and tag `phase-5a-accepted`; Phase 6A Analytics Engine
-is the next active gate. A user-entered Finnhub key is kept only in page-session
-memory and removed from legacy Local Storage state.
+manager, Chart Manager, Analytics Engine, GBM and Historical Bootstrap Monte
+Carlo modules, and the validated Phase 8A Projection Horizon and projection
+visuals. Phase 8A validation is recorded in the linked test evidence; its
+branch, pull-request, and accepted-tag lifecycle remains governed by the
+roadmap. A user-entered Finnhub key is kept only in page-session memory and
+removed from legacy Local Storage state.
 
 ## Approved architecture
 
@@ -198,6 +203,7 @@ Run the browser suites applicable to the changed area:
 - `tests/historical-data-tests.html`
 - `tests/data-service-tests.html`
 - `tests/calculation-tests.html`
+- `tests/monte-carlo-tests.html?autorun=1`
 - `tests/index.html` for the test index
 
 The currently available supplemental Node suite is:

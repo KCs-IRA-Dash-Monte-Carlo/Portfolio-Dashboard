@@ -30,11 +30,10 @@
         <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
       </div>
 
-      <label class="field field--compact" for="projection-horizon-placeholder">
+      <label class="field field--compact projection-horizon-control" for="projection-horizon-header">
         <span>Projection Horizon</span>
-        <select id="projection-horizon-placeholder" name="projection-horizon-placeholder" disabled>
-          <option>Phase 8 control pending</option>
-        </select>
+        <input id="projection-horizon-header" name="projection-horizon-header" type="number" min="1" max="10" step="1" required aria-describedby="projection-horizon-header-help" data-projection-horizon-input>
+        <small id="projection-horizon-header-help">Years, 1–10</small>
       </label>
     </div>
   </header>
@@ -67,6 +66,12 @@
         <!-- Future Data Services attachment: quote snapshots, market status, and last refresh timestamps. -->
         <!-- Future Portfolio Engine attachment: current value, gains/losses, allocation, and cost-basis summaries. -->
         <div class="card-grid" aria-label="Dashboard metric placeholders">
+          <article class="card projection-context-card">
+            <h3>Projection Horizon</h3>
+            <p><strong data-projection-horizon>5 Years</strong></p>
+            <p>Projected Through: <span data-projected-through>Unavailable</span></p>
+            <p data-projection-trading-days>1,260 statistical trading days</p>
+          </article>
           <article class="card">
             <h3>Current Portfolio Value</h3>
             <p class="metric-placeholder">Unavailable</p>
@@ -176,16 +181,13 @@
           <span class="status-pill status-pill--warning" data-dependent-status="simulations">Unavailable</span>
         </div>
 
-        <!-- Future Monte Carlo Engine attachment: GBM and Historical Bootstrap only. -->
-        <!-- Future Web Worker attachment: non-blocking simulation progress and cancellation. -->
-        <!-- Future Chart Manager attachment: confidence fan and percentile bands. -->
-        <div class="placeholder-block">
-          <h3>Projection placeholder</h3>
-          <p>Monte Carlo and projection charts are deferred. Scenario analysis is not part of the MVP.</p>
+        <div class="projection-context-card" role="status" aria-live="polite">
+          <strong data-projection-context>Projection context loading.</strong>
+          <p>Calendar date context is for display. Monte Carlo methods use the stated number of statistical trading-day steps.</p>
         </div>
         <div class="chart-grid chart-grid--future" aria-label="Future Monte Carlo chart containers">
-          <article data-chart-type="monte-carlo-confidence-fan" data-chart-title="Monte Carlo confidence fan"></article>
-          <article data-chart-type="monte-carlo-percentile-bands" data-chart-title="Monte Carlo percentile bands"></article>
+          <article data-chart-type="monte-carlo-confidence-fan" data-chart-title="Monte Carlo confidence fan" data-chart-initial-state="unavailable" data-chart-state-message="Run GBM or Historical Bootstrap to render the confidence fan."></article>
+          <article data-chart-type="monte-carlo-percentile-bands" data-chart-title="Monte Carlo percentile bands" data-chart-initial-state="unavailable" data-chart-state-message="Run GBM or Historical Bootstrap to render percentile bands."></article>
         </div>
       </section>
 
@@ -204,6 +206,16 @@
           <article class="card">
             <h3>Theme</h3>
             <p>The dashboard follows the operating-system theme by default. Use the discreet System, Light, and Dark controls in the header to override or restore that behavior.</p>
+          </article>
+          <article class="card projection-settings-card">
+            <h3>Projection Horizon</h3>
+            <label class="field" for="projection-horizon-settings">
+              <span>Global projection horizon (years)</span>
+              <input id="projection-horizon-settings" name="projection-horizon-settings" type="number" min="1" max="10" step="1" required aria-describedby="projection-horizon-settings-help" data-projection-horizon-input>
+              <small id="projection-horizon-settings-help">Whole years only: 1 through 10. Changes mark completed simulations stale; they never start a run automatically.</small>
+            </label>
+            <p>Projected Through: <strong data-projected-through>Unavailable</strong></p>
+            <p data-projection-trading-days>Statistical trading-day length loading.</p>
           </article>
           <article class="card">
             <h3>API key management</h3>

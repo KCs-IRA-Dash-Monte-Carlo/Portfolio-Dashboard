@@ -1,4 +1,6 @@
 import { CHART_TYPES, STOOQ_PRICE_RETURN_LABEL } from './chart-state.js';
+import { createConfidenceFanOption } from './mc-confidence-fan.js';
+import { createPercentileBandsOption } from './mc-percentile-bands.js';
 
 export const DEFAULT_CHART_PALETTE = Object.freeze([
   '#2563eb',
@@ -17,6 +19,12 @@ const SYMBOLS = Object.freeze(['circle', 'rect', 'triangle', 'diamond', 'roundRe
 export function createChartOption(type, prepared = {}, context = {}) {
   if (type === CHART_TYPES.ALLOCATION) {
     return createAllocationOption(prepared, context);
+  }
+  if (type === CHART_TYPES.MONTE_CARLO_CONFIDENCE_FAN) {
+    return createConfidenceFanOption(prepared, context);
+  }
+  if (type === CHART_TYPES.MONTE_CARLO_PERCENTILE_BANDS) {
+    return createPercentileBandsOption(prepared, context);
   }
 
   return createTimeSeriesOption(type, prepared, context);
@@ -186,7 +194,8 @@ export function createChartContext(element, overrides = {}) {
     reduceMotion: overrides.reduceMotion === true,
     disableHorizontalPan: overrides.disableHorizontalPan === true,
     visibleSeries: overrides.visibleSeries || {},
-    zoom: overrides.zoom || { start: 0, end: 100 }
+    zoom: overrides.zoom || { start: 0, end: 100 },
+    projectionContext: overrides.projectionContext || null
   };
 }
 

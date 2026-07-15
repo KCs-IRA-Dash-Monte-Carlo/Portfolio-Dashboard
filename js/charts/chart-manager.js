@@ -55,6 +55,7 @@ export class ChartManager {
     this.mounted = false;
     this.ownedNodes = [];
     this.exportOptions = options.exportOptions || {};
+    this.projectionContext = options.projectionContext || null;
     this.onTimeFilterChange = typeof options.onTimeFilterChange === 'function'
       ? options.onTimeFilterChange
       : null;
@@ -77,6 +78,7 @@ export class ChartManager {
   setPreparedData(prepared) {
     this.prepared = prepared && typeof prepared === 'object' ? prepared : null;
     this.filteredPrepared = resolvePreparedChartData(this.prepared, this.state.timeFilter);
+    this.projectionContext = this.filteredPrepared?.projectionContext || this.projectionContext;
     const status = this.filteredPrepared?.status || (
       hasPreparedSeries(this.filteredPrepared, this.type)
         ? CHART_DATA_STATES.READY
@@ -151,6 +153,7 @@ export class ChartManager {
     return exportChartPng(this.chart, {
       title: this.title,
       backgroundColor: readCssColor(this.root, '--color-surface', this.theme === 'dark' ? '#0f172a' : '#ffffff'),
+      projectionContext: this.projectionContext || this.filteredPrepared?.projectionContext || null,
       ...this.exportOptions
     });
   }
@@ -309,6 +312,7 @@ export class ChartManager {
       disableHorizontalPan: Boolean(this.root.closest('[data-swipeable-tabs]')),
       visibleSeries: this.state.visibleSeries,
       zoom: this.state.zoom,
+      projectionContext: this.projectionContext || this.filteredPrepared?.projectionContext || null,
       reduceMotion: this.window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
     });
     this.chart.setOption(createChartOption(this.type, this.filteredPrepared || {}, context), true);

@@ -16,10 +16,25 @@ export function createChartPngDataUrl(chart, options = {}) {
 export async function exportChartPng(chart, options = {}) {
   const dataUrl = createChartPngDataUrl(chart, options);
   const blob = dataUrlToBlob(dataUrl);
-  const filename = createPngFilename(options.filename || options.title || 'portfolio-chart');
+  const projectionMetadata = createProjectionPngMetadata(options.projectionContext);
+  const filename = createPngFilename(options.filename || projectionFilename(options.title, projectionMetadata));
   const save = typeof options.save === 'function' ? options.save : downloadBlob;
   await save(blob, filename, options.document || globalThis.document);
-  return { blob, filename };
+  return { blob, filename, projectionMetadata };
+}
+
+/** Credential-free metadata supplied to PNG and portable-backup callers. */
+export function createProjectionPngMetadata(context) {
+  if (!context || !Number.isInteger(context.horizonYears) || !Number.isInteger(context.tradingDays)
+    || typeof context.projectedThroughDate !== 'string' || typeof context.projectedThroughLabel !== 'string') {
+    return null;
+  }
+  return Object.freeze({
+    projectionHorizonYears: context.horizonYears,
+    projectionTradingDays: context.tradingDays,
+    projectedThroughDate: context.projectedThroughDate,
+    projectedThroughLabel: context.projectedThroughLabel
+  });
 }
 
 export function createPngFilename(value) {
@@ -68,4 +83,9 @@ function decodeBase64Fallback(value) {
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
+}
+
+function projectionFilename(title, metadata) {
+  if (!metadata) return title || 'portfolio-chart';
+  return `${title || 'portfolio-chart'}-${metadata.projectionHorizonYears}y-through-${metadata.projectedThroughDate}`;
 }

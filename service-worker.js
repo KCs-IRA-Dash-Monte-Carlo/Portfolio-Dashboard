@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'portfolio-dash-static-v0.2.3-phase-5a-2';
+const CACHE_VERSION = 'portfolio-dash-static-v0.2.3-phase-8a-1';
 
 const STATIC_ASSETS = [
   './',
@@ -17,7 +17,10 @@ const STATIC_ASSETS = [
   './js/charts/chart-options.js',
   './js/charts/chart-export.js',
   './js/charts/chart-state.js',
+  './js/charts/mc-confidence-fan.js',
+  './js/charts/mc-percentile-bands.js',
   './js/settings/settings-state.js',
+  './js/settings/projection-settings.js',
   './js/ui/setup-wizard.js',
   './js/ui/lot-editor.js',
   './js/ui/portfolio-editor.js',
@@ -48,6 +51,7 @@ const STATIC_ASSETS = [
   './js/utils/date-utils.js',
   './js/utils/number-utils.js',
   './js/utils/dom-utils.js',
+  './js/utils/projection-date-utils.js',
   './tests/index.html',
   './tests/ui-tests.html'
 ];

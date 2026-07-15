@@ -3,6 +3,7 @@ import {
   DEFAULT_FINNHUB_API_KEY
 } from '../config/finnhub.js';
 import { assertActiveSymbolLimit } from '../core/symbol-registry.js';
+import { parseProjectionHorizon } from '../utils/projection-date-utils.js';
 
 const STORAGE_KEY = 'mvpPortfolioDash.settings.v1';
 const APP_VERSION = '0.2.3-v2.3-phase-4a';
@@ -323,7 +324,10 @@ function normalizeSettingsState(state) {
   next.theme = ['system', 'light', 'dark'].includes(state.theme) ? state.theme : defaults.theme;
   next.accentColor = /^#[0-9a-fA-F]{6}$/.test(state.accentColor || '') ? state.accentColor : defaults.accentColor;
   next.fontScale = clampNumber(state.fontScale, 0.85, 1.25, defaults.fontScale);
-  next.projectionHorizonYears = clampInteger(state.projectionHorizonYears, 1, 10, defaults.projectionHorizonYears);
+  // Stored state is untrusted input too. Do not coerce decimals (for example
+  // "7.5") or partial text into a different accepted global horizon.
+  next.projectionHorizonYears = parseProjectionHorizon(state.projectionHorizonYears)
+    ?? defaults.projectionHorizonYears;
   next.activeSymbols = computeActiveSymbols(next.holdings, next.benchmarks);
   next.api.hasKey = Boolean(next.api.apiKey);
   if (!Object.values(FINNHUB_API_KEY_SOURCES).includes(next.api.keySource)) {

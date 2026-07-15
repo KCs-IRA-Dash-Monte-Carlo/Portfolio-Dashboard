@@ -73,6 +73,10 @@
   max-width: 15rem;
 }
 
+.field--compact input {
+  inline-size: 6.5rem;
+}
+
 .field select {
   border: 1px solid var(--color-border-strong);
   border-radius: 0.3rem;
@@ -169,6 +173,19 @@
 .chart-shell,
 .app-aside {
   padding: 0.75rem;
+}
+
+.projection-context-card {
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.4rem;
+  padding: 0.75rem;
+  color: var(--color-text);
+  background: var(--color-surface-muted);
+}
+
+.projection-context-card > :last-child,
+.projection-settings-card > :last-child {
+  margin-bottom: 0;
 }
 
 .chart-grid {

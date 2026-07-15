@@ -13,9 +13,22 @@ import {
   CHART_THEME_CHANGED_EVENT,
   mountChartManagers
 } from './charts/chart-manager.js';
+import {
+  PROJECTION_HORIZON_CHANGED_EVENT,
+  applyProjectionHorizonToMonteCarloInputs,
+  createProjectionRunSnapshot,
+  createProjectionExportMetadata,
+  getProjectionContext,
+  initProjectionHorizonControls,
+  validateAcceptedProjectionResult
+} from './settings/projection-settings.js';
+import { createConfidenceFanPreparedData } from './charts/mc-confidence-fan.js';
+import { createPercentileBandsPreparedData } from './charts/mc-percentile-bands.js';
 
 const APP_VERSION = '0.2.3-v2.3-phase-5a';
 const chartManagers = new Map();
+const activeProjectionRuns = new Map();
+let acceptedProjectionResult = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   bootstrapApp();
@@ -26,6 +39,7 @@ function bootstrapApp() {
   const state = loadSettingsState();
   applyDisplayPreferences(state);
   renderPhaseOneShellState(state);
+  initProjectionHorizonControls(document);
   wireShellActions();
   initPortfolioPhase3B();
   initBenchmarkManagement();
@@ -40,7 +54,7 @@ function renderDependentDataState(state) {
   document.querySelectorAll('[data-dependent-status]').forEach((node) => {
     const key = node.dataset.dependentStatus;
     if (dependent[key] === 'stale') {
-      node.textContent = 'Stale after portfolio edit';
+      node.textContent = staleStatusMessage(dependent.staleReason);
       node.classList.add('status-pill--warning');
     }
   });
@@ -92,6 +106,93 @@ function wireShellActions() {
     const manager = chartManagers.get(event.detail?.type);
     if (manager) manager.setPreparedData(event.detail.prepared);
   });
+  window.addEventListener('mvp:monte-carlo-result', (event) => {
+    const result = event.detail?.result;
+    const context = event.detail?.projectionContext || getProjectionContext(loadSettingsState());
+    const accepted = validateAcceptedProjectionResult(result, context);
+    if (!accepted.accepted) {
+      invalidateProjectionOutputs(accepted.error);
+      return;
+    }
+    acceptedProjectionResult = accepted.value;
+    chartManagers.get('monte-carlo-confidence-fan')?.setPreparedData(createConfidenceFanPreparedData(accepted.value, accepted.value.projectionContext));
+    chartManagers.get('monte-carlo-percentile-bands')?.setPreparedData(createPercentileBandsPreparedData(accepted.value, accepted.value.projectionContext));
+    publishProjectionMetadata(accepted.value.projectionContext, 'accepted-simulation');
+  });
+  window.addEventListener('mvp:monte-carlo-run-approved', (event) => {
+    const detail = event.detail || {};
+    const outcome = startApprovedProjection(detail);
+    detail.respond?.(outcome);
+  });
+  window.addEventListener(PROJECTION_HORIZON_CHANGED_EVENT, (event) => {
+    const context = event.detail;
+    renderPhaseOneShellState(loadSettingsState());
+    activeProjectionRuns.forEach((run) => {
+      run.controller.markInputsChanged(
+        applyProjectionHorizonToMonteCarloInputs(run.rawInputs, context.horizonYears),
+        run.alignedHistory
+      );
+    });
+    activeProjectionRuns.clear();
+    invalidateProjectionOutputs('Projection horizon changed. Run or approve a new simulation to refresh this visual.');
+    renderDependentDataState({ dependentDataState: { simulations: 'stale', staleReason: 'projection-horizon-changed' } });
+    publishProjectionMetadata(context, 'projection-horizon-changed');
+  });
+}
+
+/**
+ * Existing Monte Carlo UI may dispatch mvp:monte-carlo-run-approved with its
+ * controller, raw inputs, and aligned history. This bridge is deliberately
+ * presentation-free: it snapshots the global setting, starts only on explicit
+ * approval, and emits only controller-completed output.
+ */
+export function startApprovedProjection({ controller, rawInputs, alignedHistory, startDate = new Date() } = {}) {
+  if (!controller || typeof controller.start !== 'function' || typeof controller.subscribe !== 'function') {
+    return { accepted: false, errors: [{ code: 'MONTE_CARLO_CONTROLLER_REQUIRED', message: 'An approved Monte Carlo controller is required.' }] };
+  }
+  const snapshot = createProjectionRunSnapshot(loadSettingsState(), startDate);
+  let inputs;
+  try {
+    inputs = applyProjectionHorizonToMonteCarloInputs(rawInputs, snapshot.context.horizonYears);
+  } catch (error) {
+    return { accepted: false, errors: [{ code: 'PROJECTION_HORIZON_INVALID', message: error.message }] };
+  }
+  const outcome = controller.start(inputs, alignedHistory);
+  if (!outcome.accepted) return outcome;
+
+  const unsubscribe = controller.subscribe((state) => {
+    if (state.status === 'completed') {
+      unsubscribe();
+      activeProjectionRuns.delete(outcome.runId);
+      window.dispatchEvent(new CustomEvent('mvp:monte-carlo-result', {
+        detail: { result: state.result, projectionContext: snapshot.context, acceptedByController: true }
+      }));
+    } else if (['stale', 'cancelled', 'failed'].includes(state.status)) {
+      unsubscribe();
+      activeProjectionRuns.delete(outcome.runId);
+    }
+  });
+  activeProjectionRuns.set(outcome.runId, { controller, rawInputs, alignedHistory, snapshot, unsubscribe });
+  return { ...outcome, projectionContext: snapshot.context, exportMetadata: snapshot.exportMetadata };
+}
+
+function invalidateProjectionOutputs(message) {
+  acceptedProjectionResult = null;
+  ['monte-carlo-confidence-fan', 'monte-carlo-percentile-bands'].forEach((type) => {
+    const manager = chartManagers.get(type);
+    manager?.setPreparedData(null);
+    manager?.setStatus(CHART_DATA_STATES.STALE, message);
+  });
+}
+
+function publishProjectionMetadata(context, reason) {
+  const detail = Object.freeze({ ...createProjectionExportMetadata(context), reason });
+  window.dispatchEvent(new CustomEvent('mvp:projection-export-context', { detail }));
+  window.dispatchEvent(new CustomEvent('mvp:projection-backup-metadata-ready', { detail }));
+}
+
+function staleStatusMessage(reason) {
+  return reason === 'projection-horizon-changed' ? 'Stale after projection horizon change' : 'Stale after portfolio edit';
 }
 
 function wireThemeChoices() {
@@ -149,6 +250,12 @@ function initCharts() {
     echarts: window.echarts,
     theme: getEffectiveTheme(loadSettingsState())
   }).forEach((manager, type) => chartManagers.set(type, manager));
+
+  const projectionContext = getProjectionContext(loadSettingsState());
+  ['monte-carlo-confidence-fan', 'monte-carlo-percentile-bands'].forEach((type) => {
+    const manager = chartManagers.get(type);
+    if (manager) manager.projectionContext = projectionContext;
+  });
 
   window.addEventListener('mvp:portfolio-changed', () => {
     chartManagers.forEach((manager) => {
