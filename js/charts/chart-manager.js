@@ -55,6 +55,7 @@ export class ChartManager {
     this.mounted = false;
     this.ownedNodes = [];
     this.exportOptions = options.exportOptions || {};
+    this.exportManager = options.exportManager || null;
     this.projectionContext = options.projectionContext || null;
     this.onTimeFilterChange = typeof options.onTimeFilterChange === 'function'
       ? options.onTimeFilterChange
@@ -150,6 +151,7 @@ export class ChartManager {
     if (!this.chart || !isRenderableChartState(this.state)) {
       throw new Error('A rendered chart is required before PNG export.');
     }
+    if (this.exportManager) return this.exportManager.exportChart(this.type);
     return exportChartPng(this.chart, {
       title: this.title,
       backgroundColor: readCssColor(this.root, '--color-surface', this.theme === 'dark' ? '#0f172a' : '#ffffff'),
@@ -253,6 +255,10 @@ export class ChartManager {
 
     const methodology = element(this.document, 'p', 'chart-methodology');
     methodology.dataset.chartMethodology = '';
+    const source = element(this.document, 'p', 'chart-provenance');
+    source.dataset.chartSource = '';
+    const freshness = element(this.document, 'p', 'chart-provenance');
+    freshness.dataset.chartFreshness = '';
     const summary = element(this.document, 'p', 'chart-summary');
     summary.dataset.chartSummary = '';
     const actionMessage = element(this.document, 'p', 'chart-action-message');
@@ -260,8 +266,8 @@ export class ChartManager {
     actionMessage.setAttribute('role', 'status');
     actionMessage.setAttribute('aria-live', 'polite');
 
-    this.root.append(heading, filters, actions, seriesControls, viewport, methodology, summary, actionMessage);
-    this.ownedNodes.push(heading, filters, actions, seriesControls, viewport, methodology, summary, actionMessage);
+    this.root.append(heading, filters, actions, seriesControls, viewport, methodology, source, freshness, summary, actionMessage);
+    this.ownedNodes.push(heading, filters, actions, seriesControls, viewport, methodology, source, freshness, summary, actionMessage);
     this.chartSurface = surface;
     this.stateOverlay = overlay;
     this.stateLabel = stateLabel;
@@ -269,6 +275,8 @@ export class ChartManager {
     this.resetButton = reset;
     this.exportButton = exportButton;
     this.methodologyNode = methodology;
+    this.sourceNode = source;
+    this.freshnessNode = freshness;
     this.summaryNode = summary;
     this.actionMessageNode = actionMessage;
 
@@ -398,9 +406,15 @@ export class ChartManager {
     const methodology = chartMethodologyLabel(prepared);
     this.methodologyNode.textContent = methodology;
     this.methodologyNode.hidden = !methodology;
+    const source = prepared.source || prepared.historicalSource || '';
+    const freshness = prepared.updatedAt || this.state.updatedAt || '';
+    this.sourceNode.textContent = String(source || '');
+    this.sourceNode.hidden = !source;
+    this.freshnessNode.textContent = String(freshness || '');
+    this.freshnessNode.hidden = !freshness;
     this.summaryNode.textContent = String(prepared.summary || createBasicSummary(prepared, this.type));
     this.summaryNode.hidden = !this.summaryNode.textContent;
-    const ariaDescription = [this.title, this.summaryNode.textContent, methodology].filter(Boolean).join('. ');
+    const ariaDescription = [this.title, this.summaryNode.textContent, methodology, this.sourceNode.textContent, this.freshnessNode.textContent].filter(Boolean).join('. ');
     this.chartSurface.setAttribute('aria-label', ariaDescription || this.title);
   }
 

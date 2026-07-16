@@ -25,11 +25,13 @@ import {
 import { createConfidenceFanPreparedData } from './charts/mc-confidence-fan.js';
 import { createPercentileBandsPreparedData } from './charts/mc-percentile-bands.js';
 import { initFullBackupManager } from './ui/full-backup-manager.js';
+import { ExportManager } from './export/export-manager.js';
 
 const APP_VERSION = '0.2.3-v2.3-phase-5a';
 const chartManagers = new Map();
 const activeProjectionRuns = new Map();
 let acceptedProjectionResult = null;
+let exportManager = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   bootstrapApp();
@@ -45,6 +47,7 @@ function bootstrapApp() {
   initPortfolioPhase3B();
   initBenchmarkManagement();
   initCharts();
+  initConfigurationBackupControls();
   renderDependentDataState(state);
   registerServiceWorker();
   initSetupWizard();
@@ -253,10 +256,12 @@ function wireThemeChoices() {
 function initCharts() {
   chartManagers.forEach((manager) => manager.destroy());
   chartManagers.clear();
+  exportManager = new ExportManager();
   mountChartManagers(document, {
     echarts: window.echarts,
-    theme: getEffectiveTheme(loadSettingsState())
-  }).forEach((manager, type) => chartManagers.set(type, manager));
+    theme: getEffectiveTheme(loadSettingsState()),
+    exportManager
+  }).forEach((manager, type) => { chartManagers.set(type, manager); exportManager.registerChart(manager); });
 
   const projectionContext = getProjectionContext(loadSettingsState());
   ['monte-carlo-confidence-fan', 'monte-carlo-percentile-bands'].forEach((type) => {
@@ -277,6 +282,31 @@ function initCharts() {
       comparison.setStatus(CHART_DATA_STATES.STALE, 'Benchmark inputs changed. Supply refreshed prepared series to update this chart.');
     }
   });
+}
+
+function initConfigurationBackupControls() {
+  const exportButton = document.querySelector('[data-configuration-backup-export]');
+  const fileInput = document.querySelector('[data-configuration-backup-file]');
+  const restoreButton = document.querySelector('[data-configuration-backup-restore]');
+  const status = document.querySelector('[data-configuration-backup-status]');
+  const reminder = document.querySelector('[data-configuration-backup-reminder]');
+  const reminderMessage = document.querySelector('[data-configuration-backup-reminder-message]');
+  const dismissReminder = document.querySelector('[data-configuration-backup-reminder-dismiss]');
+  let pending = null;
+  const show = (message, error = false) => { if (status) { status.textContent = message; status.dataset.status = error ? 'error' : 'ok'; } };
+  const refreshReminder = () => {
+    if (!reminder || !exportManager) return;
+    const due = exportManager.reminder(loadSettingsState());
+    reminder.hidden = !due.due;
+    if (due.due && reminderMessage) reminderMessage.textContent = 'Backup reminder: export a configuration or full portable backup now.';
+  };
+  exportButton?.addEventListener('click', async () => { try { await exportManager.exportConfiguration(); show('Configuration backup exported. Historical data was not included.'); refreshReminder(); } catch (error) { show(error.message, true); } });
+  fileInput?.addEventListener('change', async () => {
+    try { pending = await fileInput.files?.[0]?.text(); if (!pending) return; const preview = exportManager.validateConfiguration(pending); restoreButton.disabled = false; show(`Validated configuration backup from ${preview.createdAt}. Historical data will remain unchanged.`); } catch (error) { pending = null; restoreButton.disabled = true; show(error.message, true); }
+  });
+  restoreButton?.addEventListener('click', async () => { try { if (!pending) throw new Error('Choose a configuration backup first.'); await exportManager.restoreConfiguration(pending); restoreButton.disabled = true; show('Configuration restored. Existing historical data was preserved.'); } catch (error) { show(error.message, true); } });
+  dismissReminder?.addEventListener('click', () => { exportManager.dismissReminder(); refreshReminder(); });
+  refreshReminder();
 }
 
 function wirePanelNavigation() {

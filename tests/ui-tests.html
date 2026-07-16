@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Phase 3B, 4A, and 5A UI Tests</title>
+  <title>Phase 3B–9B UI Tests</title>
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/themes.css">
@@ -12,7 +12,7 @@
 </head>
 <body>
   <main class="test-page">
-    <h1>Phase 3B, 4A, and 5A UI Tests</h1>
+    <h1>Phase 3B–9B UI Tests</h1>
     <section class="panel">
       <h2>Automated checks</h2>
       <ol id="test-results" aria-live="polite"></ol>
@@ -32,7 +32,7 @@
       <article data-chart-test="monte-carlo-percentile-bands"></article>
     </section>
     <section class="panel">
-      <h2>Phase 5A manual checks</h2>
+      <h2>Phase 9B manual checks</h2>
       <ol>
         <li>Open this page in Mozilla Firefox on desktop and confirm all automated checks pass.</li>
         <li>At iPhone 13 mini portrait and landscape sizes, confirm every chart stays within its panel and the page has no horizontal overflow.</li>
@@ -42,13 +42,21 @@
         <li>In Home Screen mode, confirm chart panels and controls clear all safe-area insets.</li>
         <li>Toggle light and dark themes repeatedly and confirm one live ECharts instance remains per rendered chart.</li>
         <li>Disconnect the development CDN and confirm a clear unavailable state appears instead of a broken interaction.</li>
-        <li>Inspect exported PNGs and confirm no credential, CSV, or printable-report content is present.</li>
+        <li>Export every rendered chart. Confirm each PNG includes its title plus visible methodology, source, freshness, warning state, and (for projections) horizon and projected-through date.</li>
+        <li>Create a configuration backup, inspect it for no Finnhub key or authentication header, then restore it and confirm holdings/settings return while existing historical IndexedDB data remains untouched.</li>
+        <li>Create and restore a full portable backup separately; confirm its historical data still replaces—not merges—the browser dataset.</li>
+        <li>After 30 days and after 10 saved edits, confirm the backup reminder appears; dismiss it and confirm it remains hidden for 30 days.</li>
+        <li>Force or cancel each export where the browser permits; confirm the UI reports a safe failure and Diagnostics contains no credentials.</li>
+        <li>Inspect exports and controls: Finnhub credentials, CSV export, and Print-to-PDF reporting must be absent.</li>
       </ol>
     </section>
   </main>
   <script type="module">
     import { createDefaultSettingsState } from '../js/settings/settings-state.js';
     import { createRestorePreview } from '../js/export/full-backup-restore.js';
+    import { createConfigurationBackup, backupReminderStatus } from '../js/export/backup-export.js';
+    import { createConfigurationRestorePreview, parseAndValidateConfigurationBackup } from '../js/export/backup-restore.js';
+    import { chartContext } from '../js/export/export-manager.js';
     import { PortfolioEditor } from '../js/ui/portfolio-editor.js';
     import { BenchmarkEngine } from '../js/benchmarks/benchmark-engine.js';
     import { SYMBOL_REGISTRY_CHANGED_EVENT } from '../js/core/symbol-registry.js';
@@ -65,6 +73,11 @@
     const checks = [];
     const portablePreview = createRestorePreview({ schemaVersion: 1, appVersion: 'fixture', createdAt: '2026-07-15T00:00:00.000Z', sourceDeviceLabel: 'Mac', runtimeLiveDataSetupRequired: true, datasetVersion: 'fixture-v1', datasetVersions: ['fixture-v1'], historicalAdjustmentBasis: { source: 'Stooq', frequency: 'D', priceAdjustment: 'split-adjusted', dividendAdjustment: 'none' }, sectionCounts: { holdings: 1, lots: 1, benchmarks: 1, activeSymbols: 1, historicalCandles: 2, historicalManifests: 1, historicalImports: 1, historicalQualityFlags: 0, quoteSnapshots: 1, candles: 1, companyMetadata: 1, diagnostics: 1 }, stores: { historicalCandles: [{ symbol: 'SPY', date: '2026-01-02' }, { symbol: 'SPY', date: '2026-01-03' }] } });
     check('portable restore preview exposes version, integrity, complete counts, symbols, dates, adjustment basis, and key warning', () => portablePreview.schemaVersion === 1 && portablePreview.integrity === 'SHA-256 verified' && portablePreview.datasetVersion === 'fixture-v1' && portablePreview.counts.historicalCandles === 2 && portablePreview.symbols[0] === 'SPY' && portablePreview.firstDate === '2026-01-02' && portablePreview.adjustmentBasis.priceAdjustment === 'split-adjusted' && portablePreview.warnings.some((item) => item.includes('not portable')));
+    const configurationFixture = createConfigurationBackup({ settings: { ...createDefaultSettingsState(), api: { apiKey: 'must-not-export', hasKey: true }, holdings: [], lots: [], benchmarks: [], activeSymbols: [] }, createdAt: '2026-07-15T00:00:00.000Z' });
+    check('configuration backup is credential-free and explicitly excludes historical data', () => configurationFixture.includesHistoricalData === false && !JSON.stringify(configurationFixture).includes('must-not-export') && configurationFixture.runtimeLiveDataSetupRequired === true);
+    check('configuration restore preview stays distinct from portable historical restore', () => { const preview = createConfigurationRestorePreview(configurationFixture); return parseAndValidateConfigurationBackup(configurationFixture).format === 'mvp-portfolio-dashboard-configuration-backup' && preview.preservesHistoricalData && preview.holdings === 0; });
+    check('configuration backups containing a credential are rejected safely', () => { const unsafe = structuredClone(configurationFixture); unsafe.settings.api = { apiKey: 'unsafe' }; try { parseAndValidateConfigurationBackup(unsafe); return false; } catch (_) { return true; } });
+    check('backup reminder is due after 30 days or 10 saved edits', () => backupReminderStatus({ backup: { lastExportedAt: '2026-06-01T00:00:00.000Z' }, portfolioRevision: 0, registryRevision: 0 }, { now: '2026-07-15T00:00:00.000Z', storage: { getItem: () => '{}' } }).due && backupReminderStatus({ backup: { lastExportedAt: '2026-07-14T00:00:00.000Z' }, portfolioRevision: 10, registryRevision: 0 }, { now: '2026-07-15T00:00:00.000Z', storage: { getItem: () => JSON.stringify({ revisionAtLastExport: 0 }) } }).due);
     let state = createDefaultSettingsState();
     let saveCount = 0;
     let confirmResult = true;
@@ -372,6 +385,11 @@
     check('Stooq-derived charts show the required approximation label', () => {
       return comparisonChart.root.querySelector('[data-chart-methodology]').textContent === STOOQ_PRICE_RETURN_LABEL
         && drawdownChart.root.querySelector('[data-chart-methodology]').textContent === STOOQ_PRICE_RETURN_LABEL;
+    });
+    check('PNG export context reads visible methodology, source, freshness, and warning fields without credentials', () => {
+      const context = chartContext(comparisonChart);
+      return context.methodology === STOOQ_PRICE_RETURN_LABEL && context.source === 'stooq'
+        && !JSON.stringify(context).match(/api[_-]?key|authorization|token|secret/i);
     });
     check('all seven time filters are buttons and do not require hover', () => {
       return CHART_TIME_FILTERS.length === 7

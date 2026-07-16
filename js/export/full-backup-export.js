@@ -52,6 +52,7 @@ export async function exportFullPortableBackup(options = {}) {
     const current = options.settings || loadSettingsState();
     current.backup = { ...(current.backup || {}), lastExportedAt: backup.createdAt };
     (options.saveSettings || saveSettingsState)(current, { incrementEditCount: false });
+    writeReminderBaseline(current, backup.createdAt);
   } catch (_) { /* A completed download must not be reported as failed if metadata cannot persist. */ }
   return { backup, text, filename: backupFilename(backup.createdAt) };
 }
@@ -125,6 +126,18 @@ function downloadBackup(text, createdAt) {
   const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
   const link = document.createElement('a'); link.href = url; link.download = backupFilename(createdAt);
   link.click(); setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+// Phase 9B reminder semantics apply to either backup type. Keep the marker
+// credential-free and local so a full portable export resets its 10-edit clock.
+function writeReminderBaseline(state, exportedAt) {
+  try {
+    globalThis.localStorage?.setItem('mvpPortfolioDash.backupReminder.v1', JSON.stringify({
+      lastExportedAt: exportedAt,
+      revisionAtLastExport: Math.max(0, Number(state.portfolioRevision || 0)) + Math.max(0, Number(state.registryRevision || 0)),
+      dismissedUntil: null
+    }));
+  } catch (_) { /* A successful portable download remains successful if local storage is blocked. */ }
 }
 
 async function recordBackupDiagnostic(persistence, category, detail) {

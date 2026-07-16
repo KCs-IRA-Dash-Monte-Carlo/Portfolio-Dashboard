@@ -223,6 +223,14 @@
           </article>
           <article class="card">
             <h3>Backup and restore</h3>
+            <p data-configuration-backup-reminder hidden class="portfolio-notice portfolio-notice--warning" aria-live="polite"><span data-configuration-backup-reminder-message></span> <button type="button" data-configuration-backup-reminder-dismiss>Dismiss reminder for 30 days</button></p>
+            <p>Configuration backups contain holdings, lots, benchmarks, settings, active symbols, and projection settings. They do not contain historical data.</p>
+            <p><button type="button" data-configuration-backup-export>Export configuration backup</button></p>
+            <label class="field"><span>Restore a configuration backup</span><input type="file" accept="application/json,.json" data-configuration-backup-file></label>
+            <p><button type="button" data-configuration-backup-restore disabled>Restore configuration only</button></p>
+            <p class="status-pill" data-configuration-backup-status aria-live="polite">Configuration restore preserves existing historical data.</p>
+            <hr>
+            <p><strong>Full portable backup</strong> includes historical data for device transfer.</p>
             <p>Create one credential-free JSON backup for transfer through AirDrop or Files. Restoring replaces this browser’s complete portable state after validation; it never merges historical datasets.</p>
             <p><button type="button" data-backup-export>Export full portable backup</button></p>
             <label class="field"><span>Restore a portable backup</span><input type="file" accept="application/json,.json" data-backup-file></label>
