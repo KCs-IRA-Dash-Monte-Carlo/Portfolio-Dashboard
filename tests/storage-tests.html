@@ -361,7 +361,9 @@
         STORE_NAMES.HISTORICAL_DATASET_MANIFESTS, STORE_NAMES.HISTORICAL_IMPORT_BATCHES,
         STORE_NAMES.HISTORICAL_QUALITY_FLAGS
       ].map((name) => [name, []]));
-      stores[STORE_NAMES.HISTORICAL_CANDLES] = [{ symbol: 'TEST', date: '2026-01-02', close: 101, open: 100, high: 102, low: 99, volume: 10 }];
+      const historicalHash = 'a'.repeat(64);
+      stores[STORE_NAMES.HISTORICAL_CANDLES] = [{ symbol: 'TEST', date: '2026-01-02', close: 101, open: 100, high: 102, low: 99, volume: 10, datasetVersion: 'fixture-v1', sourceFileHash: historicalHash, source: 'Stooq', frequency: 'D', priceAdjustment: 'split-adjusted', dividendAdjustment: 'none' }];
+      stores[STORE_NAMES.HISTORICAL_DATASET_MANIFESTS] = [{ id: 'symbol:TEST', recordType: 'symbol', symbol: 'TEST', datasetVersion: 'fixture-v1', sourceFileHash: historicalHash, source: 'Stooq', frequency: 'D', priceAdjustment: 'split-adjusted', dividendAdjustment: 'none', recordCount: 1, firstDate: '2026-01-02', lastDate: '2026-01-02' }];
       const persistence = {
         async getAll(name) { return structuredClone(stores[name]); },
         async replaceStoresAtomically(next) { Object.assign(stores, structuredClone(next)); },
@@ -373,6 +375,12 @@
       let rejected = false;
       try { await parseAndValidateFullBackup(corrupted); } catch (error) { rejected = /checksum/.test(error.message); }
       assert(rejected, 'Checksum corruption must be rejected before restore.');
+      const inconsistent = structuredClone(backup);
+      inconsistent.stores[STORE_NAMES.HISTORICAL_CANDLES][0].priceAdjustment = 'unadjusted';
+      inconsistent.integrity.checksum = await checksumForBackup(inconsistent);
+      rejected = false;
+      try { await parseAndValidateFullBackup(inconsistent); } catch (error) { rejected = /adjustment metadata/.test(error.message); }
+      assert(rejected, 'Checksum-valid incompatible adjustment metadata must be rejected before restore.');
       const before = structuredClone(stores);
       let failed = false;
       try {

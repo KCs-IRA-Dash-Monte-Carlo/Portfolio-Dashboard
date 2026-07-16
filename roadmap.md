@@ -3765,8 +3765,8 @@ Requirements:
    - historical quality flags
    - historical import history
    - diagnostics settings needed for safe restore
-2. Include the active Finnhub API key.
-3. Cached provider request URLs and the active Finnhub key may be included.
+2. Exclude the active Finnhub API key, authentication headers, and credential-bearing request URLs.
+3. Cached provider records may be included only after credential-bearing request data has been removed.
 4. Include backup schema version, application version, creation timestamp, source-device label, section counts, and integrity checksum or equivalent validation.
 5. Validate the complete backup before changing current state.
 6. Show a restore preview with versions, counts, symbols, date ranges, and warnings.
@@ -3774,7 +3774,7 @@ Requirements:
 8. Restore transactionally so a failed restore leaves the prior state intact.
 9. Offer replace behavior for the complete portable state; do not silently merge incompatible historical datasets.
 10. Invalidate derived analytics and simulations after successful restore.
-11. Restore the saved Finnhub key and allow the user to edit or reset it.
+11. Require the owner to enter, edit, or reset the Finnhub key separately for the current page session after restore.
 12. Support transfer from Mac to iPhone through AirDrop or Files.
 13. Record backup and restore success or safe failure in Diagnostics.
 14. Provide deterministic corruption and rollback tests.
@@ -3789,7 +3789,7 @@ Audit Phase 9A against requirements.md Version 2.3.
 
 Check:
 - Full backup includes every required state and historical section.
-- API key and complete request details may be included.
+- API key, authentication headers, and credential-bearing request details are excluded.
 - Schema version and integrity validation are present.
 - Entire backup is validated before mutation.
 - Restore preview is complete.
@@ -3797,8 +3797,8 @@ Check:
 - Restore rollback preserves prior data.
 - Historical data is not silently merged across incompatible adjustment bases.
 - Derived results are invalidated.
-- Mac-to-iPhone transfer and restored-key edit/reset behavior are documented.
-- Diagnostics may include backup metadata and key content; restore status remains explicit.
+- Mac-to-iPhone transfer and post-restore session-key entry/edit/reset behavior are documented.
+- Diagnostics may include credential-free backup metadata; restore status remains explicit.
 
 Return data-loss risks, content-integrity risks, compatibility risks, and exact fixes.
 
@@ -3823,12 +3823,12 @@ Required output:
 - [ ] Use an unsupported future schema version.
 - [ ] Inject a restore failure and verify old state remains.
 - [ ] Transfer through AirDrop/Files and restore on iPhone after Phase 1D.
-- [ ] Verify the iPhone restores the saved key and can edit or reset it.
+- [ ] Verify the iPhone requires a separately entered session key that can be edited or reset.
 
 ## Exit criteria
 
 - Full backup round-trip preserves required state.
-- The active Finnhub key may be exported.
+- The active Finnhub key is excluded from every backup and must be entered separately after restore.
 - Corruption and rollback tests pass.
 - Mac-to-iPhone restore works before final acceptance.
 

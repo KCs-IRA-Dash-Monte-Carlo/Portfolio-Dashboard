@@ -22,6 +22,7 @@ export async function createFullPortableBackup(options = {}) {
   const settings = stripCredentials(options.settings || loadSettingsState());
   const stores = {};
   for (const storeName of PORTABLE_STORE_NAMES) stores[storeName] = await persistence.getAll(storeName);
+  const historicalMetadata = deriveHistoricalMetadata(stores);
   const backup = {
     format: FULL_BACKUP_FORMAT,
     schemaVersion: FULL_BACKUP_SCHEMA_VERSION,
@@ -29,6 +30,10 @@ export async function createFullPortableBackup(options = {}) {
     createdAt: options.createdAt || new Date().toISOString(),
     sourceDeviceLabel: safeDeviceLabel(options.sourceDeviceLabel),
     runtimeLiveDataSetupRequired: Boolean(settings.api?.hasKey),
+    datasetVersion: historicalMetadata.datasetVersion,
+    datasetVersions: historicalMetadata.datasetVersions,
+    historicalAdjustmentBasis: historicalMetadata.adjustmentBasis,
+    excludedSections: [STORE_NAMES.EXPORT_STAGING],
     settings,
     stores,
     sectionCounts: sectionCounts(settings, stores),
@@ -79,13 +84,35 @@ export function backupFilename(createdAt = new Date().toISOString()) {
 
 function sectionCounts(settings, stores) {
   return {
+    settings: 1,
     holdings: settings.holdings?.length || 0, lots: settings.lots?.length || 0,
     benchmarks: settings.benchmarks?.length || 0,
+    activeSymbols: settings.activeSymbols?.length || 0,
+    quoteSnapshots: stores[STORE_NAMES.QUOTE_SNAPSHOTS].length,
+    candles: stores[STORE_NAMES.CANDLES].length,
+    companyMetadata: stores[STORE_NAMES.COMPANY_METADATA].length,
     historicalCandles: stores[STORE_NAMES.HISTORICAL_CANDLES].length,
     historicalManifests: stores[STORE_NAMES.HISTORICAL_DATASET_MANIFESTS].length,
     historicalImports: stores[STORE_NAMES.HISTORICAL_IMPORT_BATCHES].length,
     historicalQualityFlags: stores[STORE_NAMES.HISTORICAL_QUALITY_FLAGS].length,
     diagnostics: stores[STORE_NAMES.DIAGNOSTICS_HISTORY].length
+  };
+}
+
+function deriveHistoricalMetadata(stores) {
+  const manifests = stores[STORE_NAMES.HISTORICAL_DATASET_MANIFESTS]
+    .filter((record) => record?.recordType === 'symbol');
+  if (!manifests.length) {
+    return { datasetVersion: 'none', datasetVersions: [], adjustmentBasis: null };
+  }
+  const datasetVersions = [...new Set(manifests.map((record) => record.datasetVersion).filter(Boolean))].sort();
+  const bases = [...new Set(manifests.map((record) => `${record.source}|${record.frequency}|${record.priceAdjustment}|${record.dividendAdjustment}`))];
+  if (bases.length !== 1) throw new Error('Historical data uses incompatible adjustment bases and cannot be exported as one portable backup.');
+  const [source, frequency, priceAdjustment, dividendAdjustment] = bases[0].split('|');
+  return {
+    datasetVersion: datasetVersions.length === 1 ? datasetVersions[0] : 'multiple',
+    datasetVersions,
+    adjustmentBasis: { source, frequency, priceAdjustment, dividendAdjustment }
   };
 }
 

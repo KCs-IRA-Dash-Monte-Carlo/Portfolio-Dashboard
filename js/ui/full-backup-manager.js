@@ -38,7 +38,11 @@ export function initFullBackupManager(root = document) {
 
 function renderPreview(node, preview) {
   const range = preview.firstDate ? `${preview.firstDate} to ${preview.lastDate}` : 'No historical dates';
-  node.innerHTML = `<h4>Restore preview</h4><p>Backup v${preview.schemaVersion}, app ${escape(preview.appVersion || 'unknown')}, created ${escape(preview.createdAt || 'unknown')}.</p><p>${preview.counts.holdings} holdings, ${preview.counts.lots} lots, ${preview.counts.benchmarks} benchmarks, ${preview.counts.historicalCandles} candles.</p><p>Symbols: ${escape(preview.symbols.join(', ') || 'None')}. History: ${escape(range)}.</p>${preview.warnings.map((warning) => `<p class="portfolio-notice portfolio-notice--warning">${escape(warning)}</p>`).join('')}`;
+  const counts = preview.counts;
+  const basis = preview.adjustmentBasis
+    ? `${preview.adjustmentBasis.source}; ${preview.adjustmentBasis.priceAdjustment}; dividends ${preview.adjustmentBasis.dividendAdjustment}`
+    : 'No historical data';
+  node.innerHTML = `<h4>Restore preview</h4><p>Backup v${preview.schemaVersion}, app ${escape(preview.appVersion || 'unknown')}, created ${escape(preview.createdAt || 'unknown')}.</p><p>Dataset: ${escape(preview.datasetVersion)} (${escape(preview.datasetVersions.join(', ') || 'none')}); ${escape(preview.integrity)}.</p><p>${counts.holdings} holdings, ${counts.lots} lots, ${counts.benchmarks} benchmarks, ${counts.activeSymbols} active symbols, ${counts.historicalCandles} historical candles.</p><p>${counts.historicalManifests} manifests, ${counts.historicalImports} imports, ${counts.historicalQualityFlags} quality flags, ${counts.quoteSnapshots} quote snapshots, ${counts.candles} cached candles, ${counts.companyMetadata} metadata records, and ${counts.diagnostics} diagnostics.</p><p>Symbols: ${escape(preview.symbols.join(', ') || 'None')}. History: ${escape(range)}. Basis: ${escape(basis)}.</p>${preview.warnings.map((warning) => `<p class="portfolio-notice portfolio-notice--warning">${escape(warning)}</p>`).join('')}`;
 }
 function escape(value) { const element = document.createElement('span'); element.textContent = String(value); return element.innerHTML; }
 function setStatus(node, message, isError = false) { if (!node) return; node.textContent = message; node.classList.toggle('status-pill--warning', isError); }
