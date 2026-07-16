@@ -20,7 +20,7 @@
     <div class="app-header__identity">
       <p class="eyebrow">Client-side PWA shell</p>
       <h1>Retirement Portfolio Dashboard</h1>
-      <p class="app-header__summary">Version 2.3 portfolio holdings and acquisition lots are editable locally. Corporate actions remain an explicit, audited manual responsibility.</p>
+      <p class="app-header__summary">Portfolio stocks and benchmarks are editable. Must manually update splits.</p>
     </div>
 
     <div class="app-header__controls" aria-label="Application controls">
@@ -131,7 +131,7 @@
         </div>
 
         <div class="portfolio-notice portfolio-notice--warning">
-          <strong>Corporate actions are manual.</strong> This app does not detect or apply splits, reverse splits, ticker changes, spin-offs, mergers, or other corporate actions. Use a lot's Manual adjustment action and verify the before-and-after preview before saving.
+          <strong>Corporate actions are manual.</strong> This app does not detect splits. Manualy adjust action and verify preview before saving.
         </div>
         <div data-portfolio-editor></div>
       </section>
@@ -205,7 +205,7 @@
         <div class="settings-grid">
           <article class="card">
             <h3>Theme</h3>
-            <p>The dashboard follows the operating-system theme by default. Use the discreet System, Light, and Dark controls in the header to override or restore that behavior.</p>
+            <p>The dashboard follows the operating-system theme by default.</p>
           </article>
           <article class="card projection-settings-card">
             <h3>Projection Horizon</h3>
@@ -223,7 +223,12 @@
           </article>
           <article class="card">
             <h3>Backup and restore</h3>
-            <p>Backup export and restore controls are placeholders until the export manager is implemented.</p>
+            <p>Create one credential-free JSON backup for transfer through AirDrop or Files. Restoring replaces this browser’s complete portable state after validation; it never merges historical datasets.</p>
+            <p><button type="button" data-backup-export>Export full portable backup</button></p>
+            <label class="field"><span>Restore a portable backup</span><input type="file" accept="application/json,.json" data-backup-file></label>
+            <div data-backup-preview hidden aria-live="polite"></div>
+            <p><button type="button" data-backup-restore-confirm disabled>Replace with validated backup</button></p>
+            <p class="status-pill" data-backup-status aria-live="polite">Backups exclude the Finnhub key.</p>
           </article>
           <article class="card portfolio-notice portfolio-notice--warning">
             <h3>Corporate-action responsibility</h3>
@@ -313,7 +318,7 @@
   </div>
 
   <footer class="app-footer" role="contentinfo">
-    <p>Retirement Portfolio Dashboard <span id="footer-version">Version 2.3 / Phase 5A</span>. Personal-use static client-side application.</p>
+    <p>Portfolio Dashboard <span id="footer-version">Version 9A / Phase 9A</span>. Let's get that money Bitch!!!.</p>
   </footer>
 
   <script defer src="https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.js"></script>

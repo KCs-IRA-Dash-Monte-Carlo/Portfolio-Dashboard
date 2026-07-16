@@ -154,6 +154,42 @@ export class IndexedDbPersistence {
     });
   }
 
+  /**
+   * Replace every supplied store in one IndexedDB transaction.  This is used
+   * by portable restore: either every store is replaced or IndexedDB aborts
+   * the complete write, leaving the old database untouched.
+   */
+  async replaceStoresAtomically(recordsByStore) {
+    await this.flushPendingWrites();
+    const database = await this.open();
+    const entries = Object.entries(recordsByStore || {});
+    if (!entries.length) return;
+    entries.forEach(([name, records]) => {
+      assertStoreExists(database, name);
+      if (!Array.isArray(records)) throw new TypeError(`Restore records for ${name} must be an array.`);
+    });
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(entries.map(([name]) => name), "readwrite");
+      let operationError = null;
+      transaction.oncomplete = () => resolve();
+      transaction.onabort = () => reject(operationError || transaction.error || new Error("Portable restore was rolled back."));
+      transaction.onerror = () => {};
+      try {
+        entries.forEach(([name, records]) => {
+          const store = transaction.objectStore(name);
+          store.clear();
+          records.forEach((record) => {
+            const request = store.put(record);
+            request.onerror = () => { operationError = request.error || new Error(`Invalid record in ${name}.`); };
+          });
+        });
+      } catch (error) {
+        operationError = error;
+        transaction.abort();
+      }
+    });
+  }
+
   async batchPut(storeName, values) {
     if (!Array.isArray(values)) {
       throw new TypeError("batchPut values must be an array.");

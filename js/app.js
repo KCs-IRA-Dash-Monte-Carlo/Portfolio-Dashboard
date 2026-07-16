@@ -24,6 +24,7 @@ import {
 } from './settings/projection-settings.js';
 import { createConfidenceFanPreparedData } from './charts/mc-confidence-fan.js';
 import { createPercentileBandsPreparedData } from './charts/mc-percentile-bands.js';
+import { initFullBackupManager } from './ui/full-backup-manager.js';
 
 const APP_VERSION = '0.2.3-v2.3-phase-5a';
 const chartManagers = new Map();
@@ -47,6 +48,7 @@ function bootstrapApp() {
   renderDependentDataState(state);
   registerServiceWorker();
   initSetupWizard();
+  initFullBackupManager();
 }
 
 function renderDependentDataState(state) {
@@ -101,6 +103,11 @@ function wireShellActions() {
   });
   window.addEventListener(SYMBOL_REGISTRY_CHANGED_EVENT, (event) => {
     renderDependentDataState({ dependentDataState: event.detail?.dependentDataState });
+  });
+  window.addEventListener('mvp:portable-restore', (event) => {
+    renderPhaseOneShellState(event.detail.state);
+    renderDependentDataState(event.detail.state);
+    invalidateProjectionOutputs('Stale after portable restore. Run a new simulation to refresh this visual.');
   });
   window.addEventListener('mvp:chart-data-ready', (event) => {
     const manager = chartManagers.get(event.detail?.type);

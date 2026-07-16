@@ -18,6 +18,8 @@ Supporting documents are:
 - [`docs/test-results/phase-8a-manual-tests.md`](docs/test-results/phase-8a-manual-tests.md)
   records the passed Phase 8A Projection Horizon manual validation and its
   Firefox automated-test complement.
+- [`docs/test-results/phase-9a-manual-tests.md`](docs/test-results/phase-9a-manual-tests.md)
+  records the passed Phase 9A full portable backup and restore validation.
 
 If supporting documentation conflicts with either authoritative document,
 `requirements.md` takes precedence, followed by `roadmap.md`.
@@ -27,8 +29,9 @@ If supporting documentation conflicts with either authoritative document,
 The repository contains the application shell, persistence and setup modules,
 historical-data pipeline, live-data services, portfolio engine, benchmark
 manager, Chart Manager, Analytics Engine, GBM and Historical Bootstrap Monte
-Carlo modules, and the validated Phase 8A Projection Horizon and projection
-visuals. Phase 8A validation is recorded in the linked test evidence; its
+Carlo modules, validated Phase 8A projection visuals, and the validated Phase
+9A full portable backup and restore flow. Phase 8A and Phase 9A validation are
+recorded in the linked test evidence; their
 branch, pull-request, and accepted-tag lifecycle remains governed by the
 roadmap. A user-entered Finnhub key is kept only in page-session memory and
 removed from legacy Local Storage state.
@@ -54,6 +57,20 @@ memory for the current page session, sent in the approved authentication header,
 and excluded from Local Storage, IndexedDB, source, documentation, tests, logs,
 diagnostics, request URLs, exports, backups, workflows, and releases. GitHub
 tokens, SSH private keys, and private certificate keys are also excluded.
+
+### Full portable backup and restore
+
+Phase 9A full backups are single JSON files intended for transfer between the
+Mac and iPhone through AirDrop or the iOS Files picker. Export the backup from
+the populated profile, transfer it to the other device, select it in Settings,
+review the version, counts, symbols, date range, and warnings, then confirm the
+complete replacement. Restore validates the entire file and its checksum before
+changing stored data; it never merges historical datasets. Analytics and
+simulations are marked stale after a successful restore.
+
+The Finnhub key is never portable. After restoring on the iPhone, enter a key in
+that page session only if live data is needed. The key can be edited or cleared
+from the session controls and must be entered again after a page reload.
 
 ## Stable integration contracts
 

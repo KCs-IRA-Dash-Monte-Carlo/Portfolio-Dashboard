@@ -87,6 +87,9 @@
     import { LocalStoragePersistence } from '../js/persistence/local-storage.js';
     import { IndexedDbPersistence } from '../js/persistence/indexed-db.js';
     import { runCapabilityChecks } from '../js/diagnostics/capabilities.js';
+    import { createFullPortableBackup, checksumForBackup } from '../js/export/full-backup-export.js';
+    import { parseAndValidateFullBackup, restoreFullPortableBackup } from '../js/export/full-backup-restore.js';
+    import { createDefaultSettingsState } from '../js/settings/settings-state.js';
 
     const TEST_LOCAL_STORAGE_KEY = 'mvpPortfolioDashboard.test.localState';
     const TEST_INDEXED_DB_NAME = 'mvpPortfolioDashboardStorageTests';
@@ -113,6 +116,7 @@
         testDebouncedLocalStorageWrite,
         testSettingsState,
         testIndexedDbStores,
+        testPortableBackupCorruptionAndRollback,
         testCapabilityChecks
       ];
 
@@ -348,6 +352,42 @@
       assert(report.checks.promise, 'Capability report should include Promise.');
       assert(report.checks.echarts, 'Capability report should include ECharts availability.');
       assert(report.checks.blobDownload, 'Capability report should include Blob/download support.');
+    }
+
+    async function testPortableBackupCorruptionAndRollback() {
+      const stores = Object.fromEntries([
+        STORE_NAMES.QUOTE_SNAPSHOTS, STORE_NAMES.CANDLES, STORE_NAMES.COMPANY_METADATA,
+        STORE_NAMES.DIAGNOSTICS_HISTORY, STORE_NAMES.HISTORICAL_CANDLES,
+        STORE_NAMES.HISTORICAL_DATASET_MANIFESTS, STORE_NAMES.HISTORICAL_IMPORT_BATCHES,
+        STORE_NAMES.HISTORICAL_QUALITY_FLAGS
+      ].map((name) => [name, []]));
+      stores[STORE_NAMES.HISTORICAL_CANDLES] = [{ symbol: 'TEST', date: '2026-01-02', close: 101, open: 100, high: 102, low: 99, volume: 10 }];
+      const persistence = {
+        async getAll(name) { return structuredClone(stores[name]); },
+        async replaceStoresAtomically(next) { Object.assign(stores, structuredClone(next)); },
+        async put(name, value) { stores[name].push(value); }
+      };
+      const backup = await createFullPortableBackup({ persistence, settings: createDefaultSettingsState(), createdAt: '2026-07-15T00:00:00.000Z', sourceDeviceLabel: 'test' });
+      assert(!JSON.stringify(backup).includes('apiKey'), 'Portable backup must not contain runtime API key fields.');
+      const corrupted = structuredClone(backup); corrupted.stores[STORE_NAMES.HISTORICAL_CANDLES][0].close = 999;
+      let rejected = false;
+      try { await parseAndValidateFullBackup(corrupted); } catch (error) { rejected = /checksum/.test(error.message); }
+      assert(rejected, 'Checksum corruption must be rejected before restore.');
+      const before = structuredClone(stores);
+      let failed = false;
+      try {
+        await restoreFullPortableBackup(backup, {
+          persistence: { ...persistence, async replaceStoresAtomically() { throw new Error('forced transaction failure'); } },
+          loadSettings: () => createDefaultSettingsState(), saveSettings: () => {}
+        });
+      } catch (_) { failed = true; }
+      assert(failed && JSON.stringify(stores[STORE_NAMES.HISTORICAL_CANDLES]) === JSON.stringify(before[STORE_NAMES.HISTORICAL_CANDLES]), 'Forced transactional restore failure must retain the prior portable data.');
+      const replacement = structuredClone(backup);
+      replacement.stores[STORE_NAMES.HISTORICAL_CANDLES][0].close = 202;
+      replacement.integrity.checksum = await checksumForBackup(replacement);
+      let settingsFailed = false;
+      try { await restoreFullPortableBackup(replacement, { persistence, loadSettings: () => createDefaultSettingsState(), saveSettings: () => { throw new Error('forced settings failure'); } }); } catch (_) { settingsFailed = true; }
+      assert(settingsFailed && stores[STORE_NAMES.HISTORICAL_CANDLES][0].close === 101, 'Settings failure after IndexedDB commit must roll back portable stores.');
     }
 
     async function clearTestData() {

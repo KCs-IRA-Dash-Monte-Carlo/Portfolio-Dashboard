@@ -18,6 +18,7 @@
       <ol id="test-results" aria-live="polite"></ol>
     </section>
     <section class="panel"><div data-portfolio-editor></div></section>
+    <section class="panel"><div data-backup-preview hidden></div><button data-backup-restore-confirm disabled>Restore</button></section>
     <section class="panel"><h2>Shared symbols and benchmarks</h2><div data-benchmark-manager></div></section>
     <section class="panel">
       <h2>Chart Manager fixtures</h2>
@@ -47,6 +48,7 @@
   </main>
   <script type="module">
     import { createDefaultSettingsState } from '../js/settings/settings-state.js';
+    import { createRestorePreview } from '../js/export/full-backup-restore.js';
     import { PortfolioEditor } from '../js/ui/portfolio-editor.js';
     import { BenchmarkEngine } from '../js/benchmarks/benchmark-engine.js';
     import { SYMBOL_REGISTRY_CHANGED_EVENT } from '../js/core/symbol-registry.js';
@@ -61,6 +63,8 @@
 
     const results = document.getElementById('test-results');
     const checks = [];
+    const portablePreview = createRestorePreview({ schemaVersion: 1, appVersion: 'fixture', createdAt: '2026-07-15T00:00:00.000Z', sourceDeviceLabel: 'Mac', runtimeLiveDataSetupRequired: true, sectionCounts: { holdings: 1, lots: 1, benchmarks: 1, historicalCandles: 2 }, stores: { historicalCandles: [{ symbol: 'SPY', date: '2026-01-02' }, { symbol: 'SPY', date: '2026-01-03' }] } });
+    check('portable restore preview exposes version, counts, symbols, dates, and key warning', () => portablePreview.schemaVersion === 1 && portablePreview.counts.historicalCandles === 2 && portablePreview.symbols[0] === 'SPY' && portablePreview.firstDate === '2026-01-02' && portablePreview.warnings.some((item) => item.includes('not portable')));
     let state = createDefaultSettingsState();
     let saveCount = 0;
     let confirmResult = true;
